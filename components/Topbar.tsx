@@ -10,7 +10,7 @@ import { Lang, LANG_LABEL, t } from "@/lib/i18n";
 import { NOTIFICATIONS } from "@/lib/notifications";
 import { GlobalSearch } from "./GlobalSearch";
 
-export function Topbar({ onMenuClick }: { onMenuClick: () => void }) {
+export function Topbar({ onMenuClick, scrolled }: { onMenuClick: () => void; scrolled?: boolean }) {
   const { roleId, setRoleId, lang, setLang } = useAppState();
   const role = useCurrentRole();
   const router = useRouter();
@@ -31,11 +31,15 @@ export function Topbar({ onMenuClick }: { onMenuClick: () => void }) {
   }, []);
 
   return (
-    <header className="flex h-16 flex-shrink-0 items-center gap-3 border-b border-border bg-surface px-4 md:gap-4 md:px-6">
+    <header
+      className={`sticky top-0 z-20 flex h-[72px] flex-shrink-0 items-center gap-3 border-b border-border bg-surface px-4 transition-shadow duration-200 motion-reduce:transition-none md:gap-4 md:px-6 ${
+        scrolled ? "shadow-brand-hover" : ""
+      }`}
+    >
       <button
         onClick={onMenuClick}
         aria-label="Menyu"
-        className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg border border-border text-foreground hover:bg-surface-alt md:hidden"
+        className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg border border-border text-foreground hover:bg-surface-alt md:hidden"
       >
         <Menu size={18} />
       </button>
@@ -46,7 +50,7 @@ export function Topbar({ onMenuClick }: { onMenuClick: () => void }) {
         <div className="relative">
           <button
             onClick={() => setLangOpen((v) => !v)}
-            className="flex items-center gap-1 rounded-lg border border-border px-3 py-2 text-xs font-medium text-foreground hover:bg-surface-alt"
+            className="flex h-10 items-center gap-1 rounded-lg border border-border px-3 text-xs font-medium text-foreground hover:bg-surface-alt"
           >
             {lang.toUpperCase()}
             <ChevronDown size={14} />
@@ -75,7 +79,7 @@ export function Topbar({ onMenuClick }: { onMenuClick: () => void }) {
           <button
             onClick={() => setNotifOpen((v) => !v)}
             title={t("notifications", lang)}
-            className="relative flex h-9 w-9 items-center justify-center rounded-lg border border-border text-foreground hover:bg-surface-alt"
+            className="relative flex h-10 w-10 items-center justify-center rounded-lg border border-border text-foreground hover:bg-surface-alt"
           >
             <Bell size={16} />
             {NOTIFICATIONS.length > 0 && (
@@ -115,9 +119,9 @@ export function Topbar({ onMenuClick }: { onMenuClick: () => void }) {
         <div className="relative">
           <button
             onClick={() => setRoleOpen((v) => !v)}
-            className="flex items-center gap-2 rounded-lg border border-border py-1.5 pl-1.5 pr-3 hover:bg-surface-alt"
+            className="flex h-10 items-center gap-2 rounded-lg border border-border py-1 pl-1 pr-3 hover:bg-surface-alt"
           >
-            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-brand-light text-xs font-semibold text-brand">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-light text-xs font-semibold text-brand">
               {roleLabel.slice(0, 2).toUpperCase()}
             </div>
             <div className="text-left">
@@ -151,7 +155,7 @@ export function Topbar({ onMenuClick }: { onMenuClick: () => void }) {
         <Link
           href="/login"
           title={t("logout", lang)}
-          className="flex h-9 w-9 items-center justify-center rounded-lg border border-border text-foreground hover:bg-surface-alt"
+          className="flex h-10 w-10 items-center justify-center rounded-lg border border-border text-foreground hover:bg-surface-alt"
         >
           <LogOut size={16} />
         </Link>

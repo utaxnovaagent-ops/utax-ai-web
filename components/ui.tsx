@@ -15,7 +15,7 @@ export function Card({
   action?: ReactNode;
 }) {
   return (
-    <div className={clsx("rounded-xl border border-border bg-surface p-5 shadow-sm", className)}>
+    <div className={clsx("rounded-2xl border border-border bg-surface p-5 shadow-brand", className)}>
       {(title || action) && (
         <div className="mb-4 flex items-start justify-between gap-3">
           <div>
@@ -35,17 +35,40 @@ export function StatCard({
   value,
   delta,
   trend,
+  hint,
+  icon,
+  tone = "default",
 }: {
   label: string;
   value: string;
   delta?: string;
   trend?: "up" | "down" | "flat";
+  hint?: string;
+  icon?: ReactNode;
+  tone?: "default" | "warning";
 }) {
   return (
-    <div className="rounded-xl border border-border bg-surface p-4 shadow-sm">
-      <p className="text-xs font-medium text-muted">{label}</p>
+    <div
+      className={clsx(
+        "rounded-2xl border bg-surface p-4 shadow-brand transition-transform duration-150 hover:-translate-y-0.5 hover:shadow-brand-hover motion-reduce:transition-none motion-reduce:hover:translate-y-0",
+        tone === "warning" ? "border-warning/30" : "border-border"
+      )}
+    >
+      <div className="flex items-center justify-between gap-2">
+        <p className="text-xs font-medium text-muted">{label}</p>
+        {icon && (
+          <span
+            className={clsx(
+              "flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl",
+              tone === "warning" ? "bg-warning-bg text-warning" : "bg-brand-light text-brand"
+            )}
+          >
+            {icon}
+          </span>
+        )}
+      </div>
       <div className="mt-2 flex items-baseline gap-2">
-        <span className="text-2xl font-semibold text-foreground">{value}</span>
+        <span className="text-[28px] font-bold leading-none text-foreground">{value}</span>
         {delta && (
           <span
             className={clsx(
@@ -59,6 +82,7 @@ export function StatCard({
           </span>
         )}
       </div>
+      {hint && <p className="mt-1.5 text-[11px] text-muted">{hint}</p>}
     </div>
   );
 }
@@ -91,11 +115,31 @@ export function toneForLevel(level: string): keyof typeof badgeTones {
   return "neutral";
 }
 
-export function PageHeader({ title, subtitle, children }: { title: string; subtitle?: string; children?: ReactNode }) {
+export function PageHeader({
+  title,
+  subtitle,
+  breadcrumb,
+  children,
+}: {
+  title: string;
+  subtitle?: string;
+  breadcrumb?: string[];
+  children?: ReactNode;
+}) {
   return (
     <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
       <div>
-        <h1 className="text-xl font-semibold text-foreground">{title}</h1>
+        {breadcrumb && breadcrumb.length > 0 && (
+          <p className="mb-1.5 text-xs font-medium text-muted">
+            {breadcrumb.map((crumb, i) => (
+              <span key={i}>
+                {i > 0 && <span className="mx-1.5 text-border">/</span>}
+                {crumb}
+              </span>
+            ))}
+          </p>
+        )}
+        <h1 className="text-[28px] font-bold leading-tight text-foreground">{title}</h1>
         {subtitle && <p className="mt-1 text-sm text-muted">{subtitle}</p>}
       </div>
       {children}

@@ -67,7 +67,7 @@ export function GlobalSearch() {
   }
 
   return (
-    <div ref={wrapRef} className="relative hidden max-w-md flex-1 md:block">
+    <div ref={wrapRef} className="relative hidden max-w-lg flex-1 md:block">
       <Search size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
       <input
         type="text"
@@ -82,8 +82,11 @@ export function GlobalSearch() {
           if (e.key === "Enter" && results[0]) goTo(results[0]);
         }}
         placeholder={t("search_placeholder", lang)}
-        className="w-full rounded-lg border border-border bg-surface-alt py-2 pl-9 pr-3 text-sm text-foreground placeholder:text-muted focus:border-brand focus:outline-none"
+        className="h-10 w-full rounded-lg border border-border bg-surface-alt py-2 pl-9 pr-14 text-sm text-foreground placeholder:text-muted focus:border-brand focus:outline-none"
       />
+      <kbd className="pointer-events-none absolute right-3 top-1/2 hidden -translate-y-1/2 items-center gap-0.5 rounded-md border border-border bg-surface px-1.5 py-0.5 text-[10px] font-medium text-muted lg:flex">
+        &#8984;K
+      </kbd>
 
       {open && query.trim() && (
         <div className="absolute left-0 right-0 z-30 mt-1 max-h-96 overflow-y-auto rounded-lg border border-border bg-surface py-2 shadow-lg">

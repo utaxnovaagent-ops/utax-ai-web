@@ -1,26 +1,41 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f5f6fa;
+  /* UTAX Intelligence Network — design tokens (UI Redesign TZI v1.0 §2.1/2.2/7.3) */
+  --background: #f6f8fc; /* canvas */
   --surface: #ffffff;
-  --surface-alt: #fafbfc;
-  --foreground: #182132;
-  --muted: #6b7280;
-  --border: #e5e7eb;
+  --surface-alt: #fafafd;
+  --foreground: #111827; /* ink */
+  --muted: #64748b;
+  --border: #e2e8f0; /* line */
 
-  --brand: #4c1d95;
-  --brand-light: #f5f1fc;
-  --brand-dark: #341066;
+  --brand-900: #351078;
+  --brand-700: #5120a8;
+  --brand: #6d28d9; /* violet-500 — primary interactive */
+  --brand-light: #f3eeff; /* selected fill */
+  --brand-dark: #351078; /* alias of brand-900, sidebar/CEO level */
   --brand-contrast: #ffffff;
+  --ai-blue: #168ef0;
+  --ai-cyan: #1ba5f8;
 
-  --success: #15803d;
+  --brand-gradient: linear-gradient(135deg, #351078 0%, #6d28d9 55%, #168ef0 100%);
+  --connector: #c4b5fd;
+  --connector-active: #6d28d9;
+
+  --success: #16a34a;
   --success-bg: #ecfdf3;
-  --warning: #b45309;
+  --warning: #d97706;
   --warning-bg: #fffbeb;
   --danger: #b91c1c;
   --danger-bg: #fef2f2;
   --info: #1d4ed8;
   --info-bg: #eff6ff;
+
+  --radius-card: 16px;
+  --radius-card-inner: 12px;
+  --radius-control: 10px;
+  --shadow-brand: 0 8px 30px rgba(53, 16, 120, 0.08);
+  --shadow-brand-hover: 0 8px 30px rgba(53, 16, 120, 0.14);
 }
 
 @theme inline {
@@ -31,10 +46,14 @@
   --color-muted: var(--muted);
   --color-border: var(--border);
 
+  --color-brand-900: var(--brand-900);
+  --color-brand-700: var(--brand-700);
   --color-brand: var(--brand);
   --color-brand-light: var(--brand-light);
   --color-brand-dark: var(--brand-dark);
   --color-brand-contrast: var(--brand-contrast);
+  --color-ai-blue: var(--ai-blue);
+  --color-ai-cyan: var(--ai-cyan);
 
   --color-success: var(--success);
   --color-success-bg: var(--success-bg);
@@ -45,6 +64,12 @@
   --color-info: var(--info);
   --color-info-bg: var(--info-bg);
 
+  --radius-card: var(--radius-card);
+  --radius-card-inner: var(--radius-card-inner);
+  --radius-control: var(--radius-control);
+
+  --breakpoint-3xl: 90rem; /* 1440px — matches TZI §6 desktop breakpoint */
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -52,6 +77,25 @@
 body {
   background: var(--background);
   color: var(--foreground);
+}
+
+.brand-gradient {
+  background: var(--brand-gradient);
+}
+
+.shadow-brand {
+  box-shadow: var(--shadow-brand);
+}
+
+.shadow-brand-hover:hover {
+  box-shadow: var(--shadow-brand-hover);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 * {

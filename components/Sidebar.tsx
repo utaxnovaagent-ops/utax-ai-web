@@ -23,6 +23,7 @@ import { useAppState, useCurrentRole } from "@/lib/app-context";
 import { ModuleKey } from "@/lib/roles";
 import { t } from "@/lib/i18n";
 import { VISIBLE_MODULES } from "@/lib/launch-config";
+import { UMark } from "@/components/UMark";
 
 const NAV: { key: ModuleKey; href: string; labelKey: string; icon: typeof LayoutDashboard; group: "modules" | "practice" }[] = [
   { key: "ceo", href: "/ceo", labelKey: "nav_ceo", icon: LayoutDashboard, group: "modules" },
@@ -58,11 +59,11 @@ function NavLink({
       href={item.href}
       onClick={onNavigate}
       className={clsx(
-        "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
-        active ? "bg-brand text-brand-contrast" : "text-foreground hover:bg-surface-alt"
+        "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors motion-reduce:transition-none",
+        active ? "brand-gradient text-brand-contrast shadow-brand" : "text-foreground hover:bg-surface-alt"
       )}
     >
-      <Icon size={17} strokeWidth={2} />
+      <Icon size={20} strokeWidth={2} />
       {t(item.labelKey, lang)}
     </Link>
   );
@@ -92,9 +93,9 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
           open ? "left-0" : "-left-64"
         )}
       >
-        <div className="flex items-center gap-2 border-b border-border px-5 py-4">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand text-sm font-bold text-brand-contrast">
-            UT
+        <div className="flex items-center gap-2.5 border-b border-border px-5 py-4">
+          <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg border border-border bg-surface">
+            <UMark size={22} />
           </div>
           <div>
             <p className="text-sm font-semibold leading-tight text-foreground">{t("app_name", lang)}</p>
@@ -123,6 +124,10 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
         </nav>
 
         <div className="border-t border-border px-4 py-3">
+          <p className="mb-1.5 flex items-center gap-1.5 text-[11px] font-medium text-foreground">
+            <span className="h-1.5 w-1.5 flex-shrink-0 rounded-full bg-success" aria-hidden="true" />
+            {t("system_status_online", lang)}
+          </p>
           <p className="text-[11px] text-muted">{t("version_footer", lang)}</p>
         </div>
       </aside>

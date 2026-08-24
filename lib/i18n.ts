@@ -27,6 +27,8 @@ export const STRINGS: Dict = {
     en: "No internal panels for this role. Use the client chat instead.",
   },
   version_footer: { uz: "v1.0 prototip · ai.utax.uz", ru: "v1.0 прототип · ai.utax.uz", en: "v1.0 prototype · ai.utax.uz" },
+  system_status_online: { uz: "Tizim holati: Online", ru: "Статус системы: онлайн", en: "System status: Online" },
+  close: { uz: "Yopish", ru: "Закрыть", en: "Close" },
 
   // Sidebar nav
   nav_ceo: { uz: "CEO markazi", ru: "Центр CEO", en: "CEO center" },
@@ -51,6 +53,9 @@ export const STRINGS: Dict = {
     ru: "Линия подчинения, отделы и распределение сотрудников",
     en: "Reporting line, departments and staff distribution",
   },
+  structure_breadcrumb_root: { uz: "Boshqaruv", ru: "Управление", en: "Control" },
+  structure_add_employee: { uz: "Xodim qo'shish", ru: "Добавить сотрудника", en: "Add employee" },
+  structure_export: { uz: "Eksport", ru: "Экспорт", en: "Export" },
 
   // Login
   login_title: { uz: "Tizimga kirish", ru: "Вход в систему", en: "Sign in" },
@@ -294,6 +299,19 @@ export const STRINGS: Dict = {
     uz: "Bu bo'lim TZ'ning asosiy 7 moduliga kirmaydi — UTAX xizmatlar ro'yxati asosida qo'shimcha taklif sifatida qo'shilgan.",
     ru: "Этот отдел не входит в основные 7 модулей ТЗ — добавлен как дополнительное предложение на основе списка услуг UTAX.",
     en: "This department is not part of the core 7 TZ modules — added as an additional suggestion based on UTAX's service list.",
+  },
+  orgchart_platform_roles_title: { uz: "Platforma rollari", ru: "Роли платформы", en: "Platform roles" },
+  orgchart_workload: { uz: "Yuklama", ru: "Загрузка", en: "Workload" },
+  orgchart_ai_agent: { uz: "AI agent", ru: "AI-агент", en: "AI agent" },
+  orgchart_ai_agent_status_active: { uz: "Holat: Faol", ru: "Статус: Активен", en: "Status: Active" },
+  orgchart_ai_agent_task: { uz: "Oxirgi vazifa", ru: "Последняя задача", en: "Last task" },
+  orgchart_drawer_vacancy_yes: { uz: "Ochiq vakansiya bor", ru: "Есть открытая вакансия", en: "Has an open vacancy" },
+  orgchart_drawer_vacancy_no: { uz: "Vakansiya yo'q", ru: "Вакансий нет", en: "No open vacancies" },
+  orgchart_drawer_open_page: { uz: "Bo'lim panelini ochish", ru: "Открыть панель отдела", en: "Open department panel" },
+  orgchart_hover_hint: {
+    uz: "Kursorni bo'lim ustiga olib boring — hisobot yo'li ajratiladi",
+    ru: "Наведите курсор на отдел — линия подчинения выделится",
+    en: "Hover a department — its reporting path lights up",
   },
   col_time: { uz: "Vaqt", ru: "Время", en: "Time" },
   col_actor: { uz: "Aktor", ru: "Субъект", en: "Actor" },

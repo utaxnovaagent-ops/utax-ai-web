@@ -7,15 +7,17 @@ export function Card({
   title,
   subtitle,
   action,
+  id,
 }: {
   children: ReactNode;
   className?: string;
   title?: ReactNode;
   subtitle?: ReactNode;
   action?: ReactNode;
+  id?: string;
 }) {
   return (
-    <div className={clsx("rounded-2xl border border-border bg-surface p-5 shadow-brand", className)}>
+    <div id={id} className={clsx("rounded-2xl border border-border bg-surface p-5 shadow-brand", className)}>
       {(title || action) && (
         <div className="mb-4 flex items-start justify-between gap-3">
           <div>

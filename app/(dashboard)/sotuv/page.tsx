@@ -1,17 +1,21 @@
 "use client";
 
-import { Sparkles, Clock } from "lucide-react";
-import { PageHeader, Card, Badge } from "@/components/ui";
+import { useState } from "react";
+import { Sparkles, Plus, FileText, Wallet, Target, Trophy, Gauge, AlertTriangle } from "lucide-react";
+import { Card, Badge, StatCard } from "@/components/ui";
 import { AgentOrgStructure } from "@/components/AgentOrgStructure";
+import { RevenueHero } from "@/components/sotuv/RevenueHero";
+import { FunnelVelocity } from "@/components/sotuv/FunnelVelocity";
+import { MissionQueue } from "@/components/sotuv/MissionQueue";
+import { DealRiskRadar } from "@/components/sotuv/DealRiskRadar";
+import { RevenueTrend } from "@/components/sotuv/RevenueTrend";
 import { sotuvData, orgStructure } from "@/lib/mock-data";
+import { pipelineValue, weightedForecast, atRiskValue, funnelStages } from "@/lib/sales-metrics";
 import { useAppState } from "@/lib/app-context";
 import { t } from "@/lib/i18n";
 
-const maxCount = Math.max(...sotuvData.pipeline.map((p) => p.count));
-
 const sotuvHead = orgStructure.departments.find((d) => d.key === "sotuv")?.head ?? "Bobur Nazarov";
-
-const negotiationStage = sotuvData.pipeline.find((p) => p.stage === "Muzokara");
+const negotiationStage = funnelStages().find((s) => s.stage === "Muzokara");
 
 const sotuvAgentStructure = {
   eyebrow: "SOTUV · AI AGENTLAR STRUKTURASI",
@@ -99,7 +103,7 @@ const sotuvAgentStructure = {
     {
       title: "Pipeline-analitik agenti",
       body: negotiationStage
-        ? `Hozirgi eng katta risk shu tomonda — "Muzokara" bosqichida ${negotiationStage.count} ta bitim, ${negotiationStage.value} to'xtab qolgan.`
+        ? `Hozirgi eng katta risk shu tomonda — "Muzokara" bosqichida ${negotiationStage.count} ta bitim, ${negotiationStage.value}M so'm to'xtab qolgan.`
         : "Voronkaning qaysi bosqichida bitimlar to'xtab qolayotganini hali hech kim tizimli kuzatmayapti.",
     },
     {
@@ -111,50 +115,81 @@ const sotuvAgentStructure = {
 
 export default function SotuvPage() {
   const { lang } = useAppState();
+  const [stageFilter, setStageFilter] = useState<string | null>(null);
 
   return (
     <div>
-      <PageHeader title={t("sotuv_title", lang)} subtitle={t("sotuv_subtitle", lang)} />
-
-      <div className="mb-6 grid gap-4 lg:grid-cols-3">
-        <Card title={t("sotuv_pipeline_title", lang)} subtitle={t("sotuv_pipeline_subtitle", lang)} className="lg:col-span-2">
-          <div className="space-y-3">
-            {sotuvData.pipeline.map((p) => (
-              <div key={p.stage}>
-                <div className="mb-1 flex items-center justify-between text-xs">
-                  <span className="font-medium text-foreground">{p.stage}</span>
-                  <span className="text-muted">
-                    {p.count} · {p.value}
-                  </span>
-                </div>
-                <div className="h-2.5 w-full rounded-full bg-surface-alt">
-                  <div
-                    className="h-2.5 rounded-full bg-brand"
-                    style={{ width: `${(p.count / maxCount) * 100}%` }}
-                  />
-                </div>
-              </div>
-            ))}
+      <div className="sticky top-0 z-10 -mx-4 mb-5 border-b border-border bg-background/95 px-4 py-3 backdrop-blur md:-mx-6 md:px-6">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <h1 className="text-lg font-bold text-foreground">Sotuv Command Center</h1>
+            <span className="rounded-full border border-border bg-surface-alt px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-muted">
+              DEMO
+            </span>
           </div>
-        </Card>
-
-        <Card title={t("sotuv_followup_title", lang)} subtitle={t("sotuv_followup_subtitle", lang)}>
-          <ul className="space-y-3">
-            {sotuvData.followUps.map((f) => (
-              <li key={f.client} className="rounded-lg border border-border p-3">
-                <p className="text-sm font-medium text-foreground">{f.client}</p>
-                <p className="mt-0.5 text-xs text-muted">{f.action}</p>
-                <div className="mt-2 flex items-center gap-1.5 text-xs text-brand">
-                  <Clock size={12} />
-                  {f.due}
-                </div>
-              </li>
-            ))}
-          </ul>
-        </Card>
+          <div className="flex flex-wrap items-center gap-2">
+            <select className="h-9 rounded-lg border border-border bg-surface px-2.5 text-xs text-foreground">
+              <option>Bu oy</option>
+              <option>O'tgan oy</option>
+              <option>Bu kvartal</option>
+            </select>
+            <select className="h-9 rounded-lg border border-border bg-surface px-2.5 text-xs text-foreground">
+              {sotuvData.salespeople.map((s) => (
+                <option key={s}>{s}</option>
+              ))}
+              <option>Barcha sotuvchilar</option>
+            </select>
+            <button className="flex h-9 items-center gap-1.5 rounded-lg border border-border px-3 text-xs font-medium text-foreground hover:bg-surface-alt">
+              <FileText size={13} /> Hisobot
+            </button>
+            <button className="flex h-9 items-center gap-1.5 rounded-lg brand-gradient px-3 text-xs font-semibold text-white shadow-brand">
+              <Plus size={13} /> Yangi lead
+            </button>
+          </div>
+        </div>
       </div>
 
-      <Card title={t("sotuv_brief_title", lang)} subtitle={t("sotuv_brief_prepared", lang)}>
+      <RevenueHero />
+
+      <div className="mb-5 grid grid-cols-2 gap-3 lg:grid-cols-5">
+        <StatCard label="Pipeline qiymati" value={`${pipelineValue()}M`} hint="Ochiq bitimlar summasi" icon={<Wallet size={17} />} />
+        <StatCard label="Weighted forecast" value={`${weightedForecast()}M`} hint="Σ bitim × ehtimollik" icon={<Target size={17} />} />
+        <StatCard
+          label="Win rate"
+          value={`${sotuvData.winRate.percent}%`}
+          delta={`${sotuvData.winRate.trendPp >= 0 ? "+" : ""}${sotuvData.winRate.trendPp}pp`}
+          trend={sotuvData.winRate.trendPp >= 0 ? "up" : "down"}
+          hint="Yutilgan / yopilgan"
+          icon={<Trophy size={17} />}
+        />
+        <StatCard
+          label="Sales velocity"
+          value={`${sotuvData.velocity.medianDays} kun`}
+          delta={`${sotuvData.velocity.trendDays >= 0 ? "+" : ""}${sotuvData.velocity.trendDays} kun`}
+          trend={sotuvData.velocity.trendDays <= 0 ? "up" : "down"}
+          hint="Lead → win median"
+          icon={<Gauge size={17} />}
+        />
+        <StatCard
+          label="At-risk revenue"
+          value={`${atRiskValue()}M`}
+          hint="Kechikkan / signal past"
+          icon={<AlertTriangle size={17} />}
+          tone="warning"
+        />
+      </div>
+
+      <div className="mb-5 grid gap-4 lg:grid-cols-2">
+        <FunnelVelocity selected={stageFilter} onSelect={setStageFilter} />
+        <MissionQueue stageFilter={stageFilter} />
+      </div>
+
+      <div className="mb-5 grid gap-4 lg:grid-cols-2">
+        <DealRiskRadar />
+        <RevenueTrend />
+      </div>
+
+      <Card title={t("sotuv_brief_title", lang)} subtitle={t("sotuv_brief_prepared", lang)} className="mb-5">
         <div className="flex items-start gap-3">
           <Sparkles size={18} className="mt-0.5 shrink-0 text-brand" />
           <div>

@@ -232,6 +232,7 @@ function DeptCard({
       onFocus={() => onHover(true)}
       onBlur={() => onHover(false)}
       aria-pressed={selected}
+      aria-label={`${label} — ${dept.head}, ${dept.employees} ${t("orgchart_employees", lang)}`}
       className={`group relative flex w-full flex-col gap-2.5 rounded-2xl border bg-surface p-4 text-left transition-all duration-150 motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand ${
         selected
           ? "border-brand bg-brand-light shadow-brand-hover"

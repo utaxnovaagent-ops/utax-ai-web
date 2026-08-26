@@ -439,6 +439,24 @@ export const STRINGS: Dict = {
   search_type_user: { uz: "Foydalanuvchilar", ru: "Пользователи", en: "Users" },
   notifications_empty: { uz: "Yangi bildirishnoma yo'q", ru: "Новых уведомлений нет", en: "No new notifications" },
   notifications_title: { uz: "Bildirishnomalar", ru: "Уведомления", en: "Notifications" },
+
+  // Agent org structure (department agent breakdown, e.g. /sotuv)
+  agent_structure_owner_note: { uz: "Yakuniy qaror shu yerda", ru: "Финальное решение здесь", en: "Final decision made here" },
+  agent_structure_proposal: { uz: "qaror taklifi", ru: "предложение решения", en: "decision proposal" },
+  agent_structure_signal: { uz: "fakt va signal", ru: "факты и сигналы", en: "facts & signals" },
+  agent_structure_data_flow: { uz: "ma'lumot", ru: "данные", en: "data" },
+  agent_structure_sources_title: { uz: "Manbalar", ru: "Источники", en: "Sources" },
+  agent_structure_rules_title: { uz: "Tuzilma qoidalari", ru: "Правила структуры", en: "Structure rules" },
+  agent_structure_start_title: { uz: "Nimadan boshlanadi", ru: "С чего начать", en: "Where to start" },
+  agent_structure_col_agent: { uz: "Agent", ru: "Агент", en: "Agent" },
+  agent_structure_col_does: { uz: "Nima qiladi", ru: "Что делает", en: "What it does" },
+  agent_structure_col_source: { uz: "Manba", ru: "Источник", en: "Source" },
+  agent_structure_col_decision: { uz: "Qanday qaror o'zgaradi", ru: "Какое решение меняется", en: "What decision it changes" },
+  agent_structure_col_status: { uz: "Holat", ru: "Статус", en: "Status" },
+  agent_status_live: { uz: "jonli ishlayapti", ru: "работает вживую", en: "live" },
+  agent_status_partial: { uz: "qisman", ru: "частично", en: "partial" },
+  agent_status_planned: { uz: "rejada", ru: "в плане", en: "planned" },
+  agent_status_partial_hint: { uz: "skript bor, agent yo'q", ru: "есть скрипт, агента нет", en: "script exists, no agent" },
 };
 
 export function t(key: string, lang: Lang): string {

@@ -23,11 +23,21 @@ import {
   Globe2,
   Send,
   Bot,
+  Box,
 } from "lucide-react";
 import { orgStructure, moliyaData, auditData, itData, marketingData, sotuvData, internationalData, telegramData, hrData } from "@/lib/mock-data";
+import { SOTUV_SYNTHESIZER, SOTUV_AGENTS, type SotuvAgentStatus } from "@/lib/sotuv-agents";
 import { useAppState } from "@/lib/app-context";
 import { t } from "@/lib/i18n";
 import { StatCard, Badge } from "@/components/ui";
+
+// AgentOrgStructure'dagi (components/AgentOrgStructure.tsx) rang xaritasi bilan
+// bir xil — shu yerda faqat kichik nuqta ko'rinishida takrorlanadi.
+const SOTUV_STATUS_DOT: Record<SotuvAgentStatus, string> = {
+  live: "bg-success",
+  partial: "bg-warning",
+  planned: "bg-danger",
+};
 
 const deptEmployeeSum = orgStructure.departments.reduce((sum, d) => sum + d.employees, 0);
 const TOTAL_STAFF = deptEmployeeSum + 2; // + CEO + Direktor
@@ -373,6 +383,45 @@ function DepartmentDrawer({ deptKey, lang, onClose }: { deptKey: string; lang: P
             <p className="text-xs font-medium text-foreground">{t("orgchart_ai_agent_task", lang)}</p>
             <p className="mt-0.5 text-sm text-foreground">{lastTask}</p>
           </div>
+
+          {/* Sotuv — TZI "3D Campus 2.0"da qurilgan haqiqiy agent tuzilmasi.
+              lib/sotuv-agents.ts'dan o'qiladi — /sotuv va /campus bilan bitta
+              manba, shu sabab boshqa bo'limlarga bu blok qo'shilmaydi (ularda
+              hali shunday granular tuzilma qurilmagan). */}
+          {dept.key === "sotuv" && (
+            <div className="rounded-xl border border-border bg-surface p-4">
+              <div className="mb-2.5 flex items-center justify-between gap-2">
+                <p className="text-xs font-semibold text-foreground">{t("orgchart_sotuv_agents_title", lang)}</p>
+                <Link
+                  href="/campus?department=sotuv"
+                  className="flex flex-shrink-0 items-center gap-1 rounded-md border border-border px-2 py-1 text-[10px] font-medium text-foreground hover:bg-surface-alt"
+                >
+                  <Box size={11} /> 3D
+                </Link>
+              </div>
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between gap-2 rounded-lg bg-brand-light px-2.5 py-1.5">
+                  <div className="min-w-0">
+                    <p className="truncate text-xs font-semibold text-foreground">{SOTUV_SYNTHESIZER.name}</p>
+                    <p className="truncate text-[10px] text-muted">{SOTUV_SYNTHESIZER.role}</p>
+                  </div>
+                  <span className={`h-1.5 w-1.5 flex-shrink-0 rounded-full ${SOTUV_STATUS_DOT.live}`} />
+                </div>
+                {SOTUV_AGENTS.map((a) => (
+                  <div key={a.id} className="flex items-center justify-between gap-2 px-2.5 py-0.5">
+                    <p className="truncate text-xs text-foreground">{a.name}</p>
+                    <span className={`h-1.5 w-1.5 flex-shrink-0 rounded-full ${SOTUV_STATUS_DOT[a.status]}`} />
+                  </div>
+                ))}
+              </div>
+              <Link
+                href="/sotuv#sales-agents"
+                className="mt-3 flex items-center justify-center gap-1.5 rounded-lg border border-border py-2 text-xs font-medium text-foreground hover:bg-surface-alt"
+              >
+                {t("orgchart_sotuv_agents_link", lang)} <ArrowRight size={12} />
+              </Link>
+            </div>
+          )}
 
           {isExtra && <p className="text-xs text-warning">{t("orgchart_extra_note", lang)}</p>}
 

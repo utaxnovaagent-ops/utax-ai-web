@@ -305,6 +305,8 @@ export const STRINGS: Dict = {
   orgchart_ai_agent: { uz: "AI agent", ru: "AI-агент", en: "AI agent" },
   orgchart_ai_agent_status_active: { uz: "Holat: Faol", ru: "Статус: Активен", en: "Status: Active" },
   orgchart_ai_agent_task: { uz: "Oxirgi vazifa", ru: "Последняя задача", en: "Last task" },
+  orgchart_sotuv_agents_title: { uz: "Sotuv AI tuzilmasi", ru: "Структура ИИ продаж", en: "Sales AI structure" },
+  orgchart_sotuv_agents_link: { uz: "Sotuv sahifasida to'liq ko'rish", ru: "Смотреть полностью на странице продаж", en: "View full structure on Sales page" },
   orgchart_drawer_vacancy_yes: { uz: "Ochiq vakansiya bor", ru: "Есть открытая вакансия", en: "Has an open vacancy" },
   orgchart_drawer_vacancy_no: { uz: "Vakansiya yo'q", ru: "Вакансий нет", en: "No open vacancies" },
   orgchart_drawer_open_page: { uz: "Bo'lim panelini ochish", ru: "Открыть панель отдела", en: "Open department panel" },

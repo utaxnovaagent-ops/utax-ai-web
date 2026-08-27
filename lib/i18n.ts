@@ -321,9 +321,9 @@ export const STRINGS: Dict = {
   // Campus
   campus_title: { uz: "3D Digital Campus", ru: "3D Digital Campus", en: "3D Digital Campus" },
   campus_subtitle: {
-    uz: "Virtual ofis — 7 AI-agentning holati, bo'limi va vazifasini boshqaruvga vizual tarzda ko'rsatadi.",
-    ru: "Виртуальный офис — визуально показывает статус, отдел и задачу 7 AI-агентов.",
-    en: "Virtual office — visually shows the status, department and task of 7 AI agents.",
+    uz: "Virtual ofis — {agentCount} AI-agent va {deptCount} bo'limning holati, joriy vazifasi bir qarashda.",
+    ru: "Виртуальный офис — статус и текущая задача {agentCount} AI-агентов и {deptCount} отделов в одном месте.",
+    en: "Virtual office — status and current task of {agentCount} AI agents across {deptCount} departments at a glance.",
   },
   campus_view_3d: { uz: "3D", ru: "3D", en: "3D" },
   campus_view_list: { uz: "Ro'yxat (fallback)", ru: "Список (резерв)", en: "List (fallback)" },
@@ -353,6 +353,21 @@ export const STRINGS: Dict = {
   campus_state_meeting: { uz: "Yig'ilishda", ru: "На встрече", en: "In meeting" },
   campus_state_talk: { uz: "Suhbatda", ru: "В разговоре", en: "Talking" },
   campus_state_error: { uz: "Xato", ru: "Ошибка", en: "Error" },
+  campus_state_planned: { uz: "Rejada", ru: "В плане", en: "Planned" },
+  campus_state_partial: { uz: "Qisman", ru: "Частично", en: "Partial" },
+  campus_fallback_webgl: {
+    uz: "Bu qurilmada 3D (WebGL) qo'llab-quvvatlanmaydi — 2D ro'yxat ko'rinishi ochildi.",
+    ru: "На этом устройстве 3D (WebGL) не поддерживается — открыт 2D список.",
+    en: "3D (WebGL) isn't supported on this device — showing the 2D list instead.",
+  },
+  campus_fallback_timeout: {
+    uz: "3D sahna yuklanmadi — 2D ko'rinish ochildi. Qayta urinib ko'rishingiz mumkin.",
+    ru: "3D-сцена не загрузилась — открыт 2D режим. Можно попробовать снова.",
+    en: "The 3D scene didn't load — showing the 2D view instead. You can try again.",
+  },
+  campus_retry_3d: { uz: "3Dni qayta urinish", ru: "Повторить 3D", en: "Retry 3D" },
+  campus_field_planned_task: { uz: "Rejalashtirilgan vazifa", ru: "Запланированная задача", en: "Planned task" },
+  campus_go_to_sales: { uz: "Sotuv Command Centerga o'tish", ru: "Перейти в Sotuv Command Center", en: "Open Sotuv Command Center" },
 
   // Calendar
   calendar_title: { uz: "Soliq muddatlari kalendari", ru: "Календарь налоговых сроков", en: "Tax deadline calendar" },
@@ -459,6 +474,12 @@ export const STRINGS: Dict = {
   agent_status_partial_hint: { uz: "skript bor, agent yo'q", ru: "есть скрипт, агента нет", en: "script exists, no agent" },
 };
 
-export function t(key: string, lang: Lang): string {
-  return STRINGS[key]?.[lang] ?? key;
+export function t(key: string, lang: Lang, vars?: Record<string, string | number>): string {
+  let str = STRINGS[key]?.[lang] ?? key;
+  if (vars) {
+    for (const [k, v] of Object.entries(vars)) {
+      str = str.replace(new RegExp(`\\{${k}\\}`, "g"), String(v));
+    }
+  }
+  return str;
 }

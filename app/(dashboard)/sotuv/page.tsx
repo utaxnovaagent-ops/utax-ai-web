@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Sparkles, Plus, FileText, Wallet, Target, Trophy, Gauge, AlertTriangle } from "lucide-react";
+import Link from "next/link";
+import { Sparkles, Plus, FileText, Wallet, Target, Trophy, Gauge, AlertTriangle, Box } from "lucide-react";
 import { Card, Badge, StatCard } from "@/components/ui";
 import { AgentOrgStructure } from "@/components/AgentOrgStructure";
 import { RevenueHero } from "@/components/sotuv/RevenueHero";
@@ -9,12 +10,12 @@ import { FunnelVelocity } from "@/components/sotuv/FunnelVelocity";
 import { MissionQueue } from "@/components/sotuv/MissionQueue";
 import { DealRiskRadar } from "@/components/sotuv/DealRiskRadar";
 import { RevenueTrend } from "@/components/sotuv/RevenueTrend";
-import { sotuvData, orgStructure } from "@/lib/mock-data";
+import { sotuvData } from "@/lib/mock-data";
 import { pipelineValue, weightedForecast, atRiskValue, funnelStages } from "@/lib/sales-metrics";
+import { SOTUV_OWNER, SOTUV_SYNTHESIZER, SOTUV_AGENTS } from "@/lib/sotuv-agents";
 import { useAppState } from "@/lib/app-context";
 import { t } from "@/lib/i18n";
 
-const sotuvHead = orgStructure.departments.find((d) => d.key === "sotuv")?.head ?? "Bobur Nazarov";
 const negotiationStage = funnelStages().find((s) => s.stage === "Muzokara");
 
 const sotuvAgentStructure = {
@@ -22,50 +23,9 @@ const sotuvAgentStructure = {
   title: "Sotuv agentlari strukturasi",
   intro:
     "Botir AI — sintezator: u o'zi mijoz bilan gaplashmaydi, signallarni yig'ib ustuvorlik taklif qiladi. Uning ostida har biri bitta ishni egallagan beshta agent turadi; ularning ostida — real manbalar.",
-  owner: { name: sotuvHead, role: "Sotuv bo'limi boshlig'i" },
-  synthesizer: { name: "Botir AI", role: "Bosh strateg · sintez va ustuvorlik", tagline: "signal → ustuvorlik → taklif" },
-  agents: [
-    {
-      name: "Uchrashuv-brifing agenti",
-      role: "taqdimotchi",
-      does: "Mijoz tarixi, oldingi audit va joriy qarzdorlik asosida har bir uchrashuv uchun qisqa brifing tayyorlaydi.",
-      source: "CRM, audit tarixi, moliyaviy holat",
-      decision: "Uchrashuvda nimaga birinchi urg'u berish kerak",
-      status: "live" as const,
-    },
-    {
-      name: "Follow-up agenti",
-      role: "eslatuvchi",
-      does: "Muddat va mijoz ahamiyatiga qarab, bugun kimga qo'ng'iroq yoki xat ketishi kerakligini tartiblaydi.",
-      source: "CRM follow-up ro'yxati",
-      decision: "Bugun kimga birinchi murojaat qilinadi",
-      status: "partial" as const,
-    },
-    {
-      name: "Pipeline-analitik agenti",
-      role: "voronka kuzatuvchisi",
-      does: "Har bosqichdagi bitimlar sonini va qiymatini kuzatib, qayerda tiqilib qolganini ko'rsatadi.",
-      source: "CRM voronka (pipeline)",
-      decision: "Qaysi bosqichga bugun e'tibor kerak",
-      status: "partial" as const,
-    },
-    {
-      name: "Lid-skoring agenti",
-      role: "birlamchi baholovchi",
-      does: "Yangi murojaatlarni manba, shoshilinchlik va byudjetga qarab ball beradi.",
-      source: "Sayt forma, Telegram, qo'ng'iroq markazi",
-      decision: "Kimga birinchi bo'lib qo'ng'iroq qilinadi",
-      status: "planned" as const,
-    },
-    {
-      name: "Shartnoma-generator agenti",
-      role: "hujjat tayyorlovchi",
-      does: "Yopilgan bitim uchun shartnoma loyihasini shablon asosida avtomatik tayyorlaydi.",
-      source: "CRM, shartnoma shablonlari",
-      decision: "Shartnoma qachon mijozga yuboriladi",
-      status: "planned" as const,
-    },
-  ],
+  owner: SOTUV_OWNER,
+  synthesizer: SOTUV_SYNTHESIZER,
+  agents: SOTUV_AGENTS.map(({ name, role, does, source, decision, status }) => ({ name, role, does, source, decision, status })),
   sources: [
     { label: "CRM", ok: true },
     { label: "Telegram", ok: true },
@@ -206,8 +166,18 @@ export default function SotuvPage() {
         </div>
       </Card>
 
-      <div className="mt-6">
-        <AgentOrgStructure {...sotuvAgentStructure} />
+      <div className="mt-6" id="sales-agents">
+        <AgentOrgStructure
+          {...sotuvAgentStructure}
+          headerAction={
+            <Link
+              href="/campus?department=sotuv"
+              className="flex h-9 flex-shrink-0 items-center gap-1.5 rounded-lg border border-border px-3 text-xs font-medium text-foreground hover:bg-surface-alt"
+            >
+              <Box size={13} /> 3D Sales Hubda ko'rish
+            </Link>
+          }
+        />
       </div>
     </div>
   );

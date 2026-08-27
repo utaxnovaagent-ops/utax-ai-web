@@ -11,8 +11,13 @@ import {
   auditData,
   internationalData,
 } from "./mock-data";
+import { SOTUV_OWNER, SOTUV_SYNTHESIZER, SOTUV_AGENTS } from "./sotuv-agents";
 
 export type AgentState = "IDLE" | "WALK" | "SIT" | "WORK" | "MEETING" | "TALK" | "ERROR";
+// "live"/"partial"/"planned" — /sotuv bilan bitta manbadan (lib/sotuv-agents.ts)
+// olingan haqiqiy holat. "planned" agent hech qachon ishlayotgandek animatsiya
+// qilinmaydi (TZI "3D Campus 2.0" AC-05/AC-06).
+export type DemoStatus = "live" | "partial" | "planned";
 
 export interface ZoneDef {
   key: string;
@@ -28,6 +33,11 @@ export interface AgentDef {
   color: string;
   role: string;
   taskPool: string[];
+  // "synthesizer" — Botir AI kabi, bir joyda turib boshqa agentlar signalini
+  // birlashtiruvchi rol; "human" — Bobur Nazarov kabi qaror beruvchi rahbar.
+  // Ikkalasi ham stol/yig'ilish aylanmasiga qo'shilmaydi, o'z podiumida turadi.
+  entityType: "ai" | "human" | "synthesizer";
+  demoStatus: DemoStatus;
 }
 
 // Zonalar korridor bo'ylab joylashadi (X o'qi). Har birining stol klasteri +Z tomonda.
@@ -79,9 +89,12 @@ const marketingTaskPool = [
   ...marketingData.contentCalendar.map((c) => `"${c.title}" kontenti — ${c.stage}`),
 ];
 
-const sotuvTaskPool = [
-  ...sotuvData.followUps.map((f) => `${f.client}: ${f.action}`),
-  ...clientsData.list.filter((c) => c.nextDeadline.includes("kechikkan")).map((c) => `${c.name}: muddat kechikkani bo'yicha ogohlantirish`),
+// Sotuv Hub'i — Bobur Nazarov (inson), Botir AI (sintezator) va 5 ta
+// ixtisoslashgan agent — hammasi lib/sotuv-agents.ts'dagi bitta manbadan.
+const boburTaskPool = sotuvData.followUps.map((f) => `${f.client} bo'yicha yakuniy qaror kutmoqda`);
+const botirTaskPool = [
+  "5 agent signalini sintez qilib, bugungi ustuvorlikni tayyorlamoqda",
+  "Bobur Nazarovga qaror taklifini yuborishga tayyorlanmoqda",
 ];
 
 const internationalTaskPool = [
@@ -96,16 +109,36 @@ const hrTaskPool = [
   ...hrData.onboarding.map((o) => `${o.name} onboarding jarayonida (${o.progress}%)`),
 ];
 
+const STATUS_COLOR: Record<"live" | "partial" | "planned", string> = {
+  live: "#ea580c",
+  partial: "#c2410c",
+  planned: "#94a3b8",
+};
+
 export const AGENTS: AgentDef[] = [
-  { id: "agent-ceo", name: "CEO Agent", zoneKey: "ceo", color: "#f59e0b", role: "Strategik xulosa", taskPool: ceoTaskPool },
-  { id: "agent-moliya", name: "Moliya Agent", zoneKey: "moliya", color: "#16a34a", role: "Moliya va soliq muddatlari", taskPool: moliyaTaskPool },
-  { id: "agent-audit", name: "Audit Agent", zoneKey: "audit", color: "#0d9488", role: "Ekspress audit kuzatuvi", taskPool: auditTaskPool },
-  { id: "agent-it", name: "IT Agent", zoneKey: "it", color: "#2563eb", role: "Servis monitoring", taskPool: itTaskPool },
-  { id: "agent-marketing", name: "Marketing Agent", zoneKey: "marketing", color: "#db2777", role: "Kontent generatsiya", taskPool: marketingTaskPool },
-  { id: "agent-sotuv", name: "Sotuv Agent", zoneKey: "sotuv", color: "#ea580c", role: "CRM va mijozlar reestri", taskPool: sotuvTaskPool },
-  { id: "agent-international", name: "Xalqaro Agent", zoneKey: "international", color: "#4338ca", role: "Xalqaro soliqqa tortish", taskPool: internationalTaskPool },
-  { id: "agent-telegram", name: "Ishchi bo'lim Agent", zoneKey: "telegram", color: "#0891b2", role: "Murojaat tasnifi", taskPool: telegramTaskPool },
-  { id: "agent-hr", name: "HR Agent", zoneKey: "hr", color: "#9333ea", role: "Onboarding", taskPool: hrTaskPool },
+  { id: "agent-ceo", name: "CEO Agent", zoneKey: "ceo", color: "#f59e0b", role: "Strategik xulosa", taskPool: ceoTaskPool, entityType: "ai", demoStatus: "live" },
+  { id: "agent-moliya", name: "Moliya Agent", zoneKey: "moliya", color: "#16a34a", role: "Moliya va soliq muddatlari", taskPool: moliyaTaskPool, entityType: "ai", demoStatus: "live" },
+  { id: "agent-audit", name: "Audit Agent", zoneKey: "audit", color: "#0d9488", role: "Ekspress audit kuzatuvi", taskPool: auditTaskPool, entityType: "ai", demoStatus: "live" },
+  { id: "agent-it", name: "IT Agent", zoneKey: "it", color: "#2563eb", role: "Servis monitoring", taskPool: itTaskPool, entityType: "ai", demoStatus: "live" },
+  { id: "agent-marketing", name: "Marketing Agent", zoneKey: "marketing", color: "#db2777", role: "Kontent generatsiya", taskPool: marketingTaskPool, entityType: "ai", demoStatus: "live" },
+
+  // Sotuv Hub — TZI "3D Campus 2.0" §6: 1 inson rahbar + 1 sintezator + 5 agent.
+  { id: "bobur-nazarov", name: SOTUV_OWNER.name, zoneKey: "sotuv", color: "#334155", role: SOTUV_OWNER.role, taskPool: boburTaskPool, entityType: "human", demoStatus: "live" },
+  { id: SOTUV_SYNTHESIZER.id, name: SOTUV_SYNTHESIZER.name, zoneKey: "sotuv", color: "#6d28d9", role: SOTUV_SYNTHESIZER.role, taskPool: botirTaskPool, entityType: "synthesizer", demoStatus: "live" },
+  ...SOTUV_AGENTS.map((a) => ({
+    id: `sotuv-${a.id}`,
+    name: a.name,
+    zoneKey: "sotuv",
+    color: STATUS_COLOR[a.status],
+    role: a.role,
+    taskPool: [a.decision],
+    entityType: "ai" as const,
+    demoStatus: a.status,
+  })),
+
+  { id: "agent-international", name: "Xalqaro Agent", zoneKey: "international", color: "#4338ca", role: "Xalqaro soliqqa tortish", taskPool: internationalTaskPool, entityType: "ai", demoStatus: "live" },
+  { id: "agent-telegram", name: "Ishchi bo'lim Agent", zoneKey: "telegram", color: "#0891b2", role: "Murojaat tasnifi", taskPool: telegramTaskPool, entityType: "ai", demoStatus: "live" },
+  { id: "agent-hr", name: "HR Agent", zoneKey: "hr", color: "#9333ea", role: "Onboarding", taskPool: hrTaskPool, entityType: "ai", demoStatus: "live" },
 ];
 
 export const CORRIDOR_Z = 0;
@@ -128,17 +161,17 @@ export function zoneByKey(key: string): ZoneDef {
   return ZONES.find((z) => z.key === key) ?? ZONES[0];
 }
 
-// Har zonada 4 ta stol (jami 36 >= talab qilingan 21)
-export function desksForZone(zone: ZoneDef) {
-  const offsets = [
-    [-1.3, 0],
-    [1.3, 0],
-    [-1.3, 2.6],
-    [1.3, 2.6],
-  ];
-  return offsets.map(([dx, dz], i) => ({
-    id: `${zone.key}-desk-${i}`,
-    x: zone.x + dx,
-    z: DESK_CLUSTER_Z + dz,
-  }));
+// Har zonada shu yerdagi agentlar sonicha stol — Sotuv (7 ta: rahbar + sintezator
+// + 5 agent) boshqa bo'limlardan (4 tadan) ko'proq stol oladi, lekin xuddi shu
+// 2-ustunli tarmoqda, shuning uchun boshqalardan haddan tashqari ustun ko'rinmaydi.
+export function desksForZone(zone: ZoneDef, count = 4) {
+  return Array.from({ length: count }, (_, i) => {
+    const col = i % 2 === 0 ? -1.3 : 1.3;
+    const row = Math.floor(i / 2);
+    return {
+      id: `${zone.key}-desk-${i}`,
+      x: zone.x + col,
+      z: DESK_CLUSTER_Z + row * 2.6,
+    };
+  });
 }

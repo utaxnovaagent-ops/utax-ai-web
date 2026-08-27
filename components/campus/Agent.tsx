@@ -4,12 +4,13 @@ import { useMemo, useRef, useState } from "react";
 import { useFrame } from "@react-three/fiber";
 import { Billboard, Text } from "@react-three/drei";
 import * as THREE from "three";
-import { AgentDef, AgentState, HUB_Z, CORRIDOR_Z, MEETING_TABLE, desksForZone, meetingSeat, zoneByKey } from "@/lib/campus-data";
+import { AgentDef, AgentState, HUB_Z, CORRIDOR_Z, MEETING_TABLE, meetingSeat, zoneByKey } from "@/lib/campus-data";
 
 const SPEED = 3.4; // units/sec
 
 interface Props {
   agent: AgentDef;
+  ownDesk: { x: number; z: number };
   seatIndex: number;
   seatTotal: number;
   selected: boolean;
@@ -22,14 +23,18 @@ function randRange(min: number, max: number) {
   return min + Math.random() * (max - min);
 }
 
-export function Agent({ agent, seatIndex, seatTotal, selected, reducedMotion, onSelect, onStateChange }: Props) {
+// "planned" holatidagi agent hali qurilmagan — 3D sahnada hech qachon ishlab
+// turgandek yoki yig'ilishga borayotgandek ko'rsatilmaydi (TZI AC-06): o'z
+// stolida harakatsiz, xira turadi.
+export function Agent({ agent, ownDesk, seatIndex, seatTotal, selected, reducedMotion, onSelect, onStateChange }: Props) {
   const zone = useMemo(() => zoneByKey(agent.zoneKey), [agent.zoneKey]);
-  const ownDesk = useMemo(() => desksForZone(zone)[0], [zone]);
   const seat = useMemo(() => meetingSeat(seatIndex, seatTotal), [seatIndex, seatTotal]);
+  const isPlanned = agent.demoStatus === "planned";
+  const isStatic = isPlanned || agent.entityType === "human" || agent.entityType === "synthesizer";
 
   const groupRef = useRef<THREE.Group>(null);
-  const [state, setState] = useState<AgentState>("WORK");
-  const [task, setTask] = useState<string>(agent.taskPool[0]);
+  const [state, setState] = useState<AgentState>(isPlanned ? "IDLE" : "WORK");
+  const [task, setTask] = useState<string>(agent.taskPool[0] ?? "");
 
   // Mutable simulation state, kept out of React state for per-frame perf.
   const sim = useRef({
@@ -73,8 +78,15 @@ export function Agent({ agent, seatIndex, seatTotal, selected, reducedMotion, on
     const group = groupRef.current;
     if (!group) return;
 
-    if (reducedMotion) {
+    if (reducedMotion || isStatic) {
+      // Rejadagi, sintezator va inson entity'lar yig'ilish/ish aylanmasiga
+      // qo'shilmaydi — doim o'z podium/stolida turadi, faqat nafas olishdek
+      // yengil bob animatsiyasi bo'ladi (ishlayotgan bo'lib ko'rinmasin uchun).
       group.position.copy(s.pos);
+      if (!isPlanned && !reducedMotion) {
+        const t = performance.now() / 1000;
+        group.position.y = Math.sin(t * 2.2) * 0.015;
+      }
       return;
     }
 
@@ -148,6 +160,15 @@ export function Agent({ agent, seatIndex, seatTotal, selected, reducedMotion, on
     TALK: "#7c3aed",
     ERROR: "#dc2626",
   };
+  // "qisman" agent hech qachon "jonli" (yashil) bilan aralashtirilmasin —
+  // ish/o'tirish holatida to'q sariq signal beradi, boshqa holatlarda odatiy rang.
+  const statusDotColor =
+    agent.demoStatus === "planned"
+      ? "#94a3b8"
+      : agent.demoStatus === "partial" && (state === "WORK" || state === "SIT")
+        ? "#d97706"
+        : stateColor[state];
+  const bodyOpacity = isPlanned ? 0.42 : 1;
 
   return (
     <group
@@ -167,27 +188,27 @@ export function Agent({ agent, seatIndex, seatTotal, selected, reducedMotion, on
       {/* Block-style avatar */}
       <mesh position={[0, 0.95, 0]} castShadow>
         <boxGeometry args={[0.46, 0.7, 0.28]} />
-        <meshStandardMaterial color={agent.color} />
+        <meshStandardMaterial color={agent.color} transparent={isPlanned} opacity={bodyOpacity} />
       </mesh>
       <mesh position={[0, 1.5, 0]} castShadow>
         <boxGeometry args={[0.36, 0.36, 0.36]} />
-        <meshStandardMaterial color="#f4d9b8" />
+        <meshStandardMaterial color="#f4d9b8" transparent={isPlanned} opacity={bodyOpacity} />
       </mesh>
       <mesh position={[-0.32, 0.95, 0]} castShadow>
         <boxGeometry args={[0.16, 0.6, 0.2]} />
-        <meshStandardMaterial color={agent.color} />
+        <meshStandardMaterial color={agent.color} transparent={isPlanned} opacity={bodyOpacity} />
       </mesh>
       <mesh position={[0.32, 0.95, 0]} castShadow>
         <boxGeometry args={[0.16, 0.6, 0.2]} />
-        <meshStandardMaterial color={agent.color} />
+        <meshStandardMaterial color={agent.color} transparent={isPlanned} opacity={bodyOpacity} />
       </mesh>
       <mesh position={[-0.13, 0.28, 0]} castShadow>
         <boxGeometry args={[0.18, 0.56, 0.2]} />
-        <meshStandardMaterial color="#374151" />
+        <meshStandardMaterial color="#374151" transparent={isPlanned} opacity={bodyOpacity} />
       </mesh>
       <mesh position={[0.13, 0.28, 0]} castShadow>
         <boxGeometry args={[0.18, 0.56, 0.2]} />
-        <meshStandardMaterial color="#374151" />
+        <meshStandardMaterial color="#374151" transparent={isPlanned} opacity={bodyOpacity} />
       </mesh>
 
       {selected && (
@@ -201,7 +222,7 @@ export function Agent({ agent, seatIndex, seatTotal, selected, reducedMotion, on
       <Billboard position={[0, 2.05, 0]}>
         <mesh>
           <circleGeometry args={[0.09, 16]} />
-          <meshBasicMaterial color={stateColor[state]} />
+          <meshBasicMaterial color={statusDotColor} />
         </mesh>
         <Text
           position={[0, 0.26, 0]}

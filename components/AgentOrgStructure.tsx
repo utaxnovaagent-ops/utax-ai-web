@@ -1,5 +1,6 @@
 "use client";
 
+import { ReactNode } from "react";
 import { Check } from "lucide-react";
 import { Card } from "@/components/ui";
 import { useAppState } from "@/lib/app-context";
@@ -27,6 +28,7 @@ export interface AgentOrgStructureProps {
   loopNote: string;
   rules: { title: string; body: string }[];
   startingPoints: { title: string; body: string }[];
+  headerAction?: ReactNode;
 }
 
 const STATUS_DOT: Record<AgentStatus, string> = {
@@ -71,15 +73,19 @@ export function AgentOrgStructure({
   loopNote,
   rules,
   startingPoints,
+  headerAction,
 }: AgentOrgStructureProps) {
   const { lang } = useAppState();
 
   return (
     <div className="space-y-6">
-      <div>
-        <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wide text-brand">{eyebrow}</p>
-        <h2 className="text-lg font-bold text-foreground">{title}</h2>
-        <p className="mt-1 max-w-3xl text-sm text-muted">{intro}</p>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wide text-brand">{eyebrow}</p>
+          <h2 className="text-lg font-bold text-foreground">{title}</h2>
+          <p className="mt-1 max-w-3xl text-sm text-muted">{intro}</p>
+        </div>
+        {headerAction}
       </div>
 
       <Card>

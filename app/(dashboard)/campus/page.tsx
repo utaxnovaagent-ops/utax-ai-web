@@ -1,8 +1,10 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
-import { RotateCcw, Layers, List, Box as BoxIcon, X, Wifi } from "lucide-react";
+import { useSearchParams } from "next/navigation";
+import { RotateCcw, Layers, List, Box as BoxIcon, X, Wifi, AlertTriangle } from "lucide-react";
+import Link from "next/link";
 import { PageHeader, Card, Badge, toneForLevel } from "@/components/ui";
 import { AGENTS, ZONES, AgentState, zoneByKey } from "@/lib/campus-data";
 import { useAppState } from "@/lib/app-context";
@@ -25,20 +27,91 @@ const stateKey: Record<AgentState, string> = {
   ERROR: "campus_state_error",
 };
 
+// "rejada" agent hech qachon "Ishlamoqda" deb ko'rsatilmasin — simulyatsiya
+// holatidan qat'i nazar, demoStatus birinchi navbatda hisobga olinadi
+// (TZI "3D Campus 2.0" AC-05/AC-06/AC-20).
+function displayStatusKey(agentId: string, simState: AgentState): string {
+  const agent = AGENTS.find((a) => a.id === agentId);
+  if (agent?.demoStatus === "planned") return "campus_state_planned";
+  if (agent?.demoStatus === "partial" && (simState === "WORK" || simState === "SIT")) return "campus_state_partial";
+  return stateKey[simState];
+}
+
+const AI_AGENT_COUNT = AGENTS.filter((a) => a.entityType !== "human").length;
+const WEBGL_TIMEOUT_MS = 8000;
+
+function hasWebGL(): boolean {
+  try {
+    const canvas = document.createElement("canvas");
+    return !!(canvas.getContext("webgl2") || canvas.getContext("webgl") || canvas.getContext("experimental-webgl"));
+  } catch {
+    return false;
+  }
+}
+
 export default function CampusPage() {
+  return (
+    <Suspense fallback={null}>
+      <CampusPageInner />
+    </Suspense>
+  );
+}
+
+function CampusPageInner() {
   const { lang } = useAppState();
+  const searchParams = useSearchParams();
   const [view, setView] = useState<"3d" | "list">("3d");
+  const [fallbackReason, setFallbackReason] = useState<"webgl_unsupported" | "timeout" | null>(null);
+  const [sceneReady, setSceneReady] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [canvasKey, setCanvasKey] = useState(0);
   const [statuses, setStatuses] = useState<Record<string, { state: AgentState; task: string }>>(
-    Object.fromEntries(AGENTS.map((a) => [a.id, { state: "WORK" as AgentState, task: a.taskPool[0] }]))
+    Object.fromEntries(
+      AGENTS.map((a) => [a.id, { state: (a.demoStatus === "planned" ? "IDLE" : "WORK") as AgentState, task: a.taskPool[0] ?? "" }])
+    )
   );
 
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
     setReducedMotion(mq.matches);
   }, []);
+
+  // WebGL 3D sahna 8 soniyada tayyor bo'lmasa yoki brauzerda WebGL umuman
+  // yo'q bo'lsa — bo'sh canvas'da qolib ketmasdan, 2D ro'yxatga o'tadi (P0).
+  useEffect(() => {
+    if (!hasWebGL()) {
+      setFallbackReason("webgl_unsupported");
+      setView("list");
+      return;
+    }
+    const timeout = window.setTimeout(() => {
+      setSceneReady((ready) => {
+        if (!ready) {
+          setFallbackReason("timeout");
+          setView("list");
+        }
+        return ready;
+      });
+    }, WEBGL_TIMEOUT_MS);
+    return () => window.clearTimeout(timeout);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [canvasKey]);
+
+  // Deep-link: /campus?department=sotuv&agent=botir-ai — sahifa ochilganda
+  // to'g'ridan-to'g'ri kerakli agentni tanlab, drawer'ni ochadi.
+  useEffect(() => {
+    const agentParam = searchParams.get("agent");
+    const deptParam = searchParams.get("department");
+    if (agentParam && AGENTS.some((a) => a.id === agentParam || a.id === `sotuv-${agentParam}`)) {
+      const match = AGENTS.find((a) => a.id === agentParam || a.id === `sotuv-${agentParam}`);
+      if (match) setSelectedId(match.id);
+    } else if (deptParam) {
+      const first = AGENTS.find((a) => a.zoneKey === deptParam);
+      if (first) setSelectedId(first.id);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
 
   useEffect(() => {
     // Mobil brauzer sahifani fonga yuborib, keyin qaytarganda WebGL kontekstini
@@ -62,15 +135,23 @@ export default function CampusPage() {
     setStatuses((prev) => ({ ...prev, [id]: { state, task } }));
   }
 
+  function retry3d() {
+    setFallbackReason(null);
+    setSceneReady(false);
+    setCanvasKey((k) => k + 1);
+    setView("3d");
+  }
+
   return (
     <div>
 
-      <PageHeader title={t("campus_title", lang)} subtitle={t("campus_subtitle", lang)}>
+      <PageHeader title={t("campus_title", lang)} subtitle={t("campus_subtitle", lang, { agentCount: AI_AGENT_COUNT, deptCount: ZONES.length })}>
         <div className="flex flex-wrap items-center gap-2">
           <div className="flex items-center gap-1 rounded-lg border border-border p-1">
             <button
               onClick={() => setView("3d")}
-              className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium ${
+              disabled={fallbackReason === "webgl_unsupported"}
+              className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium disabled:cursor-not-allowed disabled:opacity-40 ${
                 view === "3d" ? "bg-brand text-brand-contrast" : "text-foreground hover:bg-surface-alt"
               }`}
             >
@@ -104,10 +185,22 @@ export default function CampusPage() {
         </div>
       </PageHeader>
 
-      <div className="flex items-center gap-1.5 rounded-lg bg-info-bg px-3 py-1.5 text-xs text-info mb-4 w-fit">
+      <div className="flex items-center gap-1.5 rounded-lg bg-info-bg px-3 py-1.5 text-xs text-info mb-2 w-fit">
         <Wifi size={13} />
         {t("campus_demo_notice", lang)}
       </div>
+
+      {fallbackReason && (
+        <div className="mb-4 flex flex-wrap items-center gap-2 rounded-lg bg-warning-bg px-3 py-1.5 text-xs text-warning">
+          <AlertTriangle size={13} />
+          {t(fallbackReason === "webgl_unsupported" ? "campus_fallback_webgl" : "campus_fallback_timeout", lang)}
+          {fallbackReason === "timeout" && (
+            <button onClick={retry3d} className="ml-1 font-semibold underline underline-offset-2">
+              {t("campus_retry_3d", lang)}
+            </button>
+          )}
+        </div>
+      )}
 
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
         <Card className="relative flex-1 !p-0 overflow-hidden">
@@ -124,6 +217,7 @@ export default function CampusPage() {
                 }}
                 onStateChange={handleStateChange}
                 onContextLost={() => setCanvasKey((k) => k + 1)}
+                onReady={() => setSceneReady(true)}
               />
             </div>
           ) : (
@@ -155,8 +249,16 @@ export default function CampusPage() {
                           </span>
                         </td>
                         <td className="py-2.5">
-                          <Badge tone={toneForLevel(st.state === "ERROR" ? "yuqori" : st.state === "WORK" ? "sog'lom" : "o'rta")}>
-                            {t(stateKey[st.state], lang)}
+                          <Badge
+                            tone={
+                              a.demoStatus === "planned"
+                                ? "neutral"
+                                : a.demoStatus === "partial" && (st.state === "WORK" || st.state === "SIT")
+                                  ? "warning"
+                                  : toneForLevel(st.state === "ERROR" ? "yuqori" : st.state === "WORK" ? "sog'lom" : "o'rta")
+                            }
+                          >
+                            {t(displayStatusKey(a.id, st.state), lang)}
                           </Badge>
                         </td>
                         <td className="py-2.5 text-muted">{st.task}</td>
@@ -199,29 +301,46 @@ export default function CampusPage() {
               <div className="flex items-center justify-between">
                 <dt className="text-muted">{t("campus_field_status", lang)}</dt>
                 <dd>
-                  <Badge tone={toneForLevel(selectedStatus.state === "ERROR" ? "yuqori" : "sog'lom")}>
-                    {t(stateKey[selectedStatus.state], lang)}
+                  <Badge
+                    tone={
+                      selectedAgent.demoStatus === "planned"
+                        ? "neutral"
+                        : selectedAgent.demoStatus === "partial" && (selectedStatus.state === "WORK" || selectedStatus.state === "SIT")
+                          ? "warning"
+                          : toneForLevel(selectedStatus.state === "ERROR" ? "yuqori" : "sog'lom")
+                    }
+                  >
+                    {t(displayStatusKey(selectedAgent.id, selectedStatus.state), lang)}
                   </Badge>
                 </dd>
               </div>
               <div className="flex items-center justify-between">
-                <dt className="text-muted">{t("campus_field_task", lang)}</dt>
+                <dt className="text-muted">
+                  {selectedAgent.demoStatus === "planned" ? t("campus_field_planned_task", lang) : t("campus_field_task", lang)}
+                </dt>
                 <dd className="max-w-[60%] text-right font-medium text-foreground">{selectedStatus.task}</dd>
-              </div>
-              <div className="flex items-center justify-between">
-                <dt className="text-muted">{t("campus_field_confidence", lang)}</dt>
-                <dd className="font-medium text-foreground">{92 + (selectedAgent.name.length % 6)}%</dd>
               </div>
             </dl>
 
-            <div className="mt-4 border-t border-border pt-3">
-              <p className="mb-2 text-xs font-semibold text-muted">{t("campus_timeline_title", lang)}</p>
-              <ul className="space-y-2 text-xs text-muted">
-                <li>10:41 — Vazifa yakunlandi, hisobot yaratildi</li>
-                <li>10:22 — Bilimlar bazasidan 3 ta manba citatsiya qilindi</li>
-                <li>09:58 — Yig'ilish maydonida IT agent bilan sinxronizatsiya</li>
-              </ul>
-            </div>
+            {selectedAgent.demoStatus !== "planned" && selectedAgent.taskPool.length > 0 && (
+              <div className="mt-4 border-t border-border pt-3">
+                <p className="mb-2 text-xs font-semibold text-muted">{t("campus_timeline_title", lang)}</p>
+                <ul className="space-y-1.5 text-xs text-muted">
+                  {selectedAgent.taskPool.slice(0, 3).map((item, i) => (
+                    <li key={i}>{item}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {selectedZone?.key === "sotuv" && (
+              <Link
+                href="/sotuv#sales-agents"
+                className="mt-4 flex items-center justify-center gap-1.5 rounded-lg brand-gradient px-4 py-2 text-xs font-semibold text-white shadow-brand"
+              >
+                {t("campus_go_to_sales", lang)}
+              </Link>
+            )}
           </Card>
         )}
       </div>

@@ -4,7 +4,7 @@ import { Suspense, useEffect } from "react";
 import { Canvas, useThree } from "@react-three/fiber";
 import { OrbitControls, Billboard, Text, ContactShadows } from "@react-three/drei";
 import * as THREE from "three";
-import { ZONES, AGENTS, desksForZone, HUB_Z, MEETING_TABLE, meetingSeat, AgentState } from "@/lib/campus-data";
+import { ZONES, AGENTS, desksForZone, zoneByKey, HUB_Z, MEETING_TABLE, meetingSeat, AgentState } from "@/lib/campus-data";
 import { Lang, t } from "@/lib/i18n";
 import { Agent } from "./Agent";
 
@@ -146,9 +146,10 @@ interface Props {
   onSelect: (id: string, state: AgentState, task: string) => void;
   onStateChange: (id: string, state: AgentState, task: string) => void;
   onContextLost?: () => void;
+  onReady?: () => void;
 }
 
-export function CampusScene({ reducedMotion, selectedId, lang, onSelect, onStateChange, onContextLost }: Props) {
+export function CampusScene({ reducedMotion, selectedId, lang, onSelect, onStateChange, onContextLost, onReady }: Props) {
   return (
     <Canvas
       shadows
@@ -166,6 +167,7 @@ export function CampusScene({ reducedMotion, selectedId, lang, onSelect, onState
           },
           { once: true }
         );
+        onReady?.();
       }}
     >
       <color attach="background" args={["#eef0f6"]} />
@@ -204,22 +206,28 @@ export function CampusScene({ reducedMotion, selectedId, lang, onSelect, onState
           <ZoneFloor key={z.key} x={z.x} color={z.color} label={t(`nav_${z.key}`, lang)} />
         ))}
 
-        {ZONES.flatMap((z) => desksForZone(z)).map((d) => (
+        {ZONES.flatMap((z) => desksForZone(z, AGENTS.filter((a) => a.zoneKey === z.key).length)).map((d) => (
           <Desk key={d.id} x={d.x} z={d.z} />
         ))}
 
-        {AGENTS.map((a, i) => (
-          <Agent
-            key={a.id}
-            agent={a}
-            seatIndex={i}
-            seatTotal={AGENTS.length}
-            selected={selectedId === a.id}
-            reducedMotion={reducedMotion}
-            onSelect={onSelect}
-            onStateChange={onStateChange}
-          />
-        ))}
+        {AGENTS.map((a, i) => {
+          const zoneAgents = AGENTS.filter((x) => x.zoneKey === a.zoneKey);
+          const deskIndex = zoneAgents.findIndex((x) => x.id === a.id);
+          const ownDesk = desksForZone(zoneByKey(a.zoneKey), zoneAgents.length)[deskIndex];
+          return (
+            <Agent
+              key={a.id}
+              agent={a}
+              ownDesk={ownDesk}
+              seatIndex={i}
+              seatTotal={AGENTS.length}
+              selected={selectedId === a.id}
+              reducedMotion={reducedMotion}
+              onSelect={onSelect}
+              onStateChange={onStateChange}
+            />
+          );
+        })}
 
         <ContactShadows position={[0, 0, 3]} opacity={0.25} scale={64} blur={2} far={10} />
       </Suspense>

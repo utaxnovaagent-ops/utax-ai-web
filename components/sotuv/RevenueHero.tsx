@@ -5,6 +5,7 @@ import { Info, ArrowRight } from "lucide-react";
 import { Card } from "@/components/ui";
 import { sotuvData } from "@/lib/mock-data";
 import { weightedForecast, negotiationValue, needsActionToday, missions } from "@/lib/sales-metrics";
+import { useDeals, useDealsSource } from "@/lib/deals-context";
 
 function fmt(n: number) {
   return n.toLocaleString("en-US");
@@ -12,13 +13,18 @@ function fmt(n: number) {
 
 export function RevenueHero() {
   const [showWhy, setShowWhy] = useState(false);
-  const { planThisMonth, factThisMonth, currency } = sotuvData.revenue;
-  const forecast = weightedForecast();
+  const deals = useDeals();
+  const { wonThisMonthM } = useDealsSource();
+  const { planThisMonth, currency } = sotuvData.revenue;
+  // Fakt — Bitrixdan (shu oyda yopilgan g'olib bitimlar). Reja — biznes maqsadi,
+  // CRMda yo'q, shuning uchun konfiguratsiyadan olinadi.
+  const factThisMonth = wonThisMonthM ?? sotuvData.revenue.factThisMonth;
+  const forecast = weightedForecast(deals);
   const gap = Math.max(0, planThisMonth - factThisMonth);
   const factPct = Math.min(100, Math.round((factThisMonth / planThisMonth) * 100));
   const forecastPct = Math.min(100, Math.round(((factThisMonth + forecast) / planThisMonth) * 100));
-  const pendingApprovals = missions().filter((m) => m.requiresApproval).length;
-  const actionNeeded = needsActionToday().length;
+  const pendingApprovals = missions(deals).filter((m) => m.requiresApproval).length;
+  const actionNeeded = needsActionToday(deals).length;
 
   return (
     <Card className="mb-5">
@@ -64,7 +70,7 @@ export function RevenueHero() {
         <div className="rounded-xl border border-border bg-surface-alt p-4">
           <p className="text-xs font-semibold uppercase tracking-wide text-brand">AI xulosa</p>
           <p className="mt-1.5 text-sm leading-relaxed text-foreground">
-            Rejaga yetish uchun <strong>{fmt(gap)}M so'm</strong> kerak. Muzokara bosqichida <strong>{fmt(negotiationValue())}M so'm</strong> turibdi;{" "}
+            Rejaga yetish uchun <strong>{fmt(gap)}M so'm</strong> kerak. Muzokara bosqichida <strong>{fmt(negotiationValue(deals))}M so'm</strong> turibdi;{" "}
             <strong>{actionNeeded} bitim</strong> bugun harakat talab qiladi.
           </p>
           <button

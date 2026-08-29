@@ -3,11 +3,13 @@
 import { AlertTriangle } from "lucide-react";
 import { Card } from "@/components/ui";
 import { funnelStages } from "@/lib/sales-metrics";
+import { useDeals } from "@/lib/deals-context";
 
 const BOTTLENECK_STAGE = "Muzokara";
 
 export function FunnelVelocity({ selected, onSelect }: { selected: string | null; onSelect: (stage: string | null) => void }) {
-  const stages = funnelStages();
+  const deals = useDeals();
+  const stages = funnelStages(deals);
   const maxCount = Math.max(...stages.map((s) => s.count), 1);
 
   return (

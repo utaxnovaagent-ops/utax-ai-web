@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Phone, Mail, CalendarClock, ShieldCheck, Check } from "lucide-react";
 import { Card, Badge } from "@/components/ui";
 import { missions as computeMissions } from "@/lib/sales-metrics";
+import { useDeals } from "@/lib/deals-context";
 
 function ctaIcon(nextAction: string) {
   if (/qo'ng'iroq/i.test(nextAction)) return Phone;
@@ -16,7 +17,8 @@ export function MissionQueue({ stageFilter }: { stageFilter: string | null }) {
   const [done, setDone] = useState<Set<string>>(new Set());
   const [confirming, setConfirming] = useState<string | null>(null);
 
-  const list = computeMissions(undefined, 8).filter((m) => !stageFilter || m.deal.stage === stageFilter);
+  const deals = useDeals();
+  const list = computeMissions(deals, 8).filter((m) => !stageFilter || m.deal.stage === stageFilter);
 
   function markDone(id: string) {
     setDone((prev) => new Set(prev).add(id));

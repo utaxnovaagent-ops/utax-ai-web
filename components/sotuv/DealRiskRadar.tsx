@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ScatterChart, Scatter, XAxis, YAxis, ZAxis, Tooltip, ResponsiveContainer, Cell, ReferenceLine } from "recharts";
 import { Card } from "@/components/ui";
 import { openDeals, type Deal } from "@/lib/sales-metrics";
+import { useDeals } from "@/lib/deals-context";
 
 const RISK_COLOR: Record<Deal["risk"], string> = {
   yuqori: "#DC2626",
@@ -28,7 +29,8 @@ function CustomTooltip({ active, payload }: { active?: boolean; payload?: { payl
 
 export function DealRiskRadar() {
   const [hovered, setHovered] = useState<string | null>(null);
-  const deals = openDeals();
+  const allDeals = useDeals();
+  const deals = openDeals(allDeals);
 
   return (
     <Card title="Deal Risk Radar" subtitle="Qiymat × yopilish ehtimoli — rang risk darajasi" className="h-full">

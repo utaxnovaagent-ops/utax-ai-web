@@ -13,12 +13,14 @@ import { RevenueTrend } from "@/components/sotuv/RevenueTrend";
 import { sotuvData } from "@/lib/mock-data";
 import { pipelineValue, weightedForecast, atRiskValue, funnelStages } from "@/lib/sales-metrics";
 import { SOTUV_OWNER, SOTUV_SYNTHESIZER, SOTUV_AGENTS } from "@/lib/sotuv-agents";
+import { DealsProvider, useDeals, useDealsSource } from "@/lib/deals-context";
+import { DataSourceBadge } from "@/components/sotuv/DataSourceBadge";
 import { useAppState } from "@/lib/app-context";
 import { t } from "@/lib/i18n";
 
-const negotiationStage = funnelStages().find((s) => s.stage === "Muzokara");
 
-const sotuvAgentStructure = {
+function buildAgentStructure(negotiationStage: { count: number; value: number } | undefined) {
+  return {
   eyebrow: "SOTUV · AI AGENTLAR STRUKTURASI",
   title: "Sotuv agentlari strukturasi",
   intro:
@@ -71,11 +73,24 @@ const sotuvAgentStructure = {
       body: "Yangi lidlar orasidan qaysi biriga birinchi qo'ng'iroq qilish kerakligini hali hech kim tartib bilan aytmayapti.",
     },
   ],
-};
+  };
+}
 
 export default function SotuvPage() {
+  return (
+    <DealsProvider>
+      <SotuvPageInner />
+    </DealsProvider>
+  );
+}
+
+function SotuvPageInner() {
   const { lang } = useAppState();
   const [stageFilter, setStageFilter] = useState<string | null>(null);
+  const deals = useDeals();
+  const negotiationStage = funnelStages(deals).find((s) => s.stage === "Muzokara");
+  const sotuvAgentStructure = buildAgentStructure(negotiationStage);
+  const { isReal } = useDealsSource();
 
   return (
     <div>
@@ -83,8 +98,12 @@ export default function SotuvPage() {
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2">
             <h1 className="text-lg font-bold text-foreground">Sotuv Command Center</h1>
-            <span className="rounded-full border border-border bg-surface-alt px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-muted">
-              DEMO
+            <span className={`rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${
+              isReal
+                ? "border-emerald-300 bg-emerald-50 text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-300"
+                : "border-border bg-surface-alt text-muted"
+            }`}>
+              {isReal ? "LIVE" : "DEMO"}
             </span>
           </div>
           <div className="flex flex-wrap items-center gap-2">
@@ -109,11 +128,13 @@ export default function SotuvPage() {
         </div>
       </div>
 
+      <DataSourceBadge />
+
       <RevenueHero />
 
       <div className="mb-5 grid grid-cols-2 gap-3 lg:grid-cols-5">
-        <StatCard label="Pipeline qiymati" value={`${pipelineValue()}M`} hint="Ochiq bitimlar summasi" icon={<Wallet size={17} />} />
-        <StatCard label="Weighted forecast" value={`${weightedForecast()}M`} hint="Σ bitim × ehtimollik" icon={<Target size={17} />} />
+        <StatCard label="Pipeline qiymati" value={`${pipelineValue(deals)}M`} hint="Ochiq bitimlar summasi" icon={<Wallet size={17} />} />
+        <StatCard label="Weighted forecast" value={`${weightedForecast(deals)}M`} hint="Σ bitim × ehtimollik" icon={<Target size={17} />} />
         <StatCard
           label="Win rate"
           value={`${sotuvData.winRate.percent}%`}
@@ -132,7 +153,7 @@ export default function SotuvPage() {
         />
         <StatCard
           label="At-risk revenue"
-          value={`${atRiskValue()}M`}
+          value={`${atRiskValue(deals)}M`}
           hint="Kechikkan / signal past"
           icon={<AlertTriangle size={17} />}
           tone="warning"

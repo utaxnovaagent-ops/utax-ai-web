@@ -110,8 +110,10 @@ export function AgentOrgStructure({
 
           <FlowLabel>{t("agent_structure_signal", lang)}</FlowLabel>
 
-          {/* Sub-agents */}
-          <div className="grid w-full grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
+          {/* Sub-agents — 3 ustun: 6 agentda (joriy holat) tekis 2 qatorga joylashadi.
+              Eski "lg:grid-cols-5" 6-agentda 1 tasini yolg'iz qatorda qoldirgan edi
+              ("UTAX Maslahatchi AI" qo'shilgandan keyin, 2026-08). */}
+          <div className="grid w-full grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {agents.map((a) => (
               <div key={a.name} className="flex flex-col gap-1.5 rounded-xl border border-border bg-surface p-3.5 shadow-sm">
                 <p className="text-xs font-bold text-foreground">{a.name}</p>

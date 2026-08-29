@@ -1,7 +1,7 @@
-// Sotuv bo'limining bitta rahbari, bitta sintezator AI va beshta ixtisoslashgan
-// agenti — /sotuv (Revenue Command Center) va /campus (3D Sales Hub) shu bitta
-// ro'yxatdan o'qiydi, shunda ikki sahifa orasida status/son ziddiyati bo'lmaydi
-// (TZI "3D Campus 2.0" AC-09).
+// Sotuv bo'limining bitta rahbari, bitta sintezator AI va oltita ixtisoslashgan
+// agenti — /structure (OrgChart), /sotuv (Revenue Command Center) va /campus
+// (3D Sales Hub) shu bitta ro'yxatdan o'qiydi, shunda sahifalar orasida
+// status/son ziddiyati bo'lmaydi (TZI "3D Campus 2.0" AC-09).
 export type SotuvAgentStatus = "live" | "partial" | "planned";
 
 export interface SotuvAgentDef {
@@ -24,6 +24,15 @@ export const SOTUV_SYNTHESIZER = {
 };
 
 export const SOTUV_AGENTS: SotuvAgentDef[] = [
+  {
+    id: "maslahatchi",
+    name: "UTAX Maslahatchi AI",
+    role: "mijoz bilan birinchi aloqa",
+    does: "Telegramda mijoz bilan o'zi gaplashib ehtiyojni aniqlaydi, to'rt xizmatdan biriga yo'naltiradi, 0–100 ball qo'yadi va Bitrixga lead yozib, isitilgan mijozni tayyor karta bilan sotuvchiga uzatadi. Narx va yakuniy soliq xulosasini aytmaydi.",
+    source: "Telegram bot (@utax_maslahatchi_bot), Bitrix24 CRM",
+    decision: "Mijoz qaysi xizmatga yo'naltiriladi va qachon insonga topshiriladi",
+    status: "live",
+  },
   {
     id: "uchrashuv-brifing",
     name: "Uchrashuv-brifing agenti",

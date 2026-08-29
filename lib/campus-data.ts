@@ -93,7 +93,7 @@ const marketingTaskPool = [
 // ixtisoslashgan agent — hammasi lib/sotuv-agents.ts'dagi bitta manbadan.
 const boburTaskPool = sotuvData.followUps.map((f) => `${f.client} bo'yicha yakuniy qaror kutmoqda`);
 const botirTaskPool = [
-  "5 agent signalini sintez qilib, bugungi ustuvorlikni tayyorlamoqda",
+  "6 agent signalini sintez qilib, bugungi ustuvorlikni tayyorlamoqda",
   "Bobur Nazarovga qaror taklifini yuborishga tayyorlanmoqda",
 ];
 
@@ -122,7 +122,7 @@ export const AGENTS: AgentDef[] = [
   { id: "agent-it", name: "IT Agent", zoneKey: "it", color: "#2563eb", role: "Servis monitoring", taskPool: itTaskPool, entityType: "ai", demoStatus: "live" },
   { id: "agent-marketing", name: "Marketing Agent", zoneKey: "marketing", color: "#db2777", role: "Kontent generatsiya", taskPool: marketingTaskPool, entityType: "ai", demoStatus: "live" },
 
-  // Sotuv Hub — TZI "3D Campus 2.0" §6: 1 inson rahbar + 1 sintezator + 5 agent.
+  // Sotuv Hub — TZI "3D Campus 2.0" §6: 1 inson rahbar + 1 sintezator + 6 agent.
   { id: "bobur-nazarov", name: SOTUV_OWNER.name, zoneKey: "sotuv", color: "#334155", role: SOTUV_OWNER.role, taskPool: boburTaskPool, entityType: "human", demoStatus: "live" },
   { id: SOTUV_SYNTHESIZER.id, name: SOTUV_SYNTHESIZER.name, zoneKey: "sotuv", color: "#6d28d9", role: SOTUV_SYNTHESIZER.role, taskPool: botirTaskPool, entityType: "synthesizer", demoStatus: "live" },
   ...SOTUV_AGENTS.map((a) => ({
@@ -161,8 +161,8 @@ export function zoneByKey(key: string): ZoneDef {
   return ZONES.find((z) => z.key === key) ?? ZONES[0];
 }
 
-// Har zonada shu yerdagi agentlar sonicha stol — Sotuv (7 ta: rahbar + sintezator
-// + 5 agent) boshqa bo'limlardan (4 tadan) ko'proq stol oladi, lekin xuddi shu
+// Har zonada shu yerdagi agentlar sonicha stol — Sotuv (8 ta: rahbar + sintezator
+// + 6 agent) boshqa bo'limlardan (4 tadan) ko'proq stol oladi, lekin xuddi shu
 // 2-ustunli tarmoqda, shuning uchun boshqalardan haddan tashqari ustun ko'rinmaydi.
 export function desksForZone(zone: ZoneDef, count = 4) {
   return Array.from({ length: count }, (_, i) => {

@@ -14,6 +14,7 @@ type DealsState = {
   fetchedAt: string | null;
   note: string | null;
   wonThisMonthM: number | null;
+  quality: { wonThisMonthCount: number; openWithoutAmount: number } | null;
 };
 
 const DealsContext = createContext<DealsState>({
@@ -23,6 +24,7 @@ const DealsContext = createContext<DealsState>({
   fetchedAt: null,
   note: null,
   wonThisMonthM: null,
+  quality: null,
 });
 
 export function DealsProvider({ children }: { children: ReactNode }) {
@@ -33,6 +35,7 @@ export function DealsProvider({ children }: { children: ReactNode }) {
     fetchedAt: null,
     note: null,
     wonThisMonthM: null,
+    quality: null,
   });
 
   useEffect(() => {
@@ -49,6 +52,10 @@ export function DealsProvider({ children }: { children: ReactNode }) {
             fetchedAt: j.meta?.fetchedAt ?? null,
             note: null,
             wonThisMonthM: typeof j.meta?.wonThisMonthM === "number" ? j.meta.wonThisMonthM : null,
+            quality: {
+              wonThisMonthCount: j.meta?.wonThisMonthCount ?? 0,
+              openWithoutAmount: j.meta?.openWithoutAmount ?? 0,
+            },
           });
         } else {
           setState((s) => ({
@@ -77,6 +84,6 @@ export function useDeals(): Deal[] {
 
 /** Manba holati — sahifadagi belgi uchun. */
 export function useDealsSource() {
-  const { isReal, loading, fetchedAt, note, deals, wonThisMonthM } = useContext(DealsContext);
-  return { isReal, loading, fetchedAt, note, count: deals.length, wonThisMonthM };
+  const { isReal, loading, fetchedAt, note, deals, wonThisMonthM, quality } = useContext(DealsContext);
+  return { isReal, loading, fetchedAt, note, count: deals.length, wonThisMonthM, quality };
 }

@@ -15,6 +15,7 @@ import { pipelineValue, weightedForecast, atRiskValue, funnelStages } from "@/li
 import { SOTUV_OWNER, SOTUV_SYNTHESIZER, SOTUV_AGENTS } from "@/lib/sotuv-agents";
 import { DealsProvider, useDeals, useDealsSource } from "@/lib/deals-context";
 import { DataSourceBadge } from "@/components/sotuv/DataSourceBadge";
+import { CallAnalytics } from "@/components/sotuv/CallAnalytics";
 import { useAppState } from "@/lib/app-context";
 import { t } from "@/lib/i18n";
 
@@ -168,6 +169,10 @@ function SotuvPageInner() {
       <div className="mb-5 grid gap-4 lg:grid-cols-2">
         <DealRiskRadar />
         <RevenueTrend />
+      </div>
+
+      <div className="mb-5">
+        <CallAnalytics days={30} />
       </div>
 
       <Card title={t("sotuv_brief_title", lang)} subtitle={t("sotuv_brief_prepared", lang)} className="mb-5">

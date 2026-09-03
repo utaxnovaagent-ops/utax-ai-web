@@ -219,3 +219,94 @@ export async function fetchSotuvSnapshot(): Promise<SotuvSnapshot> {
     },
   };
 }
+
+// --- Qo'ng'iroqlar tahlili --------------------------------------------------
+// MUHIM: webhook'da "telefoniya" ruxsati yo'q (faqat crm + call), shuning uchun
+// voximplant.statistic.get ishlamaydi. Qo'ng'iroqlar CRM faoliyat tarixidan
+// olinadi — u yerda davomiylik, yo'nalish, mas'ul va audio havolasi bor.
+
+export type CallStats = {
+  days: number;
+  total: number;
+  incoming: number;
+  outgoing: number;
+  missed: number;
+  withRecording: number;
+  avgSeconds: number;
+  medianSeconds: number;
+  underTargetPct: number;   // 25 soniyadan qisqa qo'ng'iroqlar ulushi
+  byManager: { id: string; count: number; avgSeconds: number; missed: number }[];
+  byDay: { day: string; count: number }[];
+  fetchedAt: string;
+};
+
+type RawActivity = {
+  ID: string; SUBJECT: string; DIRECTION: string;
+  START_TIME: string; END_TIME: string; RESPONSIBLE_ID: string;
+  FILES?: unknown;
+};
+
+const CALL_TARGET_SECONDS = 25;
+
+export async function fetchCallStats(days = 30): Promise<CallStats> {
+  const since = new Date(Date.now() - days * 86_400_000).toISOString().slice(0, 19);
+  const select: Record<string, string> = {};
+  ["ID", "SUBJECT", "DIRECTION", "START_TIME", "END_TIME", "RESPONSIBLE_ID", "FILES"]
+    .forEach((f, i) => { select[`select[${i}]`] = f; });
+
+  const rows = await listAll<RawActivity>("crm.activity.list", {
+    ...select,
+    "filter[TYPE_ID]": "2",
+    "filter[>CREATED]": since,
+    "order[CREATED]": "DESC",
+  }, 40);
+
+  const seconds = (a: RawActivity) => {
+    const s = Date.parse(a.START_TIME), e = Date.parse(a.END_TIME);
+    if (Number.isNaN(s) || Number.isNaN(e)) return null;
+    const d = (e - s) / 1000;
+    return d > 0 ? d : null;
+  };
+  const isMissed = (a: RawActivity) => (a.SUBJECT ?? "").includes("ропущен");
+
+  const durations = rows.map(seconds).filter((d): d is number => d !== null).sort((a, b) => a - b);
+  const avg = durations.length ? durations.reduce((s, d) => s + d, 0) / durations.length : 0;
+  const median = durations.length ? durations[Math.floor(durations.length / 2)] : 0;
+  const under = durations.filter((d) => d < CALL_TARGET_SECONDS).length;
+
+  const mgr = new Map<string, { count: number; durs: number[]; missed: number }>();
+  const day = new Map<string, number>();
+  for (const a of rows) {
+    const m = mgr.get(a.RESPONSIBLE_ID) ?? { count: 0, durs: [], missed: 0 };
+    m.count++;
+    const d = seconds(a);
+    if (d) m.durs.push(d);
+    if (isMissed(a)) m.missed++;
+    mgr.set(a.RESPONSIBLE_ID, m);
+
+    const k = (a.START_TIME ?? "").slice(0, 10);
+    if (k) day.set(k, (day.get(k) ?? 0) + 1);
+  }
+
+  return {
+    days,
+    total: rows.length,
+    incoming: rows.filter((a) => String(a.DIRECTION) === "1").length,
+    outgoing: rows.filter((a) => String(a.DIRECTION) === "2").length,
+    missed: rows.filter(isMissed).length,
+    withRecording: rows.filter((a) => Boolean(a.FILES)).length,
+    avgSeconds: Math.round(avg),
+    medianSeconds: Math.round(median),
+    underTargetPct: durations.length ? Math.round((under / durations.length) * 100) : 0,
+    byManager: [...mgr.entries()]
+      .map(([id, v]) => ({
+        id,
+        count: v.count,
+        avgSeconds: v.durs.length ? Math.round(v.durs.reduce((s, d) => s + d, 0) / v.durs.length) : 0,
+        missed: v.missed,
+      }))
+      .sort((a, b) => b.count - a.count),
+    byDay: [...day.entries()].map(([d, c]) => ({ day: d, count: c })).sort((a, b) => a.day.localeCompare(b.day)),
+    fetchedAt: new Date().toISOString(),
+  };
+}

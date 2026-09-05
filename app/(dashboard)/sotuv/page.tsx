@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Sparkles, Plus, FileText, Wallet, Target, Trophy, Gauge, AlertTriangle, Box } from "lucide-react";
+import { Sparkles, ExternalLink, FileText, Wallet, Target, Trophy, Gauge, AlertTriangle, Box } from "lucide-react";
 import { Card, Badge, StatCard } from "@/components/ui";
 import { AgentOrgStructure } from "@/components/AgentOrgStructure";
 import { RevenueHero } from "@/components/sotuv/RevenueHero";
@@ -122,9 +122,16 @@ function SotuvPageInner() {
             <button className="flex h-9 items-center gap-1.5 rounded-lg border border-border px-3 text-xs font-medium text-foreground hover:bg-surface-alt">
               <FileText size={13} /> Hisobot
             </button>
-            <button className="flex h-9 items-center gap-1.5 rounded-lg brand-gradient px-3 text-xs font-semibold text-white shadow-brand">
-              <Plus size={13} /> Yangi lead
-            </button>
+            {/* Sotuv bo'limining alohida ish paneli (Sotuv Desk) — Bitrix24 ustida
+                ishlaydigan alohida ilova, shu sabab yangi oynada ochiladi. */}
+            <a
+              href="https://sotuv.169-58-178-40.sslip.io"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex h-9 items-center gap-1.5 rounded-lg brand-gradient px-3 text-xs font-semibold text-white shadow-brand"
+            >
+              <ExternalLink size={13} /> Sotuv web
+            </a>
           </div>
         </div>
       </div>

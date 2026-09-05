@@ -15,6 +15,9 @@ type DealsState = {
   note: string | null;
   wonThisMonthM: number | null;
   quality: { wonThisMonthCount: number; openWithoutAmount: number } | null;
+  // Bitrixdagi so'nggi 90 kun natijasi — win rate shu ikkitasidan hisoblanadi.
+  won90: number | null;
+  lost90: number | null;
 };
 
 const DealsContext = createContext<DealsState>({
@@ -25,6 +28,8 @@ const DealsContext = createContext<DealsState>({
   note: null,
   wonThisMonthM: null,
   quality: null,
+  won90: null,
+  lost90: null,
 });
 
 export function DealsProvider({ children }: { children: ReactNode }) {
@@ -36,6 +41,8 @@ export function DealsProvider({ children }: { children: ReactNode }) {
     note: null,
     wonThisMonthM: null,
     quality: null,
+    won90: null,
+    lost90: null,
   });
 
   useEffect(() => {
@@ -56,6 +63,8 @@ export function DealsProvider({ children }: { children: ReactNode }) {
               wonThisMonthCount: j.meta?.wonThisMonthCount ?? 0,
               openWithoutAmount: j.meta?.openWithoutAmount ?? 0,
             },
+            won90: typeof j.meta?.wonLast90 === "number" ? j.meta.wonLast90 : null,
+            lost90: typeof j.meta?.lostLast90 === "number" ? j.meta.lostLast90 : null,
           });
         } else {
           setState((s) => ({
@@ -84,6 +93,9 @@ export function useDeals(): Deal[] {
 
 /** Manba holati — sahifadagi belgi uchun. */
 export function useDealsSource() {
-  const { isReal, loading, fetchedAt, note, deals, wonThisMonthM, quality } = useContext(DealsContext);
-  return { isReal, loading, fetchedAt, note, count: deals.length, wonThisMonthM, quality };
+  const { isReal, loading, fetchedAt, note, deals, wonThisMonthM, quality, won90, lost90 } = useContext(DealsContext);
+  // Win rate faqat real yopilgan bitimlar bo'lsa hisoblanadi.
+  const closed = (won90 ?? 0) + (lost90 ?? 0);
+  const winRate = isReal && closed > 0 ? Math.round(((won90 ?? 0) / closed) * 100) : null;
+  return { isReal, loading, fetchedAt, note, count: deals.length, wonThisMonthM, quality, won90, lost90, winRate };
 }

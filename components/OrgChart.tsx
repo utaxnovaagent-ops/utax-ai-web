@@ -29,7 +29,7 @@ import {
 } from "lucide-react";
 import { orgStructure, moliyaData, auditData, itData, marketingData, sotuvData, internationalData, telegramData, hrData } from "@/lib/mock-data";
 import { useDepartments, type Dept } from "@/lib/custom-depts";
-import { SOTUV_SYNTHESIZER, SOTUV_AGENTS, type SotuvAgentStatus } from "@/lib/sotuv-agents";
+import { SOTUV_AGENTS, type SotuvAgentStatus } from "@/lib/sotuv-agents";
 import { useAppState } from "@/lib/app-context";
 import { t } from "@/lib/i18n";
 import { StatCard, Badge } from "@/components/ui";
@@ -435,16 +435,12 @@ function DepartmentDrawer({
                 </Link>
               </div>
               <div className="space-y-1.5">
-                <div className="flex items-center justify-between gap-2 rounded-lg bg-brand-light px-2.5 py-1.5">
-                  <div className="min-w-0">
-                    <p className="truncate text-xs font-semibold text-foreground">{SOTUV_SYNTHESIZER.name}</p>
-                    <p className="truncate text-[10px] text-muted">{SOTUV_SYNTHESIZER.role}</p>
-                  </div>
-                  <span className={`h-1.5 w-1.5 flex-shrink-0 rounded-full ${SOTUV_STATUS_DOT.live}`} />
-                </div>
                 {SOTUV_AGENTS.map((a) => (
                   <div key={a.id} className="flex items-center justify-between gap-2 px-2.5 py-0.5">
-                    <p className="truncate text-xs text-foreground">{a.name}</p>
+                    <div className="min-w-0">
+                      <p className="truncate text-xs text-foreground">{a.name}</p>
+                      <p className="truncate text-[10px] text-muted">{a.role}</p>
+                    </div>
                     <span className={`h-1.5 w-1.5 flex-shrink-0 rounded-full ${SOTUV_STATUS_DOT[a.status]}`} />
                   </div>
                 ))}

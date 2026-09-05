@@ -121,6 +121,8 @@ export type SotuvSnapshot = {
     wonThisMonthCount: number;
     /** Summasi kiritilmagan ochiq bitimlar soni — ma'lumot sifati signali. */
     openWithoutAmount: number;
+    /** Oxirgi 6 oy: yopilgan g'olib bitimlar summasi (mln so'm) va soni. */
+    monthlyWon: { month: string; revenue: number; deals: number }[];
     source: "bitrix";
   };
 };
@@ -157,7 +159,9 @@ export async function fetchSotuvSnapshot(): Promise<SotuvSnapshot> {
     "select[6]": "DATE_CREATE", "select[7]": "DATE_MODIFY", "select[8]": "ASSIGNED_BY_ID",
   };
 
-  const [openRaw, closedRaw] = await Promise.all([
+  const since6m = new Date(Date.now() - 183 * 86_400_000).toISOString().slice(0, 19);
+
+  const [openRaw, closedRaw, won6mRaw] = await Promise.all([
     listAll<RawDeal>("crm.deal.list", {
       ...select, "filter[CLOSED]": "N", "order[DATE_MODIFY]": "DESC",
     }, 6),
@@ -165,7 +169,36 @@ export async function fetchSotuvSnapshot(): Promise<SotuvSnapshot> {
       ...select, "select[9]": "CLOSEDATE",
       "filter[>CLOSEDATE]": since90, "order[CLOSEDATE]": "DESC",
     }, 4),
+    // Tushum trendi uchun — 6 oylik g'olib bitimlar (faqat sana va summa kerak).
+    listAll<{ CLOSEDATE?: string; OPPORTUNITY: string }>("crm.deal.list", {
+      "select[0]": "CLOSEDATE", "select[1]": "OPPORTUNITY",
+      "filter[STAGE_SEMANTIC_ID]": "S",
+      "filter[>CLOSEDATE]": since6m, "order[CLOSEDATE]": "ASC",
+    }, 8).catch(() => []),
   ]);
+
+  // Oy bo'yicha guruhlash — grafik oxirgi 6 oyni ko'rsatadi, bo'sh oy ham qoladi
+  // (aks holda "o'sish" yolg'on ko'rinadi).
+  const MONTHS = ["Yan", "Fev", "Mar", "Apr", "May", "Iyun", "Iyul", "Avg", "Sen", "Okt", "Noy", "Dek"];
+  const bucket = new Map<string, { revenue: number; deals: number }>();
+  const now = new Date();
+  for (let i = 5; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    bucket.set(`${d.getFullYear()}-${d.getMonth()}`, { revenue: 0, deals: 0 });
+  }
+  for (const d of won6mRaw) {
+    if (!d.CLOSEDATE) continue;
+    const dt = new Date(d.CLOSEDATE);
+    const key = `${dt.getFullYear()}-${dt.getMonth()}`;
+    const b = bucket.get(key);
+    if (!b) continue;
+    b.revenue += Number(d.OPPORTUNITY || 0);
+    b.deals += 1;
+  }
+  const monthlyWon = Array.from(bucket.entries()).map(([key, v]) => {
+    const [, m] = key.split("-").map(Number);
+    return { month: MONTHS[m], revenue: Math.round(v.revenue / 1_000_000), deals: v.deals };
+  });
 
   // Shu oyda yopilgan g'olib bitimlar summasi (reja vs fakt uchun)
   const monthStart = new Date();
@@ -215,6 +248,7 @@ export async function fetchSotuvSnapshot(): Promise<SotuvSnapshot> {
       wonThisMonthM,
       wonThisMonthCount,
       openWithoutAmount: openRaw.filter((d) => Number(d.OPPORTUNITY || 0) === 0).length,
+      monthlyWon,
       source: "bitrix",
     },
   };

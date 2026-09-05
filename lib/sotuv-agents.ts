@@ -1,12 +1,14 @@
-// Sotuv bo'limining bitta rahbari, bitta sintezator AI va oltita ixtisoslashgan
-// agenti — /structure (OrgChart), /sotuv (Revenue Command Center) va /campus
-// (3D Sales Hub) shu bitta ro'yxatdan o'qiydi, shunda sahifalar orasida
-// status/son ziddiyati bo'lmaydi (TZI "3D Campus 2.0" AC-09).
+// Sotuv bo'limining HAQIQATDA ishlab turgan AI agentlari.
+// Har biri VPS'da alohida systemd xizmati sifatida ishlaydi (claude-<id>.service),
+// nomi va vazifasi shu agentning o'z sozlamasidan olingan — bu yerda o'ylab
+// topilgan agent yo'q. /sotuv, /campus va /structure shu bitta ro'yxatdan o'qiydi.
 export type SotuvAgentStatus = "live" | "partial" | "planned";
 
 export interface SotuvAgentDef {
   id: string;
   name: string;
+  /** VPS'dagi systemd xizmati — tekshirish uchun: systemctl status <service> */
+  service: string;
   role: string;
   does: string;
   source: string;
@@ -16,66 +18,65 @@ export interface SotuvAgentDef {
 
 export const SOTUV_OWNER = { name: "Bobur Nazarov", role: "Sotuv bo'limi boshlig'i" };
 
-export const SOTUV_SYNTHESIZER = {
-  id: "botir-ai",
-  name: "Botir AI",
-  role: "Bosh strateg · sintez va ustuvorlik",
-  tagline: "signal → ustuvorlik → taklif",
-};
-
 export const SOTUV_AGENTS: SotuvAgentDef[] = [
   {
     id: "maslahatchi",
     name: "UTAX Maslahatchi AI",
+    service: "claude-maslahatchi",
     role: "mijoz bilan birinchi aloqa",
-    does: "Telegramda mijoz bilan o'zi gaplashib ehtiyojni aniqlaydi, to'rt xizmatdan biriga yo'naltiradi, 0–100 ball qo'yadi va Bitrixga lead yozib, isitilgan mijozni tayyor karta bilan sotuvchiga uzatadi. Narx va yakuniy soliq xulosasini aytmaydi.",
-    source: "Telegram bot (@utax_maslahatchi_bot), Bitrix24 CRM",
+    does: "Telegramda mijoz bilan o'zi gaplashadi: savollar bilan ehtiyojni aniqlaydi, mos xizmatni ko'rsatadi, kontaktni tasdiqlaydi va tayyor mijozni inson sotuvchiga topshiradi. Narx, chegirma va yakuniy soliq xulosasini aytmaydi — bu sotuvchining vakolati.",
+    source: "Telegram bot, Bitrix24",
     decision: "Mijoz qaysi xizmatga yo'naltiriladi va qachon insonga topshiriladi",
     status: "live",
   },
   {
-    id: "uchrashuv-brifing",
-    name: "Uchrashuv-brifing agenti",
-    role: "taqdimotchi",
-    does: "Mijoz tarixi, oldingi audit va joriy qarzdorlik asosida har bir uchrashuv uchun qisqa brifing tayyorlaydi.",
-    source: "CRM, audit tarixi, moliyaviy holat",
-    decision: "Uchrashuvda nimaga birinchi urg'u berish kerak",
+    id: "tezkorlid",
+    name: "Tezkor Lid",
+    service: "claude-tezkorlid",
+    role: "yangi lid bilan tezkor ishlash",
+    does: "Xizmat ishga tushirilgan, lekin agentning roli hali sozlanmagan — andozadagi bo'sh o'rin ({AGENT_ROLE}) to'ldirilmagan, shuning uchun aniq vazifa bajarmayapti.",
+    source: "—",
+    decision: "Hali aniqlanmagan",
+    status: "partial",
+  },
+  {
+    id: "sotuvcoach",
+    name: "Sotuv Coach",
+    service: "claude-sotuvcoach",
+    role: "menejerlarni kuzatuvchi",
+    does: "Sotuv menejerlarining ishini kuzatib boradi va yo'naltiradi — coach sifatida maslahat beradi.",
+    source: "Sotuv bo'limi yozishmalari",
+    decision: "Qaysi menejerga qanday yordam kerak",
     status: "live",
   },
   {
-    id: "follow-up",
-    name: "Follow-up agenti",
-    role: "eslatuvchi",
-    does: "Muddat va mijoz ahamiyatiga qarab, bugun kimga qo'ng'iroq yoki xat ketishi kerakligini tartiblaydi.",
-    source: "CRM follow-up ro'yxati",
-    decision: "Bugun kimga birinchi murojaat qilinadi",
-    status: "partial",
+    id: "mijozegasi",
+    name: "Mijoz Egasi",
+    service: "claude-mijozegasi",
+    role: "mijozni ushlab qolish",
+    does: "Mavjud mijozlar bilan aloqani uzilib qolishidan saqlaydi — retention bo'yicha ishlaydi.",
+    source: "Bitrix24, mijoz tarixi",
+    decision: "Qaysi mijoz bilan aloqani tiklash kerak",
+    status: "live",
   },
   {
-    id: "pipeline-analitik",
-    name: "Pipeline-analitik agenti",
-    role: "voronka kuzatuvchisi",
-    does: "Har bosqichdagi bitimlar sonini va qiymatini kuzatib, qayerda tiqilib qolganini ko'rsatadi.",
-    source: "CRM voronka (pipeline)",
-    decision: "Qaysi bosqichga bugun e'tibor kerak",
-    status: "partial",
+    id: "auditchi",
+    name: "Audit Ijrochisi",
+    service: "claude-auditchi",
+    role: "sotilgan xizmatni bajaruvchi",
+    does: "Sotilgan audit va optimizatsiya xizmatlarini bajarishda yordam beradi — sotuvdan keyingi bosqich.",
+    source: "Bitrix24, audit hujjatlari",
+    decision: "Sotilgan ish qanday va qachon bajariladi",
+    status: "live",
   },
   {
-    id: "lid-skoring",
-    name: "Lid-skoring agenti",
-    role: "birlamchi baholovchi",
-    does: "Yangi murojaatlarni manba, shoshilinchlik va byudjetga qarab ball beradi.",
-    source: "Sayt forma, Telegram, qo'ng'iroq markazi",
-    decision: "Kimga birinchi bo'lib qo'ng'iroq qilinadi",
-    status: "planned",
-  },
-  {
-    id: "shartnoma-generator",
-    name: "Shartnoma-generator agenti",
-    role: "hujjat tayyorlovchi",
-    does: "Yopilgan bitim uchun shartnoma loyihasini shablon asosida avtomatik tayyorlaydi.",
-    source: "CRM, shartnoma shablonlari",
-    decision: "Shartnoma qachon mijozga yuboriladi",
-    status: "planned",
+    id: "sotuv",
+    name: "Sotuv Sales",
+    service: "claude-sotuv",
+    role: "bo'lim yordamchisi",
+    does: "Sotuv bo'limi uchun shaxsiy yordamchi — kundalik so'rovlar, eslatma va ma'lumot yig'ish.",
+    source: "Telegram",
+    decision: "Kundalik ish oqimidagi mayda qarorlar",
+    status: "live",
   },
 ];

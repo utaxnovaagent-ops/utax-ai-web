@@ -11,7 +11,7 @@ import {
   auditData,
   internationalData,
 } from "./mock-data";
-import { SOTUV_OWNER, SOTUV_SYNTHESIZER, SOTUV_AGENTS } from "./sotuv-agents";
+import { SOTUV_OWNER, SOTUV_AGENTS } from "./sotuv-agents";
 
 export type AgentState = "IDLE" | "WALK" | "SIT" | "WORK" | "MEETING" | "TALK" | "ERROR";
 // "live"/"partial"/"planned" — /sotuv bilan bitta manbadan (lib/sotuv-agents.ts)
@@ -92,10 +92,6 @@ const marketingTaskPool = [
 // Sotuv Hub'i — Bobur Nazarov (inson), Botir AI (sintezator) va 5 ta
 // ixtisoslashgan agent — hammasi lib/sotuv-agents.ts'dagi bitta manbadan.
 const boburTaskPool = sotuvData.followUps.map((f) => `${f.client} bo'yicha yakuniy qaror kutmoqda`);
-const botirTaskPool = [
-  "6 agent signalini sintez qilib, bugungi ustuvorlikni tayyorlamoqda",
-  "Bobur Nazarovga qaror taklifini yuborishga tayyorlanmoqda",
-];
 
 const internationalTaskPool = [
   ...internationalData.cases.map((c) => `${c.client}: ${c.treaty} — ${c.status}`),
@@ -124,7 +120,6 @@ export const AGENTS: AgentDef[] = [
 
   // Sotuv Hub — TZI "3D Campus 2.0" §6: 1 inson rahbar + 1 sintezator + 6 agent.
   { id: "bobur-nazarov", name: SOTUV_OWNER.name, zoneKey: "sotuv", color: "#334155", role: SOTUV_OWNER.role, taskPool: boburTaskPool, entityType: "human", demoStatus: "live" },
-  { id: SOTUV_SYNTHESIZER.id, name: SOTUV_SYNTHESIZER.name, zoneKey: "sotuv", color: "#6d28d9", role: SOTUV_SYNTHESIZER.role, taskPool: botirTaskPool, entityType: "synthesizer", demoStatus: "live" },
   ...SOTUV_AGENTS.map((a) => ({
     id: `sotuv-${a.id}`,
     name: a.name,

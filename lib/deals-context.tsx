@@ -18,6 +18,8 @@ type DealsState = {
   // Bitrixdagi so'nggi 90 kun natijasi — win rate shu ikkitasidan hisoblanadi.
   won90: number | null;
   lost90: number | null;
+  /** Oxirgi 6 oy tushumi — Bitrixdagi g'olib bitimlardan. */
+  monthlyWon: { month: string; revenue: number; deals: number }[] | null;
 };
 
 const DealsContext = createContext<DealsState>({
@@ -30,6 +32,7 @@ const DealsContext = createContext<DealsState>({
   quality: null,
   won90: null,
   lost90: null,
+  monthlyWon: null,
 });
 
 export function DealsProvider({ children }: { children: ReactNode }) {
@@ -43,6 +46,7 @@ export function DealsProvider({ children }: { children: ReactNode }) {
     quality: null,
     won90: null,
     lost90: null,
+    monthlyWon: null,
   });
 
   useEffect(() => {
@@ -65,6 +69,7 @@ export function DealsProvider({ children }: { children: ReactNode }) {
             },
             won90: typeof j.meta?.wonLast90 === "number" ? j.meta.wonLast90 : null,
             lost90: typeof j.meta?.lostLast90 === "number" ? j.meta.lostLast90 : null,
+            monthlyWon: Array.isArray(j.meta?.monthlyWon) ? j.meta.monthlyWon : null,
           });
         } else {
           setState((s) => ({
@@ -93,9 +98,9 @@ export function useDeals(): Deal[] {
 
 /** Manba holati — sahifadagi belgi uchun. */
 export function useDealsSource() {
-  const { isReal, loading, fetchedAt, note, deals, wonThisMonthM, quality, won90, lost90 } = useContext(DealsContext);
+  const { isReal, loading, fetchedAt, note, deals, wonThisMonthM, quality, won90, lost90, monthlyWon } = useContext(DealsContext);
   // Win rate faqat real yopilgan bitimlar bo'lsa hisoblanadi.
   const closed = (won90 ?? 0) + (lost90 ?? 0);
   const winRate = isReal && closed > 0 ? Math.round(((won90 ?? 0) / closed) * 100) : null;
-  return { isReal, loading, fetchedAt, note, count: deals.length, wonThisMonthM, quality, won90, lost90, winRate };
+  return { isReal, loading, fetchedAt, note, count: deals.length, wonThisMonthM, quality, won90, lost90, winRate, monthlyWon };
 }

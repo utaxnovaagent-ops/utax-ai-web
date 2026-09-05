@@ -24,8 +24,11 @@ import {
   Send,
   Bot,
   Box,
+  Trash2,
+  Plus,
 } from "lucide-react";
 import { orgStructure, moliyaData, auditData, itData, marketingData, sotuvData, internationalData, telegramData, hrData } from "@/lib/mock-data";
+import { useDepartments, type Dept } from "@/lib/custom-depts";
 import { SOTUV_SYNTHESIZER, SOTUV_AGENTS, type SotuvAgentStatus } from "@/lib/sotuv-agents";
 import { useAppState } from "@/lib/app-context";
 import { t } from "@/lib/i18n";
@@ -39,10 +42,16 @@ const SOTUV_STATUS_DOT: Record<SotuvAgentStatus, string> = {
   planned: "bg-danger",
 };
 
-const deptEmployeeSum = orgStructure.departments.reduce((sum, d) => sum + d.employees, 0);
-const TOTAL_STAFF = deptEmployeeSum + 2; // + CEO + Direktor
-const LEADERS = orgStructure.departments.length + 2; // dept heads + CEO + Direktor
-const AVG_SPAN = Math.round((deptEmployeeSum / orgStructure.departments.length) * 10) / 10;
+// Statistika qo'lda qo'shilgan bo'limlarni ham hisobga oladi, shuning uchun
+// modul darajasida emas, ro'yxatdan hisoblanadi.
+function deptStats(departments: Dept[]) {
+  const employeeSum = departments.reduce((sum, d) => sum + d.employees, 0);
+  return {
+    totalStaff: employeeSum + 2, // + CEO + Direktor
+    leaders: departments.length + 2, // bo'lim boshliqlari + CEO + Direktor
+    avgSpan: departments.length ? Math.round((employeeSum / departments.length) * 10) / 10 : 0,
+  };
+}
 const VIEW_STORAGE_KEY = "utax_orgchart_view";
 
 const DEPT_ICON: Record<string, typeof Wallet> = {
@@ -69,7 +78,10 @@ const LAST_TASK_BY_DEPT: Record<string, string> = {
   hr: hrData.vacancies[0]?.title ?? "",
 };
 
-type Dept = (typeof orgStructure.departments)[number];
+// Bo'lim nomi: qo'lda qo'shilganlarda tarjima kaliti bo'lmaydi, o'z nomi ishlatiladi.
+function deptLabel(dept: Dept, lang: Parameters<typeof t>[1]) {
+  return dept.isCustom ? dept.label : t(`nav_${dept.key}`, lang);
+}
 
 interface Geom {
   w: number;
@@ -84,6 +96,7 @@ function useOrgConnectors(
   ceoRef: React.RefObject<HTMLDivElement | null>,
   directorRef: React.RefObject<HTMLDivElement | null>,
   deptRefs: React.RefObject<(HTMLButtonElement | null)[]>,
+  departments: Dept[],
   active: boolean,
   deps: unknown[]
 ) {
@@ -106,7 +119,7 @@ function useOrgConnectors(
     const ceo = rel(ceoEl.getBoundingClientRect());
     const dir = rel(dirEl.getBoundingClientRect());
 
-    const depts = orgStructure.departments
+    const depts = departments
       .map((d, i) => {
         const el = deptRefs.current[i];
         if (!el) return null;
@@ -135,7 +148,7 @@ function useOrgConnectors(
     ];
 
     setGeom({ w: wrapRect.width, h: wrapRect.height, trunk, branches, dot });
-  }, [wrapRef, ceoRef, directorRef, deptRefs]);
+  }, [wrapRef, ceoRef, directorRef, deptRefs, departments]);
 
   useLayoutEffect(() => {
     if (!active) return;
@@ -288,10 +301,22 @@ function DeptCard({
   );
 }
 
-function DepartmentDrawer({ deptKey, lang, onClose }: { deptKey: string; lang: Parameters<typeof t>[1]; onClose: () => void }) {
+function DepartmentDrawer({
+  deptKey,
+  departments,
+  lang,
+  onClose,
+  onRemove,
+}: {
+  deptKey: string;
+  departments: Dept[];
+  lang: Parameters<typeof t>[1];
+  onClose: () => void;
+  onRemove: (key: string) => void;
+}) {
   const [entered, setEntered] = useState(false);
   const closeRef = useRef<HTMLButtonElement>(null);
-  const dept = orgStructure.departments.find((d) => d.key === deptKey);
+  const dept = departments.find((d) => d.key === deptKey);
 
   useEffect(() => {
     const raf = requestAnimationFrame(() => setEntered(true));
@@ -307,7 +332,7 @@ function DepartmentDrawer({ deptKey, lang, onClose }: { deptKey: string; lang: P
   }, [onClose]);
 
   if (!dept) return null;
-  const label = t(`nav_${dept.key}`, lang);
+  const label = deptLabel(dept, lang);
   const Icon = DEPT_ICON[dept.key] ?? Users;
   const isExtra = "isExtra" in dept && dept.isExtra;
   const aiPercent = dept.aiPercent;
@@ -435,12 +460,26 @@ function DepartmentDrawer({ deptKey, lang, onClose }: { deptKey: string; lang: P
 
           {isExtra && <p className="text-xs text-warning">{t("orgchart_extra_note", lang)}</p>}
 
-          <Link
-            href={`/${dept.key}`}
-            className="flex items-center justify-center gap-1.5 rounded-xl brand-gradient px-4 py-2.5 text-sm font-semibold text-white shadow-brand transition-transform hover:-translate-y-0.5 motion-reduce:transition-none"
-          >
-            {t("orgchart_drawer_open_page", lang)} <ArrowRight size={14} />
-          </Link>
+          {/* Qo'lda qo'shilgan bo'limda alohida sahifa yo'q — uning o'rniga
+              o'chirish tugmasi ko'rsatiladi. */}
+          {dept.isCustom ? (
+            <button
+              onClick={() => {
+                onRemove(dept.key);
+                onClose();
+              }}
+              className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-danger/40 px-4 py-2.5 text-sm font-semibold text-danger hover:bg-danger-bg"
+            >
+              <Trash2 size={14} /> {t("orgchart_dept_remove", lang)}
+            </button>
+          ) : (
+            <Link
+              href={`/${dept.key}`}
+              className="flex items-center justify-center gap-1.5 rounded-xl brand-gradient px-4 py-2.5 text-sm font-semibold text-white shadow-brand transition-transform hover:-translate-y-0.5 motion-reduce:transition-none"
+            >
+              {t("orgchart_drawer_open_page", lang)} <ArrowRight size={14} />
+            </Link>
+          )}
         </div>
       </div>
     </div>
@@ -449,6 +488,8 @@ function DepartmentDrawer({ deptKey, lang, onClose }: { deptKey: string; lang: P
 
 export function OrgChart() {
   const { lang } = useAppState();
+  const { departments, removeDepartment } = useDepartments();
+  const stats = deptStats(departments);
   const [view, setView] = useState<"diagram" | "list">("diagram");
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
   const [hoveredKey, setHoveredKey] = useState<string | null>(null);
@@ -472,7 +513,11 @@ export function OrgChart() {
     window.localStorage.setItem(VIEW_STORAGE_KEY, view);
   }, [view]);
 
-  const geom = useOrgConnectors(wrapRef, ceoRef, directorRef, deptRefs, view === "diagram", [lang, view, orgStructure.departments.length]);
+  const geom = useOrgConnectors(wrapRef, ceoRef, directorRef, deptRefs, departments, view === "diagram", [
+    lang,
+    view,
+    departments.length,
+  ]);
 
   function toggleSelect(key: string) {
     setSelectedKey((prev) => (prev === key ? null : key));
@@ -516,7 +561,7 @@ export function OrgChart() {
           icon={<Crown size={17} />}
           name={orgStructure.ceo.name}
           eyebrow={t("role_label_ceo", lang)}
-          meta={`${TOTAL_STAFF} ${t("orgchart_ceo_meta", lang)}`}
+          meta={`${stats.totalStaff} ${t("orgchart_ceo_meta", lang)}`}
           gradient
         />
       </div>
@@ -526,16 +571,16 @@ export function OrgChart() {
           icon={<UserCog size={15} />}
           name={orgStructure.director.name}
           eyebrow={t("role_label_director", lang)}
-          meta={`${orgStructure.departments.length} ${t("orgchart_director_meta", lang)}`}
+          meta={`${departments.length} ${t("orgchart_director_meta", lang)}`}
         />
       </div>
 
       <div className="relative z-10 grid w-full grid-cols-1 gap-3.5 pt-2 sm:grid-cols-2 lg:grid-cols-3 3xl:grid-cols-4">
-        {orgStructure.departments.map((d, i) => (
+        {departments.map((d, i) => (
           <DeptCard
             key={d.key}
             dept={d}
-            label={t(`nav_${d.key}`, lang)}
+            label={deptLabel(d, lang)}
             selected={selectedKey === d.key}
             onSelect={() => toggleSelect(d.key)}
             lang={lang}
@@ -564,23 +609,23 @@ export function OrgChart() {
           <tr className="border-b border-border">
             <td className="py-2.5 font-medium text-foreground">{orgStructure.ceo.name}</td>
             <td className="py-2.5 text-muted">{t("role_label_ceo", lang)}</td>
-            <td className="py-2.5 text-muted">{TOTAL_STAFF}</td>
+            <td className="py-2.5 text-muted">{stats.totalStaff}</td>
             <td className="py-2.5 text-muted">—</td>
           </tr>
           <tr className="border-b border-border">
             <td className="py-2.5 font-medium text-foreground">{orgStructure.director.name}</td>
             <td className="py-2.5 text-muted">{t("role_label_director", lang)}</td>
             <td className="py-2.5 text-muted">
-              {orgStructure.departments.length} {t("orgchart_director_meta", lang)}
+              {departments.length} {t("orgchart_director_meta", lang)}
             </td>
             <td className="py-2.5 text-muted">—</td>
           </tr>
-          {orgStructure.departments.map((d) => (
+          {departments.map((d) => (
             <tr key={d.key} className="border-b border-border last:border-0">
               <td className="max-w-[140px] py-2.5 sm:max-w-none">
                 <span className="flex items-center gap-2 whitespace-nowrap font-medium text-foreground">
                   <span className="h-2 w-2 flex-shrink-0 rounded-full" style={{ background: d.color }} />
-                  {t(`nav_${d.key}`, lang)}
+                  {deptLabel(d, lang)}
                 </span>
                 {"isExtra" in d && d.isExtra && (
                   <span className="mt-1 block w-fit">
@@ -608,19 +653,19 @@ export function OrgChart() {
         <div className="grid grid-cols-2 gap-3 sm:flex-1 lg:grid-cols-4">
           <StatCard
             label={t("orgchart_stat_total", lang)}
-            value={String(TOTAL_STAFF)}
+            value={String(stats.totalStaff)}
             hint={t("orgchart_stat_total_hint", lang)}
             icon={<Users size={18} />}
           />
           <StatCard
             label={t("orgchart_stat_leaders", lang)}
-            value={String(LEADERS)}
+            value={String(stats.leaders)}
             hint={t("orgchart_stat_leaders_hint", lang)}
             icon={<UserCog size={18} />}
           />
           <StatCard
             label={t("orgchart_stat_span", lang)}
-            value={String(AVG_SPAN)}
+            value={String(stats.avgSpan)}
             hint={t("orgchart_stat_span_hint", lang)}
             icon={<Layers3 size={18} />}
           />
@@ -662,7 +707,15 @@ export function OrgChart() {
         list
       )}
 
-      {selectedKey && <DepartmentDrawer deptKey={selectedKey} lang={lang} onClose={() => setSelectedKey(null)} />}
+      {selectedKey && (
+        <DepartmentDrawer
+          deptKey={selectedKey}
+          departments={departments}
+          lang={lang}
+          onClose={() => setSelectedKey(null)}
+          onRemove={removeDepartment}
+        />
+      )}
 
       {/* Support & external roles */}
       <div className="mt-8 w-full rounded-2xl border border-border bg-brand-light/40 p-5">

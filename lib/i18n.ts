@@ -54,7 +54,15 @@ export const STRINGS: Dict = {
     en: "Reporting line, departments and staff distribution",
   },
   structure_breadcrumb_root: { uz: "Boshqaruv", ru: "Управление", en: "Control" },
-  structure_add_employee: { uz: "Xodim qo'shish", ru: "Добавить сотрудника", en: "Add employee" },
+  structure_add_dept: { uz: "Bo'lim qo'shish", ru: "Добавить отдел", en: "Add department" },
+  structure_dept_name: { uz: "Bo'lim nomi", ru: "Название отдела", en: "Department name" },
+  structure_dept_save: { uz: "Qo'shish", ru: "Добавить", en: "Add" },
+  structure_dept_local_note: {
+    uz: "Bu bo'lim faqat shu brauzerda saqlanadi — umumiy baza hali ulanmagan, boshqa xodimlar uni ko'rmaydi.",
+    ru: "Отдел сохраняется только в этом браузере — общая база ещё не подключена, другие сотрудники его не увидят.",
+    en: "This department is stored in this browser only — there is no shared database yet, so others will not see it.",
+  },
+  orgchart_dept_remove: { uz: "Bo'limni o'chirish", ru: "Удалить отдел", en: "Remove department" },
   structure_export: { uz: "Eksport", ru: "Экспорт", en: "Export" },
 
   // Login

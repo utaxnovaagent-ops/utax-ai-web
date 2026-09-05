@@ -43,7 +43,6 @@ const deptEmployeeSum = orgStructure.departments.reduce((sum, d) => sum + d.empl
 const TOTAL_STAFF = deptEmployeeSum + 2; // + CEO + Direktor
 const LEADERS = orgStructure.departments.length + 2; // dept heads + CEO + Direktor
 const AVG_SPAN = Math.round((deptEmployeeSum / orgStructure.departments.length) * 10) / 10;
-const MAX_DEPT_SIZE = Math.max(...orgStructure.departments.map((d) => d.employees));
 const VIEW_STORAGE_KEY = "utax_orgchart_view";
 
 const DEPT_ICON: Record<string, typeof Wallet> = {
@@ -230,7 +229,7 @@ function DeptCard({
   onHover: (hovering: boolean) => void;
 }) {
   const Icon = DEPT_ICON[dept.key] ?? Users;
-  const load = Math.round((dept.employees / MAX_DEPT_SIZE) * 100);
+  const aiPercent = dept.aiPercent;
   const isExtra = "isExtra" in dept && dept.isExtra;
 
   return (
@@ -274,11 +273,11 @@ function DeptCard({
 
       <div>
         <div className="mb-1 flex items-center justify-between text-[10px] font-medium text-muted">
-          <span>{t("orgchart_workload", lang)}</span>
-          <span>{load}%</span>
+          <span>{t("orgchart_ai_coverage", lang)}</span>
+          <span>{aiPercent > 0 ? `${aiPercent}%` : t("orgchart_ai_not_started", lang)}</span>
         </div>
         <div className="h-1.5 w-full overflow-hidden rounded-full bg-surface-alt">
-          <div className="h-full rounded-full" style={{ width: `${load}%`, background: dept.color }} />
+          <div className="h-full rounded-full" style={{ width: `${aiPercent}%`, background: dept.color }} />
         </div>
       </div>
 
@@ -311,7 +310,7 @@ function DepartmentDrawer({ deptKey, lang, onClose }: { deptKey: string; lang: P
   const label = t(`nav_${dept.key}`, lang);
   const Icon = DEPT_ICON[dept.key] ?? Users;
   const isExtra = "isExtra" in dept && dept.isExtra;
-  const load = Math.round((dept.employees / MAX_DEPT_SIZE) * 100);
+  const aiPercent = dept.aiPercent;
   const lastTask = LAST_TASK_BY_DEPT[dept.key];
 
   return (
@@ -338,11 +337,14 @@ function DepartmentDrawer({ deptKey, lang, onClose }: { deptKey: string; lang: P
               <p className="text-xs text-muted">
                 {t("orgchart_detail_head", lang)}: {dept.head}
               </p>
-              <span className="mt-1 inline-block">
-                {isExtra ? (
-                  <Badge tone="warning">{t("orgchart_extra_badge", lang)}</Badge>
-                ) : (
+              <span className="mt-1 inline-flex flex-wrap gap-1.5">
+                {isExtra && <Badge tone="warning">{t("orgchart_extra_badge", lang)}</Badge>}
+                {/* Holat faqat haqiqatda qurilgan bo'limda "faol" — qolganida
+                    ish hali boshlanmagani ochiq aytiladi. */}
+                {aiPercent > 0 ? (
                   <Badge tone="success">{t("orgchart_ai_agent_status_active", lang)}</Badge>
+                ) : (
+                  <Badge tone="neutral">{t("orgchart_ai_not_started", lang)}</Badge>
                 )}
               </span>
             </div>
@@ -364,8 +366,8 @@ function DepartmentDrawer({ deptKey, lang, onClose }: { deptKey: string; lang: P
               <p className="text-[10px] text-muted">{t("orgchart_col_employees", lang)}</p>
             </div>
             <div className="rounded-xl border border-border bg-surface-alt p-3 text-center">
-              <p className="text-lg font-bold text-foreground">{load}%</p>
-              <p className="text-[10px] text-muted">{t("orgchart_workload", lang)}</p>
+              <p className="text-lg font-bold text-foreground">{aiPercent}%</p>
+              <p className="text-[10px] text-muted">{t("orgchart_ai_coverage", lang)}</p>
             </div>
             <div className="rounded-xl border border-border bg-surface-alt p-3 text-center">
               <p className="text-lg font-bold text-foreground">{isExtra ? "1" : "0"}</p>
@@ -375,13 +377,21 @@ function DepartmentDrawer({ deptKey, lang, onClose }: { deptKey: string; lang: P
             </div>
           </div>
 
+          {/* Agent qurilmagan bo'limda "oxirgi vazifa" ko'rsatilmaydi — u shunchaki
+              namunaviy yozuv bo'lar edi va agent ishlayotgandek taassurot qoldirardi. */}
           <div className="rounded-xl border border-border bg-brand-light p-4">
             <div className="mb-1.5 flex items-center gap-2 text-xs font-semibold text-brand">
               <Bot size={14} />
               {t("orgchart_ai_agent", lang)}: {label}
             </div>
-            <p className="text-xs font-medium text-foreground">{t("orgchart_ai_agent_task", lang)}</p>
-            <p className="mt-0.5 text-sm text-foreground">{lastTask}</p>
+            {aiPercent > 0 ? (
+              <>
+                <p className="text-xs font-medium text-foreground">{t("orgchart_ai_agent_task", lang)}</p>
+                <p className="mt-0.5 text-sm text-foreground">{lastTask}</p>
+              </>
+            ) : (
+              <p className="text-sm text-muted">{t("orgchart_ai_not_started_note", lang)}</p>
+            )}
           </div>
 
           {/* Sotuv — TZI "3D Campus 2.0"da qurilgan haqiqiy agent tuzilmasi.

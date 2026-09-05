@@ -1,5 +1,17 @@
 // Namunaviy (mock) ma'lumotlar — UTAX AI prototipi uchun. Real backend/integratsiyalarga ulanmagan.
 
+import { SOTUV_AGENTS } from "./sotuv-agents";
+
+// AI qamrovi — bo'lim bo'yicha HAQIQATDA qurilgan ulush (xodim soniga aloqasi yo'q).
+// Sotuvda: Botir AI (sintezator, ishlaydi) + 6 ta agent; live = 1, partial = 0.5,
+// planned = 0. Qolgan bo'limlarda hozircha faqat interfeys maketi bor — real agent,
+// integratsiya va mantiq yozilmagan, shuning uchun halol ko'rsatkich 0%.
+const sotuvAiUnits = [
+  1, // Botir AI — sintezator, ishlab turibdi
+  ...SOTUV_AGENTS.map((a) => (a.status === "live" ? 1 : a.status === "partial" ? 0.5 : 0)),
+];
+const SOTUV_AI_PERCENT = Math.round((sotuvAiUnits.reduce((s, n) => s + n, 0) / sotuvAiUnits.length) * 100);
+
 export const ceoData = {
   weeklySummary:
     "Bu hafta 118 ta mijoz murojaati qayta ishlandi, tushum rejadan 4% yuqori. IT bo'limida 2 ta kritik tiket ochiq. Marketing kontent taqvimi 92% bajarilgan.",
@@ -373,14 +385,14 @@ export const orgStructure = {
   ceo: { name: "Aziz Rahimov", title: "CEO" },
   director: { name: "Dilnoza Karimova", title: "Direktor" },
   departments: [
-    { key: "moliya", label: "Moliya", head: "Gulnora Aliyeva", employees: 9, color: "#16a34a" },
-    { key: "audit", label: "Audit", head: "Malika Rustamova", employees: 8, color: "#0d9488", isExtra: true },
-    { key: "it", label: "IT", head: "Sherzod Yo'ldoshev", employees: 6, color: "#2563eb" },
-    { key: "marketing", label: "Marketing", head: "Kamola Zokirova", employees: 5, color: "#db2777" },
-    { key: "sotuv", label: "Sotuv", head: "Bobur Nazarov", employees: 11, color: "#ea580c" },
-    { key: "international", label: "Xalqaro soliq", head: "Javlon Sultonov", employees: 3, color: "#4338ca", isExtra: true },
-    { key: "telegram", label: "Ishchi bo'lim", head: "Nodira Egamova", employees: 7, color: "#0891b2" },
-    { key: "hr", label: "HR", head: "Shahnoza Tursunova", employees: 4, color: "#9333ea" },
+    { key: "moliya", label: "Moliya", head: "Gulnora Aliyeva", employees: 9, color: "#16a34a", aiPercent: 0 },
+    { key: "audit", label: "Audit", head: "Malika Rustamova", employees: 8, color: "#0d9488", isExtra: true, aiPercent: 0 },
+    { key: "it", label: "IT", head: "Sherzod Yo'ldoshev", employees: 6, color: "#2563eb", aiPercent: 0 },
+    { key: "marketing", label: "Marketing", head: "Kamola Zokirova", employees: 5, color: "#db2777", aiPercent: 0 },
+    { key: "sotuv", label: "Sotuv", head: "Bobur Nazarov", employees: 11, color: "#ea580c", aiPercent: SOTUV_AI_PERCENT },
+    { key: "international", label: "Xalqaro soliq", head: "Javlon Sultonov", employees: 3, color: "#4338ca", isExtra: true, aiPercent: 0 },
+    { key: "telegram", label: "Ishchi bo'lim", head: "Nodira Egamova", employees: 7, color: "#0891b2", aiPercent: 0 },
+    { key: "hr", label: "HR", head: "Shahnoza Tursunova", employees: 4, color: "#9333ea", aiPercent: 0 },
   ],
   support: [
     { key: "admin", label: "Administrator", desc: "Konfiguratsiya va monitoring" },

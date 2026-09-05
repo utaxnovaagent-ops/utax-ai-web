@@ -302,6 +302,13 @@ export const STRINGS: Dict = {
   },
   orgchart_platform_roles_title: { uz: "Platforma rollari", ru: "Роли платформы", en: "Platform roles" },
   orgchart_workload: { uz: "Yuklama", ru: "Загрузка", en: "Workload" },
+  orgchart_ai_coverage: { uz: "AI qamrovi", ru: "Охват ИИ", en: "AI coverage" },
+  orgchart_ai_not_started: { uz: "Boshlanmagan", ru: "Не начато", en: "Not started" },
+  orgchart_ai_not_started_note: {
+    uz: "Bu bo'lim uchun AI agent hali qurilmagan — sahifadagi ma'lumot namunaviy, faqat ko'rinish uchun.",
+    ru: "ИИ-агент для этого отдела ещё не создан — данные на странице демонстрационные.",
+    en: "No AI agent has been built for this department yet — the page data is illustrative only.",
+  },
   orgchart_ai_agent: { uz: "AI agent", ru: "AI-агент", en: "AI agent" },
   orgchart_ai_agent_status_active: { uz: "Holat: Faol", ru: "Статус: Активен", en: "Status: Active" },
   orgchart_ai_agent_task: { uz: "Oxirgi vazifa", ru: "Последняя задача", en: "Last task" },

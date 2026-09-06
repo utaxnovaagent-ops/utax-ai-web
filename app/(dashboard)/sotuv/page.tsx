@@ -9,13 +9,13 @@ import { MissionQueue } from "@/components/sotuv/MissionQueue";
 import { DealRiskRadar } from "@/components/sotuv/DealRiskRadar";
 import { RevenueTrend } from "@/components/sotuv/RevenueTrend";
 import { pipelineValue, weightedForecast, atRiskValue, funnelStages } from "@/lib/sales-metrics";
-import { DealsProvider, useDeals, useDealsSource } from "@/lib/deals-context";
+import { DealsProvider, useDeals, useDealsSource, usePeriod } from "@/lib/deals-context";
 import { DataSourceBadge } from "@/components/sotuv/DataSourceBadge";
 import { SotuvStructure } from "@/components/sotuv/SotuvStructure";
 import { SotuvAgents } from "@/components/sotuv/SotuvAgents";
 import { AgentActivity } from "@/components/sotuv/AgentActivity";
 import { downloadCsv } from "@/lib/csv";
-import { PERIODS, filterByPeriod, periodSupported, type PeriodId } from "@/lib/period";
+import { PERIODS, type PeriodId } from "@/lib/period";
 import { CallAnalytics } from "@/components/sotuv/CallAnalytics";
 
 
@@ -31,11 +31,10 @@ const SOTUV_WEB_URL = "https://sotuv.169-58-178-40.sslip.io";
 
 function SotuvPageInner() {
   const [stageFilter, setStageFilter] = useState<string | null>(null);
-  const [period, setPeriod] = useState<PeriodId>("all");
-  const allDeals = useDeals();
-  // Davr filtri faqat Bitrixdan kelgan bitimlarda ishlaydi (sana bor).
-  const canFilter = periodSupported(allDeals);
-  const deals = canFilter ? filterByPeriod(allDeals, period) : allDeals;
+  // Davr filtri kontekstda qo'llanadi — useDeals() allaqachon filtrlangan
+  // ro'yxatni qaytaradi, shuning uchun radar/voronka/missiyalar ham bo'ysunadi.
+  const { period, setPeriod, supported: canFilter, totalCount } = usePeriod();
+  const deals = useDeals();
   const { isReal, fetchedAt, count, winRate, won90, lost90, quality } = useDealsSource();
 
   function exportReport() {
@@ -136,7 +135,7 @@ function SotuvPageInner() {
             {PERIODS.find((p) => p.id === period)?.label}
           </span>
           <span>
-            — {deals.length} ta bitim ({allDeals.length} tadan), yaratilgan sana bo&apos;yicha
+            — {deals.length} ta bitim ({totalCount} tadan), yaratilgan sana bo&apos;yicha
           </span>
           <button onClick={() => setPeriod("all")} className="ml-auto font-medium text-brand hover:underline">
             filtrni tozalash

@@ -3,7 +3,8 @@
 // Sotuv sahifasidagi barcha komponentlar bitta manbadan bitim ro'yxatini oladi.
 // Bitrix ulanmagan yoki uzilgan bo'lsa — namunaviy ma'lumotga qaytadi va buni
 // sahifada ochiq aytadi (yarim-real ko'rsatkich chalg'itmasligi uchun).
-import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { filterByPeriod, periodSupported, type PeriodId } from "./period";
 import { sotuvDeals } from "./mock-data";
 import type { Deal } from "./sales-metrics";
 
@@ -35,7 +36,22 @@ const DealsContext = createContext<DealsState>({
   monthlyWon: null,
 });
 
+type PeriodCtx = {
+  period: PeriodId;
+  setPeriod: (p: PeriodId) => void;
+  supported: boolean;
+  totalCount: number;
+};
+
+const PeriodContext = createContext<PeriodCtx>({
+  period: "all",
+  setPeriod: () => {},
+  supported: false,
+  totalCount: 0,
+});
+
 export function DealsProvider({ children }: { children: ReactNode }) {
+  const [period, setPeriod] = useState<PeriodId>("all");
   const [state, setState] = useState<DealsState>({
     deals: sotuvDeals as Deal[],
     isReal: false,
@@ -88,12 +104,31 @@ export function DealsProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  return <DealsContext.Provider value={state}>{children}</DealsContext.Provider>;
+  // Davr filtri shu yerda qo'llanadi — sahifadagi hamma blok bir xil ro'yxatdan
+  // o'qiydi, aks holda KPI filtrlanib, grafik filtrlanmay qolardi.
+  const supported = periodSupported(state.deals);
+  const visible = useMemo(
+    () => (supported ? filterByPeriod(state.deals, period) : state.deals),
+    [state.deals, period, supported]
+  );
+
+  return (
+    <PeriodContext.Provider
+      value={{ period, setPeriod, supported, totalCount: state.deals.length }}
+    >
+      <DealsContext.Provider value={{ ...state, deals: visible }}>{children}</DealsContext.Provider>
+    </PeriodContext.Provider>
+  );
 }
 
 /** Metrik funksiyalarga uzatish uchun bitim ro'yxati. */
 export function useDeals(): Deal[] {
   return useContext(DealsContext).deals;
+}
+
+/** Davr filtri — faqat sarlavhadagi tanlagich uchun. */
+export function usePeriod() {
+  return useContext(PeriodContext);
 }
 
 /** Manba holati — sahifadagi belgi uchun. */

@@ -111,7 +111,7 @@ function MeetingTable({ seatCount }: { seatCount: number }) {
         <group key={i} position={[s.x, 0, s.z]}>
           <mesh position={[0, MEETING_TABLE.seatHeight, 0]} castShadow receiveShadow>
             <cylinderGeometry args={[0.27, 0.27, 0.06, 24]} />
-            <meshStandardMaterial color="#4c1d95" />
+            <meshStandardMaterial color="#1677FF" />
           </mesh>
           <mesh position={[0, MEETING_TABLE.seatHeight / 2, 0]}>
             <cylinderGeometry args={[0.05, 0.05, MEETING_TABLE.seatHeight, 12]} />
@@ -196,7 +196,7 @@ export function CampusScene({ reducedMotion, selectedId, lang, onSelect, onState
           <meshStandardMaterial color="#ece7fb" />
         </mesh>
         <Billboard position={[0, 2.4, -4]}>
-          <Text fontSize={0.3} color="#4c1d95" anchorX="center" outlineWidth={0.015} outlineColor="#ffffff">
+          <Text fontSize={0.3} color="#0B4FB0" anchorX="center" outlineWidth={0.015} outlineColor="#ffffff">
             Yig'ilish maydoni
           </Text>
         </Billboard>

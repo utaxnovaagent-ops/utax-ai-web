@@ -41,7 +41,7 @@ function since(iso: string | null) {
 }
 
 export function SotuvStructure() {
-  const [activity, setActivity] = useState<Record<string, string | null>>({});
+  const [activity, setActivity] = useState<Record<string, { at: string | null; note?: string }>>({});
 
   useEffect(() => {
     let alive = true;
@@ -49,8 +49,10 @@ export function SotuvStructure() {
       .then((r) => r.json())
       .then((j) => {
         if (!alive || !j?.ok) return;
-        const map: Record<string, string | null> = {};
-        for (const a of j.agents as { id: string; lastActiveAt: string | null }[]) map[a.id] = a.lastActiveAt;
+        const map: Record<string, { at: string | null; note?: string }> = {};
+        for (const a of j.agents as { id: string; lastActiveAt: string | null; note?: string }[]) {
+          map[a.id] = { at: a.lastActiveAt, note: a.note };
+        }
         setActivity(map);
       })
       .catch(() => {});
@@ -118,7 +120,8 @@ export function SotuvStructure() {
 
                 <div className="space-y-2">
                   {agents.map((a) => {
-                    const last = activity[a.id] ?? null;
+                    const last = activity[a.id]?.at ?? null;
+                    const note = activity[a.id]?.note;
                     const fresh = !!last && Date.now() - Date.parse(last) < 24 * 3600_000;
                     return (
                       <div
@@ -144,6 +147,12 @@ export function SotuvStructure() {
                           <p className="min-w-0 truncate text-[10px] text-muted">{a.role}</p>
                           {last && <p className="flex-shrink-0 text-[10px] text-muted">{since(last)}</p>}
                         </div>
+                        {/* Tirik, lekin ishi yo'q — buni "o'lik" deb ko'rsatmaymiz */}
+                        {note && (
+                          <p className="mt-1 ml-8 rounded-md bg-amber-50 px-1.5 py-0.5 text-[10px] text-amber-800 dark:bg-amber-950/40 dark:text-amber-300">
+                            {note}
+                          </p>
+                        )}
                       </div>
                     );
                   })}

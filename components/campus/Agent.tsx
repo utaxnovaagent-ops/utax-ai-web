@@ -156,8 +156,8 @@ export function Agent({ agent, ownDesk, seatIndex, seatTotal, selected, reducedM
     WALK: "#2563eb",
     SIT: "#9ca3af",
     WORK: "#16a34a",
-    MEETING: "#7c3aed",
-    TALK: "#7c3aed",
+    MEETING: "#38BDF8",
+    TALK: "#38BDF8",
     ERROR: "#dc2626",
   };
   // "qisman" agent hech qachon "jonli" (yashil) bilan aralashtirilmasin —
@@ -214,7 +214,7 @@ export function Agent({ agent, ownDesk, seatIndex, seatTotal, selected, reducedM
       {selected && (
         <mesh position={[0, 0.05, 0]} rotation={[-Math.PI / 2, 0, 0]}>
           <ringGeometry args={[0.55, 0.65, 32]} />
-          <meshBasicMaterial color="#4c1d95" />
+          <meshBasicMaterial color="#1677FF" />
         </mesh>
       )}
 

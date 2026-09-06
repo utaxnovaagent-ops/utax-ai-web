@@ -38,7 +38,7 @@ export default function CeoPage() {
               <XAxis dataKey="month" tick={{ fontSize: 12 }} stroke="#6b7280" />
               <YAxis tick={{ fontSize: 12 }} stroke="#6b7280" />
               <Tooltip />
-              <Line type="monotone" dataKey="revenue" stroke="#4c1d95" strokeWidth={2.5} dot={false} name={t("fact", lang)} />
+              <Line type="monotone" dataKey="revenue" stroke="#1677FF" strokeWidth={2.5} dot={false} name={t("fact", lang)} />
               <Line type="monotone" dataKey="plan" stroke="#9ca3af" strokeWidth={2} strokeDasharray="4 4" dot={false} name={t("plan", lang)} />
             </LineChart>
           </ResponsiveContainer>
@@ -50,7 +50,7 @@ export default function CeoPage() {
               <XAxis type="number" domain={[0, 100]} tick={{ fontSize: 11 }} stroke="#6b7280" />
               <YAxis type="category" dataKey="dept" tick={{ fontSize: 12 }} width={70} stroke="#6b7280" />
               <Tooltip />
-              <Bar dataKey="score" fill="#4c1d95" radius={[0, 4, 4, 0]} />
+              <Bar dataKey="score" fill="#1677FF" radius={[0, 4, 4, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </Card>

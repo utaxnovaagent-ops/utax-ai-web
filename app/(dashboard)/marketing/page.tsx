@@ -7,7 +7,7 @@ import { marketingData } from "@/lib/mock-data";
 import { useAppState } from "@/lib/app-context";
 import { t } from "@/lib/i18n";
 
-const COLORS = ["#4c1d95", "#7c3aed", "#a78bfa", "#ddd6fe"];
+const COLORS = ["#0B4FB0", "#1677FF", "#7FB2F7", "#BCD6FA"];
 
 export default function MarketingPage() {
   const { lang } = useAppState();

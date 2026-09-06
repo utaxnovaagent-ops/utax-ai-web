@@ -20,7 +20,7 @@ export interface NewDept {
 const STORAGE_KEY = "utax_custom_departments";
 
 // Yangi bo'limlarga navbat bilan beriladigan ranglar.
-const PALETTE = ["#0f766e", "#b45309", "#7c3aed", "#be123c", "#1d4ed8", "#4d7c0f"];
+const PALETTE = ["#0f766e", "#b45309", "#64748b", "#be123c", "#1d4ed8", "#4d7c0f"];
 
 function slugify(label: string) {
   const base = label

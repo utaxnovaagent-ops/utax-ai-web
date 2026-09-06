@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, BarChart, Bar } from "recharts";
 import { AlertTriangle, CheckCircle2, Sparkles } from "lucide-react";
 import { PageHeader, Card, StatCard, Badge, toneForLevel } from "@/components/ui";
@@ -12,6 +14,9 @@ export default function CeoPage() {
   const { lang } = useAppState();
   // Qaror tasdig'i: backend yo'q, shuning uchun shu brauzerda saqlanadi
   const decisions = useLocalActions("utax_ceo_decisions");
+  // Ochish/yopish vaqtinchalik — saqlashning hojati yo'q, shuning uchun
+  // tasdiq holati bilan bitta kalitni bo'lishmaydi.
+  const [openId, setOpenId] = useState<string | null>(null);
 
   return (
     <div>
@@ -82,9 +87,8 @@ export default function CeoPage() {
         <Card title={t("ceo_decisions_title", lang)} subtitle={t("ceo_decisions_subtitle", lang)}>
           <ul className="space-y-4">
             {ceoData.decisions.map((d) => {
-              const status = decisions.state[d.title];
-              const approved = status === "approved";
-              const open = status === "open";
+              const approved = decisions.state[d.title] === "approved";
+              const open = openId === d.title;
               return (
                 <li key={d.title} className="rounded-lg border border-border p-3">
                   <div className="flex items-start justify-between gap-3">
@@ -128,7 +132,7 @@ export default function CeoPage() {
                       </button>
                     )}
                     <button
-                      onClick={() => decisions.set(d.title, open ? null : "open")}
+                      onClick={() => setOpenId(open ? null : d.title)}
                       className="rounded-lg border border-border px-3 py-1.5 text-xs font-medium text-foreground hover:bg-surface-alt"
                     >
                       {open ? "Yopish" : t("details", lang)}

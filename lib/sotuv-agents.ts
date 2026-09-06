@@ -4,6 +4,15 @@
 // topilgan agent yo'q. /sotuv, /campus va /structure shu bitta ro'yxatdan o'qiydi.
 export type SotuvAgentStatus = "live" | "partial" | "planned";
 
+/** Agent mijoz yo'lining qaysi bosqichida ishlaydi — tuzilmadagi ustunlar shu bo'yicha. */
+export type SotuvStage = "kirish" | "jarayon" | "keyin";
+
+export const SOTUV_STAGES: { id: SotuvStage; label: string; hint: string }[] = [
+  { id: "kirish", label: "Lid kirishi", hint: "mijoz birinchi marta murojaat qilganda" },
+  { id: "jarayon", label: "Sotuv jarayoni", hint: "bitim ustida ishlash davrida" },
+  { id: "keyin", label: "Sotuvdan keyin", hint: "xizmat ko'rsatish va ushlab qolish" },
+];
+
 export interface SotuvAgentDef {
   id: string;
   name: string;
@@ -14,6 +23,7 @@ export interface SotuvAgentDef {
   source: string;
   decision: string;
   status: SotuvAgentStatus;
+  stage: SotuvStage;
 }
 
 export const SOTUV_OWNER = { name: "Bobur Nazarov", role: "Sotuv bo'limi boshlig'i" };
@@ -28,6 +38,7 @@ export const SOTUV_AGENTS: SotuvAgentDef[] = [
     source: "Telegram bot, Bitrix24",
     decision: "Mijoz qaysi xizmatga yo'naltiriladi va qachon insonga topshiriladi",
     status: "live",
+    stage: "kirish",
   },
   {
     id: "tezkorlid",
@@ -38,6 +49,7 @@ export const SOTUV_AGENTS: SotuvAgentDef[] = [
     source: "Telegram",
     decision: "Qaysi lid darhol menejerga uzatiladi",
     status: "live",
+    stage: "kirish",
   },
   {
     id: "sotuvcoach",
@@ -48,6 +60,7 @@ export const SOTUV_AGENTS: SotuvAgentDef[] = [
     source: "Sotuv bo'limi yozishmalari",
     decision: "Qaysi menejerga qanday yordam kerak",
     status: "live",
+    stage: "jarayon",
   },
   {
     id: "mijozegasi",
@@ -58,6 +71,7 @@ export const SOTUV_AGENTS: SotuvAgentDef[] = [
     source: "Bitrix24, mijoz tarixi",
     decision: "Qaysi mijoz bilan aloqani tiklash kerak",
     status: "live",
+    stage: "keyin",
   },
   {
     id: "auditchi",
@@ -68,6 +82,7 @@ export const SOTUV_AGENTS: SotuvAgentDef[] = [
     source: "Bitrix24, audit hujjatlari",
     decision: "Sotilgan ish qanday va qachon bajariladi",
     status: "live",
+    stage: "keyin",
   },
   {
     id: "sotuv",
@@ -78,5 +93,6 @@ export const SOTUV_AGENTS: SotuvAgentDef[] = [
     source: "Telegram",
     decision: "Kundalik ish oqimidagi mayda qarorlar",
     status: "live",
+    stage: "jarayon",
   },
 ];

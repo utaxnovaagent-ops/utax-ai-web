@@ -11,6 +11,7 @@ import { RevenueTrend } from "@/components/sotuv/RevenueTrend";
 import { pipelineValue, weightedForecast, atRiskValue, funnelStages } from "@/lib/sales-metrics";
 import { DealsProvider, useDeals, useDealsSource } from "@/lib/deals-context";
 import { DataSourceBadge } from "@/components/sotuv/DataSourceBadge";
+import { SotuvStructure } from "@/components/sotuv/SotuvStructure";
 import { SotuvAgents } from "@/components/sotuv/SotuvAgents";
 import { AgentActivity } from "@/components/sotuv/AgentActivity";
 import { downloadCsv } from "@/lib/csv";
@@ -161,6 +162,10 @@ function SotuvPageInner() {
       </div>
 
       <div className="mt-6" id="sales-agents">
+        <SotuvStructure />
+      </div>
+
+      <div className="mt-5">
         <SotuvAgents sotuvWebUrl={SOTUV_WEB_URL} />
       </div>
 

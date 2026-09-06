@@ -16,8 +16,8 @@ export function UMark({ size = 32, className }: { size?: number; className?: str
     >
       <defs>
         <linearGradient id={gradientId} x1="4" y1="4" x2="34" y2="34" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor="#351078" />
-          <stop offset="100%" stopColor="#6D28D9" />
+          <stop offset="0%" stopColor="#0B4FB0" />
+          <stop offset="100%" stopColor="#1677FF" />
         </linearGradient>
       </defs>
       <path
@@ -29,7 +29,7 @@ export function UMark({ size = 32, className }: { size?: number; className?: str
       />
       <path
         d="M20 1.5 L21.6 6.2 L26.5 6.5 L22.9 9.4 L24.1 14 L20 11.4 L15.9 14 L17.1 9.4 L13.5 6.5 L18.4 6.2 Z"
-        fill="#168EF0"
+        fill="#38BDF8"
       />
     </svg>
   );

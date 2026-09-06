@@ -1,41 +1,47 @@
 @import "tailwindcss";
 
 :root {
-  /* UTAX Intelligence Network — design tokens (UI Redesign TZI v1.0 §2.1/2.2/7.3) */
-  --background: #f6f8fc; /* canvas */
+  /* UTAX Executive Intelligence — Dizayn TZI §4/§5/§7.3.
+     Sotuv Desk (sotuv.169-58-178-40.sslip.io) bilan bitta tizim. */
+  --background: #f4f7fa; /* Cloud — sahifa foni */
   --surface: #ffffff;
-  --surface-alt: #fafafd;
-  --foreground: #111827; /* ink */
-  --muted: #64748b;
-  --border: #e2e8f0; /* line */
+  --surface-alt: #f1f5f9;
+  --foreground: #111827; /* Ink */
+  --muted: #64748b;      /* Slate */
+  --border: #e5eaf0;
 
-  --brand-900: #351078;
-  --brand-700: #5120a8;
-  --brand: #6d28d9; /* violet-500 — primary interactive */
-  --brand-light: #f3eeff; /* selected fill */
-  --brand-dark: #351078; /* alias of brand-900, sidebar/CEO level */
+  /* Qorong'i qatlam — sidebar, splash, CEO darajasi */
+  --graphite: #0b0f14;
+  --carbon: #101722;
+
+  --brand-900: #0b4fb0;
+  --brand-700: #0f62d6;
+  --brand: #1677ff;       /* Intelligence Blue — asosiy UTAX aksenti */
+  --brand-light: #eaf2ff; /* tanlangan fon */
+  --brand-dark: #101722;  /* Carbon — sidebar/CEO darajasi */
   --brand-contrast: #ffffff;
-  --ai-blue: #168ef0;
-  --ai-cyan: #1ba5f8;
+  --ai-blue: #1677ff;
+  --ai-cyan: #38bdf8;     /* Electric Blue — faqat AI bloki */
+  --silver: #b8c2cf;
 
-  --brand-gradient: linear-gradient(135deg, #351078 0%, #6d28d9 55%, #168ef0 100%);
-  --connector: #c4b5fd;
-  --connector-active: #6d28d9;
+  --brand-gradient: linear-gradient(135deg, #0b4fb0 0%, #1677ff 58%, #38bdf8 100%);
+  --connector: #b8c2cf;
+  --connector-active: #1677ff;
 
-  --success: #16a34a;
-  --success-bg: #ecfdf3;
-  --warning: #d97706;
-  --warning-bg: #fffbeb;
-  --danger: #b91c1c;
-  --danger-bg: #fef2f2;
-  --info: #1d4ed8;
-  --info-bg: #eff6ff;
+  --success: #16a36a;
+  --success-bg: #e6f6ef;
+  --warning: #f59e0b;
+  --warning-bg: #fef4e3;
+  --danger: #dc3545;
+  --danger-bg: #fceaec;
+  --info: #1677ff;
+  --info-bg: #eaf2ff;
 
-  --radius-card: 16px;
-  --radius-card-inner: 12px;
+  --radius-card: 14px;
+  --radius-card-inner: 10px;
   --radius-control: 10px;
-  --shadow-brand: 0 8px 30px rgba(53, 16, 120, 0.08);
-  --shadow-brand-hover: 0 8px 30px rgba(53, 16, 120, 0.14);
+  --shadow-brand: 0 1px 2px rgba(11, 15, 20, 0.045), 0 8px 24px rgba(11, 15, 20, 0.055);
+  --shadow-brand-hover: 0 2px 6px rgba(11, 15, 20, 0.07), 0 18px 44px rgba(11, 15, 20, 0.11);
 }
 
 @theme inline {
@@ -54,6 +60,9 @@
   --color-brand-contrast: var(--brand-contrast);
   --color-ai-blue: var(--ai-blue);
   --color-ai-cyan: var(--ai-cyan);
+  --color-silver: var(--silver);
+  --color-graphite: var(--graphite);
+  --color-carbon: var(--carbon);
 
   --color-success: var(--success);
   --color-success-bg: var(--success-bg);
@@ -78,6 +87,21 @@ body {
   background: var(--background);
   color: var(--foreground);
 }
+
+/* Chap menyu — chuqur grafit (Dizayn TZI §7.1). Ichkarida token to'plami
+   almashtiriladi, shuning uchun mavjud Tailwind klasslari o'zgartirilmaydi. */
+.utax-rail {
+  --surface: var(--carbon);
+  --surface-alt: #18202d;
+  --foreground: #f4f7fb;
+  --muted: #9dacc0;
+  --border: #1c2534;
+  --brand-light: rgba(22, 119, 255, 0.16);
+  --brand: #5ca4ff;
+  color: #f4f7fb;
+}
+.utax-rail ::-webkit-scrollbar-thumb { background: #26313f; }
+.utax-rail { scrollbar-color: #26313f transparent; }
 
 .brand-gradient {
   background: var(--brand-gradient);
@@ -110,4 +134,102 @@ body {
 ::-webkit-scrollbar-thumb {
   background: #d1d5db;
   border-radius: 8px;
+}
+
+/* ===== Kirish ekrani (Dizayn TZI §6.2) — Sotuv Desk bilan bir xil ===== */
+.utax-splash {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  align-items: center;
+  justify-items: center;
+  padding: 40px 24px 52px;
+  background: #000;
+  opacity: 0;
+  animation: utaxSplashIn 0.25s ease forwards;
+}
+.utax-splash.is-leaving { animation: utaxSplashOut 0.4s ease forwards; }
+@keyframes utaxSplashIn { to { opacity: 1; } }
+@keyframes utaxSplashOut { to { opacity: 0; visibility: hidden; } }
+.utax-splash::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(620px 620px at 50% 42%, rgba(22, 119, 255, 0.16), transparent 68%);
+}
+.utax-splash-art {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  max-width: min(1080px, 92vw);
+}
+/* Nur rasm ORTIDA — rasmning o'z ko'k nuri bor, uni xiralashtirmaymiz */
+.utax-splash-glow {
+  position: absolute;
+  inset: -12% -6%;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(46% 42% at 50% 46%, rgba(22, 119, 255, 0.3), transparent 68%);
+  filter: blur(26px);
+  animation: utaxGlowIn 0.7s ease 0.5s forwards, utaxGlowPulse 2.6s ease-in-out 0.9s infinite;
+}
+@keyframes utaxGlowIn { to { opacity: 1; } }
+@keyframes utaxGlowPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }
+.utax-splash-img {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 100%;
+  max-height: min(60vh, 620px);
+  object-fit: contain;
+  border-radius: 20px;
+  opacity: 0;
+  transform: scale(0.985);
+  animation: utaxArtIn 0.7s cubic-bezier(0.2, 0.7, 0.3, 1) 0.25s forwards,
+             utaxArtPulse 2.6s ease-in-out 0.95s infinite;
+}
+@keyframes utaxArtIn { to { opacity: 1; transform: none; } }
+@keyframes utaxArtPulse { 0%, 100% { filter: brightness(1); } 50% { filter: brightness(1.07); } }
+.utax-splash-cap { position: relative; text-align: center; margin-top: 30px; }
+.utax-splash-t {
+  font-size: 16px; font-weight: 700; color: #eaf1fa; letter-spacing: -0.01em;
+  opacity: 0; animation: utaxCapIn 0.5s ease 0.75s forwards;
+}
+.utax-splash-bar {
+  width: 230px; height: 2px; border-radius: 2px; margin: 15px auto 0; overflow: hidden;
+  background: rgba(184, 194, 207, 0.16);
+  opacity: 0; animation: utaxCapIn 0.5s ease 0.85s forwards;
+}
+/* Chiziq aynan splash davomiyligida to'ladi — sun'iy kutish ko'rinmaydi */
+.utax-splash-bar i {
+  display: block; height: 100%; width: 0; border-radius: 2px;
+  background: linear-gradient(90deg, #1677ff, #38bdf8);
+  animation: utaxBarGo calc(var(--splash-ms, 4500ms) - 700ms) cubic-bezier(0.25, 0.1, 0.3, 1) 0.5s forwards;
+}
+@keyframes utaxBarGo { to { width: 100%; } }
+.utax-splash-cred {
+  font-size: 11.5px; color: #6e7d92; margin-top: 16px; line-height: 1.7;
+  opacity: 0; animation: utaxCapIn 0.5s ease 1.1s forwards;
+}
+.utax-splash-cred b { color: #94a5ba; font-weight: 700; }
+.utax-splash-note { color: #55637a; }
+.utax-splash-note a { color: #7fb6ff; text-decoration: none; }
+@keyframes utaxCapIn { to { opacity: 1; } }
+@media (max-width: 640px) {
+  .utax-splash-img { max-height: 46vh; }
+  .utax-splash-cap { margin-top: 22px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .utax-splash, .utax-splash-img, .utax-splash-glow,
+  .utax-splash-t, .utax-splash-bar, .utax-splash-bar i, .utax-splash-cred {
+    animation-duration: 0.28s !important;
+    animation-delay: 0s !important;
+    animation-iteration-count: 1 !important;
+  }
+  .utax-splash-glow, .utax-splash-img { opacity: 1; }
 }

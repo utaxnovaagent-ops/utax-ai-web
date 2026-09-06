@@ -89,7 +89,7 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
 
       <aside
         className={clsx(
-          "fixed inset-y-0 z-40 flex h-full w-64 flex-shrink-0 flex-col border-r border-border bg-surface transition-[left] duration-200 md:static",
+          "utax-rail fixed inset-y-0 z-40 flex h-full w-64 flex-shrink-0 flex-col border-r border-border bg-surface transition-[left] duration-200 md:static",
           open ? "left-0" : "-left-64"
         )}
       >

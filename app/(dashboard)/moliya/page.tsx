@@ -23,7 +23,7 @@ export default function MoliyaPage() {
               <YAxis tick={{ fontSize: 12 }} stroke="#6b7280" />
               <Tooltip />
               <Legend />
-              <Area type="monotone" dataKey="kirim" stroke="#4c1d95" fill="#4c1d95" fillOpacity={0.15} strokeWidth={2} name={t("income", lang)} />
+              <Area type="monotone" dataKey="kirim" stroke="#1677FF" fill="#1677FF" fillOpacity={0.15} strokeWidth={2} name={t("income", lang)} />
               <Area type="monotone" dataKey="chiqim" stroke="#b91c1c" fill="#b91c1c" fillOpacity={0.1} strokeWidth={2} name={t("expense", lang)} />
             </AreaChart>
           </ResponsiveContainer>
@@ -53,8 +53,8 @@ export default function MoliyaPage() {
               <YAxis tick={{ fontSize: 12 }} stroke="#6b7280" />
               <Tooltip />
               <Legend />
-              <Bar dataKey="plan" fill="#c4b5fd" name={t("plan", lang)} radius={[4, 4, 0, 0]} />
-              <Bar dataKey="fact" fill="#4c1d95" name={t("fact", lang)} radius={[4, 4, 0, 0]} />
+              <Bar dataKey="plan" fill="#B8C2CF" name={t("plan", lang)} radius={[4, 4, 0, 0]} />
+              <Bar dataKey="fact" fill="#1677FF" name={t("fact", lang)} radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </Card>

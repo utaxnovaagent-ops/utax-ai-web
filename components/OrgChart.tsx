@@ -34,8 +34,8 @@ import { useAppState } from "@/lib/app-context";
 import { t } from "@/lib/i18n";
 import { StatCard, Badge } from "@/components/ui";
 
-// AgentOrgStructure'dagi (components/AgentOrgStructure.tsx) rang xaritasi bilan
-// bir xil — shu yerda faqat kichik nuqta ko'rinishida takrorlanadi.
+// Agent holati ranglari — SotuvAgents komponenti bilan bir xil mantiq,
+// bu yerda faqat kichik nuqta ko'rinishida.
 const SOTUV_STATUS_DOT: Record<SotuvAgentStatus, string> = {
   live: "bg-success",
   partial: "bg-warning",

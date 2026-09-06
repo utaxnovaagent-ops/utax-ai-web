@@ -3,7 +3,9 @@
 // chiqariladi — sahifada qo'lda yozilgan yakuniy raqam yo'q (TZI v2.0 §3.2, §8).
 import { sotuvDeals, SALES_STAGES } from "./mock-data";
 
-export type Deal = (typeof sotuvDeals)[number];
+// createdAt faqat Bitrixdan kelgan bitimlarda bo'ladi — namunaviy ma'lumotda
+// sana yo'q, shuning uchun ixtiyoriy: davr filtri faqat real ma'lumotda ishlaydi.
+export type Deal = (typeof sotuvDeals)[number] & { createdAt?: string };
 
 const WON_STAGE = "Yopilgan (g'olib)";
 const RISK_WEIGHT: Record<Deal["risk"], number> = { yuqori: 30, "o'rta": 18, past: 6 };

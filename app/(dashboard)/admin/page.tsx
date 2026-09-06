@@ -5,10 +5,20 @@ import { PageHeader, Card, StatCard, Badge, toneForLevel } from "@/components/ui
 import { OrgChart } from "@/components/OrgChart";
 import { adminData } from "@/lib/mock-data";
 import { useAppState } from "@/lib/app-context";
+import { useLocalActions } from "@/lib/local-actions";
 import { t } from "@/lib/i18n";
 
 export default function AdminPage() {
   const { lang } = useAppState();
+  // Foydalanuvchi qo'shish: backend hali yo'q — ro'yxat shu brauzerda saqlanadi
+  const extraUsers = useLocalActions("utax_admin_users");
+
+  function addUser() {
+    const name = window.prompt("Xodimning ism-familiyasi:")?.trim();
+    if (!name) return;
+    const role = window.prompt("Roli (masalan: Auditor, Bo'lim boshlig'i):")?.trim() || "Xodim";
+    extraUsers.set(name, role);
+  }
 
   return (
     <div>
@@ -29,7 +39,10 @@ export default function AdminPage() {
           title={t("admin_users_title", lang)}
           subtitle={t("admin_users_subtitle", lang)}
           action={
-            <button className="flex items-center gap-1.5 rounded-lg bg-brand px-3 py-1.5 text-xs font-semibold text-brand-contrast hover:opacity-90">
+            <button
+              onClick={addUser}
+              className="flex items-center gap-1.5 rounded-lg bg-brand px-3 py-1.5 text-xs font-semibold text-brand-contrast hover:opacity-90"
+            >
               <Users2 size={13} /> {t("admin_new_user", lang)}
             </button>
           }
@@ -44,6 +57,20 @@ export default function AdminPage() {
                   </p>
                 </div>
                 <Badge tone={toneForLevel(u.status)}>{u.status}</Badge>
+              </div>
+            ))}
+            {Object.entries(extraUsers.state).map(([name, role]) => (
+              <div key={name} className="flex items-center justify-between gap-3 border-b border-border pb-2.5 last:border-0 last:pb-0">
+                <div>
+                  <p className="text-sm font-medium text-foreground">{name}</p>
+                  <p className="text-xs text-muted">{role} · qo&apos;shildi (shu brauzerda)</p>
+                </div>
+                <button
+                  onClick={() => extraUsers.set(name, null)}
+                  className="rounded-lg border border-border px-2 py-1 text-[11px] font-medium text-foreground hover:bg-surface-alt"
+                >
+                  O&apos;chirish
+                </button>
               </div>
             ))}
           </div>

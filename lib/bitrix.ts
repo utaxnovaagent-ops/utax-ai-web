@@ -229,6 +229,7 @@ export async function fetchSotuvSnapshot(): Promise<SotuvSnapshot> {
       owner: userName.get(d.ASSIGNED_BY_ID) ?? "Tayinlanmagan",
       risk: stage === "Yopilgan (g'olib)" ? "past" : riskOf(lastContact, valueM),
       nextAction: STAGE_NEXT_ACTION[stage],
+      createdAt: d.DATE_CREATE,
     } as Deal;
   };
 

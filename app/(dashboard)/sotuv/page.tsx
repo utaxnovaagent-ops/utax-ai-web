@@ -15,6 +15,7 @@ import { SotuvStructure } from "@/components/sotuv/SotuvStructure";
 import { SotuvAgents } from "@/components/sotuv/SotuvAgents";
 import { AgentActivity } from "@/components/sotuv/AgentActivity";
 import { downloadCsv } from "@/lib/csv";
+import { PERIODS, filterByPeriod, periodSupported, type PeriodId } from "@/lib/period";
 import { CallAnalytics } from "@/components/sotuv/CallAnalytics";
 
 
@@ -30,7 +31,11 @@ const SOTUV_WEB_URL = "https://sotuv.169-58-178-40.sslip.io";
 
 function SotuvPageInner() {
   const [stageFilter, setStageFilter] = useState<string | null>(null);
-  const deals = useDeals();
+  const [period, setPeriod] = useState<PeriodId>("all");
+  const allDeals = useDeals();
+  // Davr filtri faqat Bitrixdan kelgan bitimlarda ishlaydi (sana bor).
+  const canFilter = periodSupported(allDeals);
+  const deals = canFilter ? filterByPeriod(allDeals, period) : allDeals;
   const { isReal, fetchedAt, count, winRate, won90, lost90, quality } = useDealsSource();
 
   function exportReport() {
@@ -90,10 +95,18 @@ function SotuvPageInner() {
             </span>
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            <select className="h-9 rounded-lg border border-border bg-surface px-2.5 text-xs text-foreground">
-              <option>Bu oy</option>
-              <option>O'tgan oy</option>
-              <option>Bu kvartal</option>
+            <select
+              value={period}
+              onChange={(e) => setPeriod(e.target.value as PeriodId)}
+              disabled={!canFilter}
+              title={canFilter ? "Bitim yaratilgan sana bo'yicha" : "Namunaviy ma'lumotda sana yo'q"}
+              className="h-9 rounded-lg border border-border bg-surface px-2.5 text-xs text-foreground disabled:opacity-50"
+            >
+              {PERIODS.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.label}
+                </option>
+              ))}
             </select>
             <button
               onClick={exportReport}
@@ -116,6 +129,20 @@ function SotuvPageInner() {
       </div>
 
       <DataSourceBadge />
+
+      {canFilter && period !== "all" && (
+        <p className="mb-3 flex flex-wrap items-center gap-2 rounded-lg border border-border bg-surface-alt px-3 py-2 text-xs text-muted">
+          <span className="font-medium text-foreground">
+            {PERIODS.find((p) => p.id === period)?.label}
+          </span>
+          <span>
+            — {deals.length} ta bitim ({allDeals.length} tadan), yaratilgan sana bo&apos;yicha
+          </span>
+          <button onClick={() => setPeriod("all")} className="ml-auto font-medium text-brand hover:underline">
+            filtrni tozalash
+          </button>
+        </p>
+      )}
 
       <RevenueHero />
 

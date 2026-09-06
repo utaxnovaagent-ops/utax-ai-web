@@ -5,10 +5,13 @@ import { AlertTriangle, CheckCircle2, Sparkles } from "lucide-react";
 import { PageHeader, Card, StatCard, Badge, toneForLevel } from "@/components/ui";
 import { ceoData } from "@/lib/mock-data";
 import { useAppState } from "@/lib/app-context";
+import { useLocalActions } from "@/lib/local-actions";
 import { t } from "@/lib/i18n";
 
 export default function CeoPage() {
   const { lang } = useAppState();
+  // Qaror tasdig'i: backend yo'q, shuning uchun shu brauzerda saqlanadi
+  const decisions = useLocalActions("utax_ceo_decisions");
 
   return (
     <div>
@@ -78,24 +81,65 @@ export default function CeoPage() {
 
         <Card title={t("ceo_decisions_title", lang)} subtitle={t("ceo_decisions_subtitle", lang)}>
           <ul className="space-y-4">
-            {ceoData.decisions.map((d) => (
-              <li key={d.title} className="rounded-lg border border-border p-3">
-                <div className="flex items-start justify-between gap-3">
-                  <p className="text-sm font-medium text-foreground">{d.title}</p>
-                  <Badge tone="warning">{d.status}</Badge>
-                </div>
-                <p className="mt-1.5 text-xs text-muted">{d.rationale}</p>
-                <p className="mt-1 text-xs text-brand">{d.impact}</p>
-                <div className="mt-3 flex gap-2">
-                  <button className="flex items-center gap-1 rounded-lg bg-brand px-3 py-1.5 text-xs font-semibold text-brand-contrast hover:opacity-90">
-                    <CheckCircle2 size={13} /> {t("approve", lang)}
-                  </button>
-                  <button className="rounded-lg border border-border px-3 py-1.5 text-xs font-medium text-foreground hover:bg-surface-alt">
-                    {t("details", lang)}
-                  </button>
-                </div>
-              </li>
-            ))}
+            {ceoData.decisions.map((d) => {
+              const status = decisions.state[d.title];
+              const approved = status === "approved";
+              const open = status === "open";
+              return (
+                <li key={d.title} className="rounded-lg border border-border p-3">
+                  <div className="flex items-start justify-between gap-3">
+                    <p className="text-sm font-medium text-foreground">{d.title}</p>
+                    <Badge tone={approved ? "success" : "warning"}>
+                      {approved ? "Tasdiqlangan" : d.status}
+                    </Badge>
+                  </div>
+                  <p className="mt-1.5 text-xs text-muted">{d.rationale}</p>
+                  <p className="mt-1 text-xs text-brand">{d.impact}</p>
+                  {open && (
+                    <dl className="mt-2 space-y-1 rounded-lg bg-surface-alt p-2.5 text-xs">
+                      <div className="flex gap-2">
+                        <dt className="w-20 flex-shrink-0 text-muted">Asos</dt>
+                        <dd className="text-foreground">{d.rationale}</dd>
+                      </div>
+                      <div className="flex gap-2">
+                        <dt className="w-20 flex-shrink-0 text-muted">Ta&apos;sir</dt>
+                        <dd className="text-foreground">{d.impact}</dd>
+                      </div>
+                      <div className="flex gap-2">
+                        <dt className="w-20 flex-shrink-0 text-muted">Holat</dt>
+                        <dd className="text-foreground">{approved ? "Tasdiqlangan" : d.status}</dd>
+                      </div>
+                    </dl>
+                  )}
+                  <div className="mt-3 flex flex-wrap items-center gap-2">
+                    {approved ? (
+                      <button
+                        onClick={() => decisions.set(d.title, null)}
+                        className="rounded-lg border border-border px-3 py-1.5 text-xs font-medium text-foreground hover:bg-surface-alt"
+                      >
+                        Tasdiqni bekor qilish
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => decisions.set(d.title, "approved")}
+                        className="flex items-center gap-1 rounded-lg bg-brand px-3 py-1.5 text-xs font-semibold text-brand-contrast hover:opacity-90"
+                      >
+                        <CheckCircle2 size={13} /> {t("approve", lang)}
+                      </button>
+                    )}
+                    <button
+                      onClick={() => decisions.set(d.title, open ? null : "open")}
+                      className="rounded-lg border border-border px-3 py-1.5 text-xs font-medium text-foreground hover:bg-surface-alt"
+                    >
+                      {open ? "Yopish" : t("details", lang)}
+                    </button>
+                    {approved && (
+                      <span className="text-[11px] text-muted">shu brauzerda saqlandi</span>
+                    )}
+                  </div>
+                </li>
+              );
+            })}
           </ul>
         </Card>
       </div>

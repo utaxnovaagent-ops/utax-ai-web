@@ -1,7 +1,7 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useState } from "react";
 import { ShieldCheck, Lock, Mail, ChevronDown } from "lucide-react";
 import { useAppState } from "@/lib/app-context";
 import { ROLES, RoleId } from "@/lib/roles";
@@ -9,18 +9,51 @@ import { Lang, LANG_LABEL, t } from "@/lib/i18n";
 import { VISIBLE_MODULES } from "@/lib/launch-config";
 
 export default function LoginPage() {
+  // useSearchParams Suspense chegarasini talab qiladi (Next.js build sharti)
+  return (
+    <Suspense fallback={null}>
+      <LoginPageInner />
+    </Suspense>
+  );
+}
+
+function LoginPageInner() {
   const router = useRouter();
   const { setRoleId, lang, setLang } = useAppState();
   const [selectedRole, setSelectedRole] = useState<RoleId>("ceo");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  const params = useSearchParams();
 
-  function handleLogin(e: React.FormEvent) {
+  async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
-    setRoleId(selectedRole);
-    const role = ROLES.find((r) => r.id === selectedRole);
-    const firstVisible = role?.modules.find((m) => VISIBLE_MODULES.includes(m));
-    router.push(firstVisible ? `/${firstVisible}` : "/login");
+    setBusy(true);
+    setError(null);
+    try {
+      // Parol serverda tekshiriladi; javobda sessiya cookie'si o'rnatiladi.
+      const res = await fetch("/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password }),
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        setError(body?.message || "Kirish amalga oshmadi");
+        return;
+      }
+      setRoleId(selectedRole);
+      const role = ROLES.find((r) => r.id === selectedRole);
+      const firstVisible = role?.modules.find((m) => VISIBLE_MODULES.includes(m));
+      const next = params.get("next");
+      router.replace(next && next.startsWith("/") ? next : firstVisible ? `/${firstVisible}` : "/");
+      router.refresh();
+    } catch {
+      setError("Tarmoq xatosi — qayta urinib ko'ring");
+    } finally {
+      setBusy(false);
+    }
   }
 
   return (
@@ -89,6 +122,8 @@ export default function LoginPage() {
                 <Lock size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
                 <input
                   type="password"
+                  required
+                  autoComplete="current-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
@@ -117,11 +152,18 @@ export default function LoginPage() {
               {t("login_2fa", lang)}
             </div>
 
+            {error && (
+              <p className="rounded-lg border border-danger/30 bg-danger-bg px-3 py-2 text-xs font-medium text-danger">
+                {error}
+              </p>
+            )}
+
             <button
               type="submit"
+              disabled={busy}
               className="w-full rounded-lg bg-brand py-2.5 text-sm font-semibold text-brand-contrast transition-opacity hover:opacity-90"
             >
-              {t("login_submit", lang)}
+              {busy ? "Tekshirilmoqda..." : t("login_submit", lang)}
             </button>
           </form>
 

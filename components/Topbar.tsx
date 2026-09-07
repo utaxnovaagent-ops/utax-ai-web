@@ -1,7 +1,6 @@
 "use client";
 
 import { Bell, ChevronDown, LogOut, Menu } from "lucide-react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useAppState, useCurrentRole } from "@/lib/app-context";
@@ -152,13 +151,19 @@ export function Topbar({ onMenuClick, scrolled }: { onMenuClick: () => void; scr
           )}
         </div>
 
-        <Link
-          href="/login"
+        <button
+          onClick={async () => {
+            // Sessiya cookie'sini serverda o'chiramiz, keyin login sahifasiga
+            await fetch("/api/login", { method: "DELETE" }).catch(() => {});
+            router.replace("/login");
+            router.refresh();
+          }}
           title={t("logout", lang)}
+          aria-label={t("logout", lang)}
           className="flex h-10 w-10 items-center justify-center rounded-lg border border-border text-foreground hover:bg-surface-alt"
         >
           <LogOut size={16} />
-        </Link>
+        </button>
       </div>
     </header>
   );

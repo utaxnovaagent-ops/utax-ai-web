@@ -192,7 +192,7 @@ function HeroCard({
 }: {
   icon: React.ReactNode;
   eyebrow: string;
-  name: string;
+  name: string | null;
   meta: string;
   gradient?: boolean;
 }) {
@@ -217,8 +217,10 @@ function HeroCard({
           {icon}
         </span>
         <div className="min-w-0">
-          <p className="truncate text-sm font-bold text-foreground">{name}</p>
-          <p className="text-[11px] font-medium text-muted">{eyebrow}</p>
+          {/* Ism kiritilmagan bo'lsa lavozimning o'zi sarlavha bo'ladi —
+              "Kiritilmagan" degan soxta ism ko'rsatilmaydi. */}
+          <p className="truncate text-sm font-bold text-foreground">{name ?? eyebrow}</p>
+          <p className="text-[11px] font-medium text-muted">{name ? eyebrow : "rahbar kiritilmagan"}</p>
         </div>
         <span className="ml-auto flex-shrink-0 rounded-full bg-brand-light px-2.5 py-1 text-[10px] font-semibold text-brand">
           {meta}
@@ -279,14 +281,16 @@ function DeptCard({
         </span>
         <div className="min-w-0 flex-1">
           <p className="truncate text-sm font-semibold text-foreground">{label}</p>
-          <p className="truncate text-[11px] text-muted">{dept.head ?? "rahbar kiritilmagan"}</p>
+          {dept.head && <p className="truncate text-[11px] text-muted">{dept.head}</p>}
         </div>
       </div>
 
-      <div className="flex items-center gap-1.5 text-[11px] text-muted">
-        <Users size={12} />
-        {dept.employees !== null ? `${dept.employees} ${t("orgchart_employees", lang)}` : "xodim soni kiritilmagan"}
-      </div>
+      {dept.employees !== null && (
+        <div className="flex items-center gap-1.5 text-[11px] text-muted">
+          <Users size={12} />
+          {dept.employees} {t("orgchart_employees", lang)}
+        </div>
+      )}
 
       <div>
         <div className="mb-1 flex items-center justify-between text-[10px] font-medium text-muted">
@@ -559,9 +563,9 @@ export function OrgChart() {
       <div ref={ceoRef} className="relative z-10 w-full max-w-xs">
         <HeroCard
           icon={<Crown size={17} />}
-          name={orgStructure.ceo.name ?? "Kiritilmagan"}
+          name={orgStructure.ceo.name}
           eyebrow={t("role_label_ceo", lang)}
-          meta={stats.totalStaff !== null ? `${stats.totalStaff} ${t("orgchart_ceo_meta", lang)}` : "xodim soni kiritilmagan"}
+          meta={stats.totalStaff !== null ? `${stats.totalStaff} ${t("orgchart_ceo_meta", lang)}` : `${departments.length} bo\u2019lim`}
           gradient
         />
       </div>
@@ -569,7 +573,7 @@ export function OrgChart() {
       <div ref={directorRef} className="relative z-10 w-full max-w-xs">
         <HeroCard
           icon={<UserCog size={15} />}
-          name={orgStructure.director.name ?? "Kiritilmagan"}
+          name={orgStructure.director.name}
           eyebrow={t("role_label_director", lang)}
           meta={`${departments.length} ${t("orgchart_director_meta", lang)}`}
         />

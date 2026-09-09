@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ExternalLink, FileText, Wallet, Target, Trophy, Gauge, AlertTriangle } from "lucide-react";
+import { ExternalLink, Wallet, Target, Trophy, Gauge, AlertTriangle } from "lucide-react";
 import { StatCard } from "@/components/ui";
 import { RevenueHero } from "@/components/sotuv/RevenueHero";
 import { FunnelVelocity } from "@/components/sotuv/FunnelVelocity";
@@ -16,6 +16,8 @@ import { SotuvAgents } from "@/components/sotuv/SotuvAgents";
 import { AgentActivity } from "@/components/sotuv/AgentActivity";
 import { downloadCsv } from "@/lib/csv";
 import { PERIODS, type PeriodId } from "@/lib/period";
+import { buildReport } from "@/lib/report";
+import { ReportMenu } from "@/components/sotuv/ReportMenu";
 import { CallAnalytics } from "@/components/sotuv/CallAnalytics";
 
 
@@ -36,6 +38,20 @@ function SotuvPageInner() {
   const { period, setPeriod, supported: canFilter, totalCount } = usePeriod();
   const deals = useDeals();
   const { isReal, fetchedAt, count, winRate, won90, lost90, quality } = useDealsSource();
+
+  // Hisobot mazmuni — PDF/Word/rasm uchun umumiy
+  function reportModel() {
+    return buildReport({
+      deals,
+      isReal,
+      fetchedAt,
+      periodLabel: PERIODS.find((p) => p.id === period)?.label ?? "Barcha davr",
+      winRate,
+      won90,
+      lost90,
+      openWithoutAmount: quality?.openWithoutAmount ?? null,
+    });
+  }
 
   function exportReport() {
     const today = new Date().toISOString().slice(0, 10);
@@ -107,12 +123,7 @@ function SotuvPageInner() {
                 </option>
               ))}
             </select>
-            <button
-              onClick={exportReport}
-              className="flex h-9 items-center gap-1.5 rounded-lg border border-border px-3 text-xs font-medium text-foreground hover:bg-surface-alt"
-            >
-              <FileText size={13} /> Hisobot
-            </button>
+            <ReportMenu build={reportModel} onCsv={exportReport} />
             {/* Sotuv bo'limining alohida ish paneli (Sotuv Desk) — Bitrix24 ustida
                 ishlaydigan alohida ilova, shu sabab yangi oynada ochiladi. */}
             <a

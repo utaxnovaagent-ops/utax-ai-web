@@ -32,7 +32,7 @@ export default function StructurePage() {
         d.aiPercent,
       ]),
     ];
-    const csv = [header, ...rows].map((r) => r.map(csvCell).join(",")).join("\r\n");
+    const csv = [header, ...rows].map((r) => r.map((v) => csvCell(v ?? "")).join(",")).join("\r\n");
     // Excel UTF-8'ni BOM'siz noto'g'ri o'qiydi (o'zbekcha belgilar buziladi).
     const blob = new Blob(["﻿" + csv], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);

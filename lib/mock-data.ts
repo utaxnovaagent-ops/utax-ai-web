@@ -381,25 +381,49 @@ export const internationalData = {
   ],
 };
 
-export const orgStructure = {
-  ceo: { name: "Aziz Rahimov", title: "CEO" },
-  director: { name: "Dilnoza Karimova", title: "Direktor" },
+// Tashkiliy tuzilma. Faqat TEKSHIRILGAN ma'lumot yoziladi: hozircha bu —
+// bo'limlar ro'yxati va Sotuv bo'limi boshlig'i (Bobur Nazarov, agent
+// tuzilmasidan tasdiqlangan). Qolgan rahbarlar ismi va xodim sonlari
+// kiritilmagan — o'ylab topilgan ism ko'rsatgandan ko'ra bo'sh qoldirilgani
+// yaxshi, aks holda tuzilma real ma'lumotdek ko'rinib chalg'itadi.
+export interface OrgDept {
+  key: string;
+  label: string;
+  /** Bo'lim boshlig'i — tekshirilmagan bo'lsa null. */
+  head: string | null;
+  /** Xodimlar soni — hali kiritilmagan bo'lsa null. */
+  employees: number | null;
+  color: string;
+  isExtra?: boolean;
+  aiPercent: number;
+}
+
+export const orgStructure: {
+  ceo: { name: string | null; title: string };
+  director: { name: string | null; title: string };
+  departments: OrgDept[];
+  support: { key: string; label: string; desc: string }[];
+  client: { key: string; label: string; desc: string };
+  vacancies: number | null;
+} = {
+  ceo: { name: null, title: "CEO" },
+  director: { name: null, title: "Direktor" },
   departments: [
-    { key: "moliya", label: "Moliya", head: "Gulnora Aliyeva", employees: 9, color: "#16a34a", aiPercent: 0 },
-    { key: "audit", label: "Audit", head: "Malika Rustamova", employees: 8, color: "#0d9488", isExtra: true, aiPercent: 0 },
-    { key: "it", label: "IT", head: "Sherzod Yo'ldoshev", employees: 6, color: "#2563eb", aiPercent: 0 },
-    { key: "marketing", label: "Marketing", head: "Kamola Zokirova", employees: 5, color: "#db2777", aiPercent: 0 },
-    { key: "sotuv", label: "Sotuv", head: "Bobur Nazarov", employees: 11, color: "#ea580c", aiPercent: SOTUV_AI_PERCENT },
-    { key: "international", label: "Xalqaro soliq", head: "Javlon Sultonov", employees: 3, color: "#4338ca", isExtra: true, aiPercent: 0 },
-    { key: "telegram", label: "Ishchi bo'lim", head: "Nodira Egamova", employees: 7, color: "#0891b2", aiPercent: 0 },
-    { key: "hr", label: "HR", head: "Shahnoza Tursunova", employees: 4, color: "#9333ea", aiPercent: 0 },
+    { key: "moliya", label: "Moliya", head: null, employees: null, color: "#16a34a", aiPercent: 0 },
+    { key: "audit", label: "Audit", head: null, employees: null, color: "#0d9488", isExtra: true, aiPercent: 0 },
+    { key: "it", label: "IT", head: null, employees: null, color: "#2563eb", aiPercent: 0 },
+    { key: "marketing", label: "Marketing", head: null, employees: null, color: "#db2777", aiPercent: 0 },
+    { key: "sotuv", label: "Sotuv", head: "Bobur Nazarov", employees: null, color: "#ea580c", aiPercent: SOTUV_AI_PERCENT },
+    { key: "international", label: "Xalqaro soliq", head: null, employees: null, color: "#4338ca", isExtra: true, aiPercent: 0 },
+    { key: "telegram", label: "Ishchi bo'lim", head: null, employees: null, color: "#0891b2", aiPercent: 0 },
+    { key: "hr", label: "HR", head: null, employees: null, color: "#9333ea", aiPercent: 0 },
   ],
   support: [
     { key: "admin", label: "Administrator", desc: "Konfiguratsiya va monitoring" },
     { key: "auditor", label: "Auditor", desc: "Audit va hisobot — faqat o'qish" },
   ],
   client: { key: "client", label: "Mijoz", desc: "Tashqi rol — faqat mijoz chatidan, o'z ma'lumotiga kirish" },
-  vacancies: 3,
+  vacancies: null,
 };
 
 export const adminData = {

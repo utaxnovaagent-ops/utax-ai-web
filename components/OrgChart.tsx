@@ -45,11 +45,15 @@ const SOTUV_STATUS_DOT: Record<SotuvAgentStatus, string> = {
 // Statistika qo'lda qo'shilgan bo'limlarni ham hisobga oladi, shuning uchun
 // modul darajasida emas, ro'yxatdan hisoblanadi.
 function deptStats(departments: Dept[]) {
-  const employeeSum = departments.reduce((sum, d) => sum + d.employees, 0);
+  // Xodim soni kiritilmagan bo'lishi mumkin — o'sha bo'limlar hisobga
+  // olinmaydi, aks holda "0 xodim" haqiqiy raqamdek ko'rinadi.
+  const known = departments.filter((d) => typeof d.employees === "number");
+  const employeeSum = known.reduce((sum, d) => sum + (d.employees ?? 0), 0);
   return {
-    totalStaff: employeeSum + 2, // + CEO + Direktor
-    leaders: departments.length + 2, // bo'lim boshliqlari + CEO + Direktor
-    avgSpan: departments.length ? Math.round((employeeSum / departments.length) * 10) / 10 : 0,
+    knownCount: known.length,
+    totalStaff: known.length ? employeeSum : null,
+    leaders: departments.length,
+    avgSpan: known.length ? Math.round((employeeSum / known.length) * 10) / 10 : null,
   };
 }
 const VIEW_STORAGE_KEY = "utax_orgchart_view";
@@ -254,7 +258,7 @@ function DeptCard({
       onFocus={() => onHover(true)}
       onBlur={() => onHover(false)}
       aria-pressed={selected}
-      aria-label={`${label} — ${dept.head}, ${dept.employees} ${t("orgchart_employees", lang)}`}
+      aria-label={`${label}${dept.head ? ` — ${dept.head}` : ""}${dept.employees !== null ? `, ${dept.employees} ${t("orgchart_employees", lang)}` : ""}`}
       className={`group relative flex w-full flex-col gap-2.5 rounded-2xl border bg-surface p-4 text-left transition-all duration-150 motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand ${
         selected
           ? "border-brand bg-brand-light shadow-brand-hover"
@@ -275,13 +279,13 @@ function DeptCard({
         </span>
         <div className="min-w-0 flex-1">
           <p className="truncate text-sm font-semibold text-foreground">{label}</p>
-          <p className="truncate text-[11px] text-muted">{dept.head}</p>
+          <p className="truncate text-[11px] text-muted">{dept.head ?? "rahbar kiritilmagan"}</p>
         </div>
       </div>
 
       <div className="flex items-center gap-1.5 text-[11px] text-muted">
         <Users size={12} />
-        {dept.employees} {t("orgchart_employees", lang)}
+        {dept.employees !== null ? `${dept.employees} ${t("orgchart_employees", lang)}` : "xodim soni kiritilmagan"}
       </div>
 
       <div>
@@ -360,7 +364,7 @@ function DepartmentDrawer({
             <div>
               <p className="text-sm font-bold text-foreground">{label}</p>
               <p className="text-xs text-muted">
-                {t("orgchart_detail_head", lang)}: {dept.head}
+                {t("orgchart_detail_head", lang)}: {dept.head ?? "kiritilmagan"}
               </p>
               <span className="mt-1 inline-flex flex-wrap gap-1.5">
                 {isExtra && <Badge tone="warning">{t("orgchart_extra_badge", lang)}</Badge>}
@@ -387,7 +391,7 @@ function DepartmentDrawer({
         <div className="space-y-5 p-5">
           <div className="grid grid-cols-3 gap-2.5">
             <div className="rounded-xl border border-border bg-surface-alt p-3 text-center">
-              <p className="text-lg font-bold text-foreground">{dept.employees}</p>
+              <p className="text-lg font-bold text-foreground">{dept.employees ?? "—"}</p>
               <p className="text-[10px] text-muted">{t("orgchart_col_employees", lang)}</p>
             </div>
             <div className="rounded-xl border border-border bg-surface-alt p-3 text-center">
@@ -555,9 +559,9 @@ export function OrgChart() {
       <div ref={ceoRef} className="relative z-10 w-full max-w-xs">
         <HeroCard
           icon={<Crown size={17} />}
-          name={orgStructure.ceo.name}
+          name={orgStructure.ceo.name ?? "Kiritilmagan"}
           eyebrow={t("role_label_ceo", lang)}
-          meta={`${stats.totalStaff} ${t("orgchart_ceo_meta", lang)}`}
+          meta={stats.totalStaff !== null ? `${stats.totalStaff} ${t("orgchart_ceo_meta", lang)}` : "xodim soni kiritilmagan"}
           gradient
         />
       </div>
@@ -565,7 +569,7 @@ export function OrgChart() {
       <div ref={directorRef} className="relative z-10 w-full max-w-xs">
         <HeroCard
           icon={<UserCog size={15} />}
-          name={orgStructure.director.name}
+          name={orgStructure.director.name ?? "Kiritilmagan"}
           eyebrow={t("role_label_director", lang)}
           meta={`${departments.length} ${t("orgchart_director_meta", lang)}`}
         />
@@ -605,7 +609,7 @@ export function OrgChart() {
           <tr className="border-b border-border">
             <td className="py-2.5 font-medium text-foreground">{orgStructure.ceo.name}</td>
             <td className="py-2.5 text-muted">{t("role_label_ceo", lang)}</td>
-            <td className="py-2.5 text-muted">{stats.totalStaff}</td>
+            <td className="py-2.5 text-muted">{stats.totalStaff ?? "—"}</td>
             <td className="py-2.5 text-muted">—</td>
           </tr>
           <tr className="border-b border-border">
@@ -629,8 +633,8 @@ export function OrgChart() {
                   </span>
                 )}
               </td>
-              <td className="py-2.5 text-muted">{d.head}</td>
-              <td className="py-2.5 text-muted">{d.employees}</td>
+              <td className="py-2.5 text-muted">{d.head ?? "—"}</td>
+              <td className="py-2.5 text-muted">{d.employees ?? "—"}</td>
               <td className="py-2.5">
                 <button onClick={() => toggleSelect(d.key)} className="text-xs font-medium text-brand hover:underline">
                   {t("orgchart_view_details", lang)}
@@ -649,7 +653,7 @@ export function OrgChart() {
         <div className="grid grid-cols-2 gap-3 sm:flex-1 lg:grid-cols-4">
           <StatCard
             label={t("orgchart_stat_total", lang)}
-            value={String(stats.totalStaff)}
+            value={stats.totalStaff !== null ? String(stats.totalStaff) : "—"}
             hint={t("orgchart_stat_total_hint", lang)}
             icon={<Users size={18} />}
           />
@@ -661,13 +665,13 @@ export function OrgChart() {
           />
           <StatCard
             label={t("orgchart_stat_span", lang)}
-            value={String(stats.avgSpan)}
+            value={stats.avgSpan !== null ? String(stats.avgSpan) : "—"}
             hint={t("orgchart_stat_span_hint", lang)}
             icon={<Layers3 size={18} />}
           />
           <StatCard
             label={t("orgchart_stat_vacancies", lang)}
-            value={String(orgStructure.vacancies)}
+            value={orgStructure.vacancies !== null ? String(orgStructure.vacancies) : "—"}
             hint={t("orgchart_stat_vacancies_hint", lang)}
             icon={<Briefcase size={18} />}
             tone="warning"

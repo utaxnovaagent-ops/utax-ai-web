@@ -137,7 +137,7 @@ export const sotuvDeals = [
     probability: 10,
     daysInStage: 2,
     lastContactDaysAgo: 1,
-    owner: "Bobur Nazarov",
+    owner: "Muxammadamin aka",
     risk: "past" as const,
     nextAction: "Birlamchi qo'ng'iroq",
   },
@@ -150,7 +150,7 @@ export const sotuvDeals = [
     probability: 10,
     daysInStage: 1,
     lastContactDaysAgo: 0,
-    owner: "Bobur Nazarov",
+    owner: "Muxammadamin aka",
     risk: "past" as const,
     nextAction: "Ehtiyoj tahlili",
   },
@@ -163,7 +163,7 @@ export const sotuvDeals = [
     probability: 25,
     daysInStage: 6,
     lastContactDaysAgo: 5,
-    owner: "Bobur Nazarov",
+    owner: "Muxammadamin aka",
     risk: "o'rta" as const,
     nextAction: "Ehtiyojni tasdiqlash uchrashuvi",
   },
@@ -176,7 +176,7 @@ export const sotuvDeals = [
     probability: 20,
     daysInStage: 11,
     lastContactDaysAgo: 9,
-    owner: "Bobur Nazarov",
+    owner: "Muxammadamin aka",
     risk: "yuqori" as const,
     nextAction: "Aloqani tiklash — 9 kundan beri javob yo'q",
   },
@@ -189,7 +189,7 @@ export const sotuvDeals = [
     probability: 40,
     daysInStage: 5,
     lastContactDaysAgo: 2,
-    owner: "Bobur Nazarov",
+    owner: "Muxammadamin aka",
     risk: "past" as const,
     nextAction: "Ekspress audit narxini kelishish",
   },
@@ -202,7 +202,7 @@ export const sotuvDeals = [
     probability: 35,
     daysInStage: 3,
     lastContactDaysAgo: 3,
-    owner: "Bobur Nazarov",
+    owner: "Muxammadamin aka",
     risk: "past" as const,
     nextAction: "Uchrashuvdan keyingi brief yuborish",
   },
@@ -215,7 +215,7 @@ export const sotuvDeals = [
     probability: 55,
     daysInStage: 9,
     lastContactDaysAgo: 1,
-    owner: "Bobur Nazarov",
+    owner: "Muxammadamin aka",
     risk: "o'rta" as const,
     nextAction: "Tijorat taklifini eslatish",
   },
@@ -228,7 +228,7 @@ export const sotuvDeals = [
     probability: 60,
     daysInStage: 14,
     lastContactDaysAgo: 6,
-    owner: "Bobur Nazarov",
+    owner: "Muxammadamin aka",
     risk: "yuqori" as const,
     nextAction: "Chegirma taklifini rahbariyatga tasdiqlatish",
   },
@@ -241,7 +241,7 @@ export const sotuvDeals = [
     probability: 100,
     daysInStage: 0,
     lastContactDaysAgo: 0,
-    owner: "Bobur Nazarov",
+    owner: "Muxammadamin aka",
     risk: "past" as const,
     nextAction: "Shartnoma imzolandi",
   },
@@ -254,7 +254,7 @@ export const sotuvDeals = [
     probability: 100,
     daysInStage: 0,
     lastContactDaysAgo: 0,
-    owner: "Bobur Nazarov",
+    owner: "Muxammadamin aka",
     risk: "past" as const,
     nextAction: "Onboarding boshlandi",
   },
@@ -264,7 +264,7 @@ export const sotuvData = {
   revenue: { planThisMonth: 500, factThisMonth: 412, currency: "M so'm" },
   winRate: { percent: 34, trendPp: 2, sparkline: [29, 31, 30, 33, 34] },
   velocity: { medianDays: 21, trendDays: -3 },
-  salespeople: ["Bobur Nazarov"],
+  salespeople: ["Muxammadamin aka"],
   followUps: [
     { client: "Silk Road Logistics", action: "Tijorat taklifini eslatish", due: "Bugun" },
     { client: "Namangan Tekstil Eksport", action: "Uchrashuvdan keyingi brief yuborish", due: "Ertaga" },
@@ -383,8 +383,8 @@ export const internationalData = {
 };
 
 // Tashkiliy tuzilma. Faqat TEKSHIRILGAN ma'lumot yoziladi: hozircha bu —
-// bo'limlar ro'yxati va Sotuv bo'limi boshlig'i (Bobur Nazarov, agent
-// tuzilmasidan tasdiqlangan). Qolgan rahbarlar ismi va xodim sonlari
+// bo'limlar ro'yxati va Sotuv bo'limi rahbari (Muxammadamin aka —
+// serverdagi agentlar xotirasidan tasdiqlangan). Qolgan rahbarlar ismi va xodim sonlari
 // kiritilmagan — o'ylab topilgan ism ko'rsatgandan ko'ra bo'sh qoldirilgani
 // yaxshi, aks holda tuzilma real ma'lumotdek ko'rinib chalg'itadi.
 export interface OrgDept {
@@ -414,7 +414,7 @@ export const orgStructure: {
     { key: "audit", label: "Audit", head: null, employees: null, color: "#0d9488", isExtra: true, aiPercent: 0 },
     { key: "it", label: "IT", head: null, employees: null, color: "#2563eb", aiPercent: 0 },
     { key: "marketing", label: "Marketing", head: null, employees: null, color: "#db2777", aiPercent: 0 },
-    { key: "sotuv", label: "Sotuv", head: "Bobur Nazarov", employees: null, color: "#ea580c", aiPercent: SOTUV_AI_PERCENT },
+    { key: "sotuv", label: "Sotuv", head: "Muxammadamin aka", employees: null, color: "#ea580c", aiPercent: SOTUV_AI_PERCENT },
     { key: "international", label: "Xalqaro soliq", head: null, employees: null, color: "#4338ca", isExtra: true, aiPercent: 0 },
     { key: "telegram", label: "Ishchi bo'lim", head: null, employees: null, color: "#0891b2", aiPercent: 0 },
     { key: "hr", label: "HR", head: null, employees: null, color: "#9333ea", aiPercent: 0 },

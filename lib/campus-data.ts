@@ -34,7 +34,7 @@ export interface AgentDef {
   role: string;
   taskPool: string[];
   // "synthesizer" — Botir AI kabi, bir joyda turib boshqa agentlar signalini
-  // birlashtiruvchi rol; "human" — Bobur Nazarov kabi qaror beruvchi rahbar.
+  // birlashtiruvchi rol; "human" — bo'lim rahbari kabi qaror beruvchi shaxs.
   // Ikkalasi ham stol/yig'ilish aylanmasiga qo'shilmaydi, o'z podiumida turadi.
   entityType: "ai" | "human" | "synthesizer";
   demoStatus: DemoStatus;
@@ -89,7 +89,7 @@ const marketingTaskPool = [
   ...marketingData.contentCalendar.map((c) => `"${c.title}" kontenti — ${c.stage}`),
 ];
 
-// Sotuv Hub'i — Bobur Nazarov (inson), Botir AI (sintezator) va 5 ta
+// Sotuv Hub'i — bo'lim rahbari (inson) va ixtisoslashgan agentlar —
 // ixtisoslashgan agent — hammasi lib/sotuv-agents.ts'dagi bitta manbadan.
 const boburTaskPool = sotuvData.followUps.map((f) => `${f.client} bo'yicha yakuniy qaror kutmoqda`);
 
@@ -119,7 +119,7 @@ export const AGENTS: AgentDef[] = [
   { id: "agent-marketing", name: "Marketing Agent", zoneKey: "marketing", color: "#db2777", role: "Kontent generatsiya", taskPool: marketingTaskPool, entityType: "ai", demoStatus: "live" },
 
   // Sotuv Hub — TZI "3D Campus 2.0" §6: 1 inson rahbar + 1 sintezator + 6 agent.
-  { id: "bobur-nazarov", name: SOTUV_OWNER.name, zoneKey: "sotuv", color: "#334155", role: SOTUV_OWNER.role, taskPool: boburTaskPool, entityType: "human", demoStatus: "live" },
+  { id: "sotuv-rahbar", name: SOTUV_OWNER.name, zoneKey: "sotuv", color: "#334155", role: SOTUV_OWNER.role, taskPool: boburTaskPool, entityType: "human", demoStatus: "live" },
   ...SOTUV_AGENTS.map((a) => ({
     id: `sotuv-${a.id}`,
     name: a.name,

@@ -26,7 +26,10 @@ export interface SotuvAgentDef {
   stage: SotuvStage;
 }
 
-export const SOTUV_OWNER = { name: "Bobur Nazarov", role: "Sotuv bo'limi boshlig'i" };
+// Sotuv bo'limi rahbari — serverdagi agentlarning xotirasidan olingan
+// (uchta agent mustaqil ravishda shunday yozgan). Ilgari bu yerda demo
+// ma'lumotdan kelib chiqqan "Bobur Nazarov" turardi.
+export const SOTUV_OWNER = { name: "Muxammadamin aka", role: "Sotuv bo'limi rahbari" };
 
 export const SOTUV_AGENTS: SotuvAgentDef[] = [
   {

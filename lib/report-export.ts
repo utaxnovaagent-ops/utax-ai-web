@@ -143,8 +143,17 @@ export function exportWord(r: ReportModel, filename: string) {
   download(new Blob(["﻿" + html], { type: "application/msword;charset=utf-8" }), filename);
 }
 
+/** Rasmni yasab, Blob qaytaradi — yuklab olish yoki Telegramga yuborish uchun. */
+export function renderImage(r: ReportModel): Promise<Blob | null> {
+  return new Promise((resolve) => drawReport(r, resolve));
+}
+
 /** Rasm — canvas'da chizilgan kartochka (.png), 2x aniqlikda. */
 export function exportImage(r: ReportModel, filename: string) {
+  drawReport(r, (blob) => blob && download(blob, filename));
+}
+
+function drawReport(r: ReportModel, done: (blob: Blob | null) => void) {
   const W = 1000;
   const pad = 48;
   const rowH = 30;
@@ -155,7 +164,7 @@ export function exportImage(r: ReportModel, filename: string) {
   canvas.width = W * scale;
   canvas.height = height * scale;
   const ctx = canvas.getContext("2d");
-  if (!ctx) return;
+  if (!ctx) return done(null);
   ctx.scale(scale, scale);
 
   const font = (size: number, weight = "400") =>
@@ -289,5 +298,5 @@ export function exportImage(r: ReportModel, filename: string) {
     });
   }
 
-  canvas.toBlob((blob) => blob && download(blob, filename), "image/png");
+  canvas.toBlob(done, "image/png");
 }

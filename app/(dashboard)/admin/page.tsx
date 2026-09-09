@@ -59,6 +59,12 @@ export default function AdminPage() {
                 <Badge tone={toneForLevel(u.status)}>{u.status}</Badge>
               </div>
             ))}
+            {adminData.users.length === 0 && Object.keys(extraUsers.state).length === 0 && (
+              <p className="py-4 text-center text-xs text-muted">
+                Foydalanuvchilar ro&apos;yxati hali tizimga ulanmagan — yuqoridagi tugma orqali
+                qo&apos;lda qo&apos;shishingiz mumkin.
+              </p>
+            )}
             {Object.entries(extraUsers.state).map(([name, role]) => (
               <div key={name} className="flex items-center justify-between gap-3 border-b border-border pb-2.5 last:border-0 last:pb-0">
                 <div>
@@ -110,6 +116,13 @@ export default function AdminPage() {
               </tr>
             </thead>
             <tbody>
+              {adminData.auditLog.length === 0 && (
+                <tr>
+                  <td colSpan={4} className="py-4 text-center text-xs text-muted">
+                    Audit jurnali hali ulanmagan — amallar tarixi yozilmayapti.
+                  </td>
+                </tr>
+              )}
               {adminData.auditLog.map((a, i) => (
                 <tr key={i} className="border-b border-border last:border-0">
                   <td className="py-2.5 font-mono text-xs text-muted">{a.time}</td>

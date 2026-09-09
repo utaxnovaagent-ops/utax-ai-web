@@ -59,7 +59,7 @@ export default function AuditPage() {
               </div>
               <div className="mt-2 flex items-center justify-between text-xs text-muted">
                 <span className="flex items-center gap-1.5">
-                  <UserCircle2 size={13} /> {e.auditor}
+                  <UserCircle2 size={13} /> {e.auditor ?? "mas'ul biriktirilmagan"}
                 </span>
                 <span>
                   {e.dueDate} · {e.findings} {t("audit_col_findings", lang)}

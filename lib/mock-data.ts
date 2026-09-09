@@ -355,12 +355,13 @@ export const auditData = {
     { key: "signoff", label: "Mijoz tasdig'i", count: 1 },
   ],
   engagements: [
-    { client: "Vodiy Agro Holding", stage: "findings", progress: 65, auditor: "Malika Rustamova", dueDate: "22-avg", findings: 3 },
-    { client: "Grand Textile MChJ", stage: "fieldwork", progress: 40, auditor: "Sherzod Yo'ldoshev", dueDate: "28-avg", findings: 0 },
-    { client: "Silk Road Logistics", stage: "report", progress: 85, auditor: "Malika Rustamova", dueDate: "19-avg", findings: 2 },
-    { client: "Namangan Bino Servis", stage: "signoff", progress: 95, auditor: "Aziz Rahimov", dueDate: "16-avg", findings: 1 },
-    { client: "Farg'ona YaTT Nazarov", stage: "fieldwork", progress: 30, auditor: "Gulnora Aliyeva", dueDate: "30-avg", findings: 0 },
-    { client: "Dr. Kamolov klinikasi", stage: "started", progress: 10, auditor: "Malika Rustamova", dueDate: "05-sen", findings: 0 },
+    // Auditor ismlari kiritilmagan — mas'ul biriktirilgach to'ldiriladi.
+    { client: "Vodiy Agro Holding", stage: "findings", progress: 65, auditor: null, dueDate: "22-avg", findings: 3 },
+    { client: "Grand Textile MChJ", stage: "fieldwork", progress: 40, auditor: null, dueDate: "28-avg", findings: 0 },
+    { client: "Silk Road Logistics", stage: "report", progress: 85, auditor: null, dueDate: "19-avg", findings: 2 },
+    { client: "Namangan Bino Servis", stage: "signoff", progress: 95, auditor: null, dueDate: "16-avg", findings: 1 },
+    { client: "Farg'ona YaTT Nazarov", stage: "fieldwork", progress: 30, auditor: null, dueDate: "30-avg", findings: 0 },
+    { client: "Dr. Kamolov klinikasi", stage: "started", progress: 10, auditor: null, dueDate: "05-sen", findings: 0 },
   ],
 };
 
@@ -427,23 +428,18 @@ export const orgStructure: {
 };
 
 export const adminData = {
-  users: [
-    { name: "Aziz Rahimov", role: "CEO", status: "Faol", lastLogin: "Bugun, 09:12" },
-    { name: "Dilnoza Karimova", role: "Direktor", status: "Faol", lastLogin: "Bugun, 08:47" },
-    { name: "Sherzod Yo'ldoshev", role: "Bo'lim boshlig'i (IT)", status: "Faol", lastLogin: "Kecha, 18:03" },
-    { name: "Malika Rustamova", role: "Auditor", status: "Bloklangan", lastLogin: "3 kun oldin" },
-  ],
+  // Foydalanuvchilar ro'yxati va audit jurnali hali hech qanday manbaga
+  // ulanmagan. Ilgari bu yerda to'qib chiqarilgan ismlar turardi —
+  // ular haqiqiy xodimlardek ko'rinib chalg'itardi, shuning uchun olib
+  // tashlandi. Sahifada "Yangi foydalanuvchi" tugmasi orqali qo'lda
+  // qo'shilganlar ko'rinadi.
+  users: [] as { name: string; role: string; status: string; lastLogin: string }[],
   integrations: [
     { name: "1C", status: "Ogohlantirish", lastSync: "42 daqiqa oldin" },
     { name: "CRM", status: "Sog'lom", lastSync: "3 daqiqa oldin" },
     { name: "Telegram Bot API", status: "Sog'lom", lastSync: "1 daqiqa oldin" },
     { name: "IP telefoniya", status: "Ulanmagan", lastSync: "—" },
   ],
-  auditLog: [
-    { actor: "Aziz Rahimov", action: "Vazifani tasdiqladi", object: "TASK-1042", time: "10:38" },
-    { actor: "AI Agent (Moliya)", action: "Hisobot yaratdi", object: "REPORT-Iyul-Cashflow", time: "10:20" },
-    { actor: "Sherzod Yo'ldoshev", action: "Integratsiya sozlamasini o'zgartirdi", object: "1C API", time: "09:55" },
-    { actor: "Sistema", action: "Backup bajarildi", object: "prod-db-2026-08-15", time: "03:00" },
-  ],
+  auditLog: [] as { actor: string; action: string; object: string; time: string }[],
   aiCost: { monthTokens: "18.4M", monthCost: "$142", avgLatency: "1.6s" },
 };

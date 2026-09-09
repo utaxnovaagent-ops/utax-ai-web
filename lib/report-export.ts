@@ -176,12 +176,15 @@ export function exportImage(r: ReportModel, filename: string) {
   ctx.fillStyle = INK;
   ctx.font = font(28, "700");
   ctx.fillText(r.title, pad, y);
+  // Kenglikni sarlavha shrifti bilan o'lchaymiz — kichik shriftda o'lchansa
+  // belgi sarlavha ustiga tushib qoladi.
+  const titleW = ctx.measureText(r.title).width;
 
   // REAL / DEMO belgisi
   const badge = r.isReal ? "REAL" : "DEMO";
   ctx.font = font(12, "700");
   const bw = ctx.measureText(badge).width + 18;
-  const bx = pad + ctx.measureText(r.title).width + 14;
+  const bx = pad + titleW + 14;
   ctx.fillStyle = r.isReal ? "#dcfce7" : "#fef3c7";
   ctx.beginPath();
   ctx.roundRect(bx, y - 15, bw, 22, 11);

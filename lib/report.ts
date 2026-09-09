@@ -26,6 +26,17 @@ export interface ReportModel {
   notes: string[];
 }
 
+const MONTHS_UZ = [
+  "yanvar", "fevral", "mart", "aprel", "may", "iyun",
+  "iyul", "avgust", "sentabr", "oktabr", "noyabr", "dekabr",
+];
+
+// toLocaleDateString("uz-UZ") ba'zi tizimlarda "2026 M09 09" ko'rinishida
+// chiqaradi — shuning uchun sanani o'zimiz yozamiz.
+function formatDate(d: Date) {
+  return `${d.getDate()}-${MONTHS_UZ[d.getMonth()]} ${d.getFullYear()}`;
+}
+
 export function buildReport(i: ReportInput): ReportModel {
   const open = openDeals(i.deals);
   const closed = (i.won90 ?? 0) + (i.lost90 ?? 0);
@@ -47,7 +58,7 @@ export function buildReport(i: ReportInput): ReportModel {
 
   return {
     title: "UTAX — Sotuv hisoboti",
-    date: new Date().toLocaleDateString("uz-UZ", { day: "2-digit", month: "long", year: "numeric" }),
+    date: formatDate(new Date()),
     periodLabel: i.periodLabel,
     isReal: i.isReal,
     sourceLine: i.isReal

@@ -13,8 +13,20 @@ import { SESSION_COOKIE, authConfigured, verifySession } from "@/lib/auth";
 // imkonsiz bo'lib qoladi.
 const PUBLIC_PATHS = ["/login", "/api/login"];
 
+// Saytning asosiy manzili. Eski Vercel deploy'i hamon tirik va GitHub'dan
+// avtomatik yangilanadi, lekin u yerda ma'lumot ham, sozlama ham yo'q —
+// eski havolani bosgan odam bo'sh xato sahifasiga tushmasligi uchun uni
+// asosiy manzilga yo'naltiramiz.
+const CANONICAL_HOST = process.env.CANONICAL_HOST ?? "utax-ai.169-58-178-40.sslip.io";
+
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  const host = request.headers.get("host") ?? "";
+
+  if (host.endsWith(".vercel.app") && CANONICAL_HOST) {
+    const target = new URL(request.nextUrl.pathname + request.nextUrl.search, `https://${CANONICAL_HOST}`);
+    return NextResponse.redirect(target, 308);
+  }
 
   // Sozlanmagan bo'lsa — "fail-open" (himoyasiz ochiq) qolib ketmasligi
   // uchun ataylab yopiq holatda qoldiramiz.

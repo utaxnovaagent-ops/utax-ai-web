@@ -6,6 +6,8 @@ import { createHmac, timingSafeEqual } from "node:crypto";
 
 export const SESSION_COOKIE = "utax_session";
 export const SESSION_DAYS = 30;
+/** "Meni eslab qolish" belgilanmasa — sessiya qisqa bo'ladi (brauzer yopilguncha). */
+export const SESSION_DAYS_SHORT = 1;
 
 function secret() {
   // Alohida SESSION_SECRET bo'lmasa — parolning o'zidan kalit hosil qilamiz,
@@ -18,8 +20,8 @@ function sign(payload: string) {
 }
 
 /** Cookie qiymati: "<muddat>.<imzo>" */
-export function createSession(now = Date.now()) {
-  const exp = String(now + SESSION_DAYS * 86_400_000);
+export function createSession(now = Date.now(), days = SESSION_DAYS) {
+  const exp = String(now + days * 86_400_000);
   return `${exp}.${sign(exp)}`;
 }
 

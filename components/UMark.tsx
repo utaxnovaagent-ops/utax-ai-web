@@ -1,9 +1,16 @@
+"use client";
+
 // UTAX "U" monogram — extracted as a standalone vector mark per the UI
 // redesign brief (§3.3): used for the sidebar/login/empty-state badge only.
 // The full robot mascot is a separate illustration and is never used here
 // or as an org-chart employee avatar.
+import { useId } from "react";
+
 export function UMark({ size = 32, className }: { size?: number; className?: string }) {
-  const gradientId = "u-mark-gradient";
+  // Har bir nusxaga o'z gradient id'si kerak: bitta sahifada ikkita mark
+  // bo'lganda (login — brend paneli + telefon sarlavhasi) bir xil id
+  // to'qnashadi va yashirilgan nusxaning gradienti tufayli "U" ko'rinmay qoladi.
+  const gradientId = `u-mark-${useId()}`;
   return (
     <svg
       width={size}

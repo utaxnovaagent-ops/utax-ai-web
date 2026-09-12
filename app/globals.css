@@ -120,6 +120,9 @@ body {
 @media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 0.01ms !important;
+    /* Iteration-count'siz cheksiz animatsiya 0.01ms da qayta-qayta takrorlanib
+       strobga aylanadi — bu fotosezgir foydalanuvchi uchun xavfli. */
+    animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
 }
@@ -234,4 +237,110 @@ body {
     animation-iteration-count: 1 !important;
   }
   .utax-splash-glow, .utax-splash-img { opacity: 1; }
+}
+
+/* UTAX bosh binosi — login kartochkasining chap paneli foni.
+   Eski brauzer birinchi qatorni (jpg) oladi, zamonaviysi image-set'dan webp ni. */
+.utax-building {
+  background-image: url(/brand/utax-building.jpg);
+  background-image: image-set(
+    url(/brand/utax-building.webp) type("image/webp"),
+    url(/brand/utax-building.jpg) type("image/jpeg")
+  );
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+/* ===== Login osmonidagi suzuvchi bulutlar (sof dekorativ) =====
+   app/globals.css OXIRIGA qo'shiladi.
+
+   Faqat transform va opacity animatsiya qilinadi — layout ham, paint ham
+   qayta hisoblanmaydi: har bir kadrda ishni to'liq kompozitor bajaradi.
+   JS yo'q, requestAnimationFrame sikli yo'q.
+
+   MUHIM: qatlam sukut bo'yicha display:none. U FAQAT
+   @media (prefers-reduced-motion: no-preference) ichida yoqiladi, chunki
+   yuqoridagi global qoida — * { animation-duration: 0.01ms !important } —
+   cheksiz animatsiyani STROBGA aylantirardi. reduce rejimida bulutlar
+   umuman render qilinmaydi (0 ta qatlam, 0 ta animatsiya); sky.svg ning
+   o'z statik bulutlari joyida qoladi. */
+.utax-sky-clouds {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: -9;              /* sky.svg (-z-10) USTIDA, kartochka ORTIDA */
+  overflow: hidden;         /* gorizontal scrollbar chiqmasligi kafolati */
+  pointer-events: none;
+  contain: layout paint style;
+}
+
+.utax-cloud {
+  position: absolute;
+  top: var(--y);
+  right: 100%;              /* start: o'ng qirrasi ekranning chap qirrasida */
+  width: var(--w);
+  height: calc(var(--w) * var(--r, 0.34));
+  opacity: 0;               /* ko'rinish FAQAT animatsiyadan keladi */
+  background-repeat: no-repeat;
+}
+
+/* Uchta shakl varianti — 7 ta bulut bir-biriga o'xshamasligi uchun.
+   Gradientlar bir marta rasterizatsiya qilinadi, keyin faqat ko'chiriladi.
+   filter: blur() ataylab ishlatilmagan — u katta maydonda qimmat. */
+.utax-cloud--a {
+  background-image:
+    radial-gradient(26% 78% at 38% 46%, #fff 0%, rgba(255,255,255,.92) 42%, rgba(255,255,255,0) 72%),
+    radial-gradient(22% 62% at 60% 52%, #fff 0%, rgba(255,255,255,.88) 44%, rgba(255,255,255,0) 74%),
+    radial-gradient(18% 48% at 21% 62%, rgba(255,255,255,.9) 0%, rgba(255,255,255,0) 76%),
+    radial-gradient(20% 44% at 77% 64%, rgba(255,255,255,.86) 0%, rgba(255,255,255,0) 76%),
+    radial-gradient(46% 30% at 50% 74%, rgba(255,255,255,.9) 0%, rgba(255,255,255,.5) 46%, rgba(255,255,255,0) 82%);
+}
+.utax-cloud--b {
+  background-image:
+    radial-gradient(24% 64% at 46% 48%, #fff 0%, rgba(255,255,255,.9) 44%, rgba(255,255,255,0) 74%),
+    radial-gradient(20% 50% at 67% 56%, rgba(255,255,255,.88) 0%, rgba(255,255,255,0) 76%),
+    radial-gradient(17% 42% at 27% 58%, rgba(255,255,255,.84) 0%, rgba(255,255,255,0) 78%),
+    radial-gradient(50% 26% at 50% 70%, rgba(255,255,255,.82) 0%, rgba(255,255,255,0) 84%);
+}
+.utax-cloud--c {
+  background-image:
+    radial-gradient(30% 74% at 44% 50%, rgba(255,255,255,.94) 0%, rgba(255,255,255,0) 72%),
+    radial-gradient(24% 52% at 69% 60%, rgba(255,255,255,.82) 0%, rgba(255,255,255,0) 78%),
+    radial-gradient(40% 28% at 47% 72%, rgba(255,255,255,.8) 0%, rgba(255,255,255,0) 84%);
+}
+
+/* Sikl: butunlay chapdan tashqarida -> butunlay o'ngdan tashqarida.
+   Masofa = ekran eni + bulutning o'z eni (100% translate'da elementning
+   o'z enini bildiradi). Brauzerda o'lchab tekshirilgan (1440px, 432px bulut):
+   boshida left = -432 = -eni, oxirida left = 1440 = ekran eni, ikkalasida
+   ham opacity = 0 -> takrorlanish nuqtasida "sakrash" ko'rinmaydi. */
+@keyframes utaxCloudDrift {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(calc(100vw + 100%), 0, 0); }
+}
+
+/* 26% / 72% — bulut ekranga TO'LIQ kirib bo'lgandan keyingina to'liq
+   ko'rinadi va chiqa boshlashidan OLDIN so'na boshlaydi. O'lchangan:
+   26% da qutisi [55..487], 72% da [916..1348] — 1440px ekran ichida
+   to'liq. Ya'ni to'liq ko'rinish paytida hech qachon qirqilmaydi. */
+@keyframes utaxCloudFade {
+  0%, 100% { opacity: 0; }
+  26%, 72% { opacity: var(--o, .4); }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .utax-sky-clouds { display: block; }
+  .utax-cloud {
+    will-change: transform, opacity;
+    /* Ikkala animatsiya bir xil --d va --t bilan -> abadiy sinxron */
+    animation:
+      utaxCloudDrift var(--d) linear      var(--t) infinite,
+      utaxCloudFade  var(--d) ease-in-out var(--t) infinite;
+  }
+}
+
+/* Telefon: 7 tadan 4 tasi qoladi (--lite lar o'chadi), qolganlari
+   clamp() tufayli o'zi kichrayadi. */
+@media (max-width: 640px) {
+  .utax-cloud--lite { display: none; }
 }

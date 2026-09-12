@@ -2,17 +2,7 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useRef, useState } from "react";
-import {
-  ArrowRight,
-  Bot,
-  ChevronDown,
-  Eye,
-  EyeOff,
-  LayoutGrid,
-  Lock,
-  ShieldCheck,
-  Users,
-} from "lucide-react";
+import { ArrowRight, ChevronDown, Eye, EyeOff, Lock, ShieldCheck } from "lucide-react";
 import { useAppState } from "@/lib/app-context";
 import { ROLES, RoleId } from "@/lib/roles";
 import { Lang, LANG_LABEL, t } from "@/lib/i18n";
@@ -27,6 +17,32 @@ export default function LoginPage() {
     </Suspense>
   );
 }
+
+// Osmonda sekin suzuvchi bulutlar — sof dekorativ bezak, kartochka ORTIDA.
+// y: hammasi yuqori yarmida — sky.svg ning pastki yarmi deyarli oq, u yerda
+// oq bulut ko'rinmaydi. d: davomiyliklar o'zaro karrali emas, shuning uchun
+// manzara takrorlanmaydi. t: manfiy delay — sahifa ochilishida bulutlar
+// siklning turli nuqtalarida turadi, hammasi chap chetdan birga chiqmaydi.
+type Cloud = {
+  w: string;
+  y: string;
+  o: string;
+  d: string;
+  t: string;
+  v: "a" | "b" | "c";
+  r?: string;
+  lite?: boolean;
+};
+
+const CLOUDS: Cloud[] = [
+  { w: "clamp(170px,30vw,440px)", y: "8%", o: ".42", d: "164s", t: "-12s", v: "a" },
+  { w: "clamp(130px,21vw,300px)", y: "20%", o: ".40", d: "208s", t: "-96s", v: "b", lite: true },
+  { w: "clamp(190px,33vw,480px)", y: "33%", o: ".46", d: "186s", t: "-140s", v: "b" },
+  { w: "clamp(110px,17vw,250px)", y: "3%", o: ".30", d: "240s", t: "-58s", v: "c", r: ".40" },
+  { w: "clamp(160px,26vw,380px)", y: "41%", o: ".48", d: "152s", t: "-104s", v: "a" },
+  { w: "clamp(140px,23vw,340px)", y: "14%", o: ".36", d: "224s", t: "-176s", v: "c", lite: true },
+  { w: "clamp(105px,15vw,220px)", y: "26%", o: ".34", d: "198s", t: "-34s", v: "c", r: ".42", lite: true },
+];
 
 // Fokus halqasi to'liq alfada bo'lishi SHART: brand/25 oq kartochkada 1.39:1
 // beradi (WCAG SC 1.4.11 talabi 3:1), ya'ni klaviatura bilan ishlaydigan
@@ -88,16 +104,10 @@ function LoginPageInner() {
     "h-11 w-full rounded-control border border-border bg-surface px-3 text-[16px] text-foreground " +
     `placeholder:text-muted focus:border-brand ${FOCUS} sm:h-10 sm:text-sm`;
 
-  const features = [
-    { icon: LayoutGrid, key: "login_feature_1" },
-    { icon: Bot, key: "login_feature_2" },
-    { icon: Users, key: "login_feature_3" },
-  ];
-
   return (
     // color-scheme:light — sahifada ikkita native <select> va checkbox bor;
     // usiz OS qorong'i rejimida ular oq kartochka ichida qora chiziladi.
-    <div className="relative flex min-h-[100svh] w-full items-start justify-center px-4 pb-8 pt-[5vh] [color-scheme:light] sm:items-center sm:pt-4">
+    <div className="relative flex min-h-[100svh] w-full items-center justify-center px-4 py-6 [color-scheme:light] sm:py-8">
       {/* Osmon foni alohida fixed qatlam: iOS Safari'da URL paneli yig'ilganda
           100svh ostidan body foni kulrang chok bo'lib chiqmasligi uchun. */}
       <div
@@ -105,22 +115,46 @@ function LoginPageInner() {
         className="fixed inset-0 -z-10 bg-[#bcdff3] bg-[url(/brand/sky.svg)] bg-cover bg-center bg-no-repeat"
       />
 
-      <div className="w-full max-w-[400px] overflow-hidden rounded-card border border-white/70 bg-surface shadow-[0_24px_64px_-20px_rgba(11,79,176,0.45)] ring-1 ring-white/50 sm:ring-8 sm:ring-white/25 lg:grid lg:max-w-[920px] lg:grid-cols-[1fr_400px]">
+      {/* Sekin suzuvchi bulutlar. Faqat transform + opacity animatsiya qilinadi;
+          prefers-reduced-motion: reduce da butun qatlam display:none bo'ladi
+          (qoidalar globals.css da) — cheksiz animatsiya strobga aylanmasin. */}
+      <div aria-hidden className="utax-sky-clouds">
+        {CLOUDS.map((c, i) => (
+          <span
+            key={i}
+            className={`utax-cloud utax-cloud--${c.v}${c.lite ? " utax-cloud--lite" : ""}`}
+            style={
+              {
+                "--w": c.w,
+                "--y": c.y,
+                "--o": c.o,
+                "--d": c.d,
+                "--t": c.t,
+                ...(c.r ? { "--r": c.r } : {}),
+              } as React.CSSProperties
+            }
+          />
+        ))}
+      </div>
+
+      <div className="w-full max-w-[400px] overflow-hidden rounded-card border border-white/70 bg-surface shadow-[0_24px_64px_-20px_rgba(11,79,176,0.45)] ring-1 ring-white/50 sm:ring-8 sm:ring-white/25 lg:grid lg:max-w-[820px] lg:grid-cols-[1fr_372px]">
         {/* Telefonda brend paneli o'rniga — ingichka gradient chiziq */}
         <div className="brand-gradient h-[3px] lg:hidden" />
 
-        {/* Chap brend paneli — faqat kengroq ekranda.
-            Gradient ataylab to'q: oq matn #38bdf8 ustida 2.14:1 bo'lardi,
-            #0b4fb0..#1560d8 oralig'ida esa 5.4:1 dan past tushmaydi. */}
-        <div className="relative m-2 hidden flex-col justify-between overflow-hidden rounded-[10px] bg-[linear-gradient(145deg,#082a63_0%,#0b4fb0_52%,#1560d8_100%)] p-8 text-white lg:flex">
-          {/* Bezak: yumshoq halqalar — hech qanday ma'lumot tashimaydi */}
-          <div aria-hidden className="pointer-events-none absolute -right-16 -top-20 h-64 w-64 rounded-full border border-white/15" />
-          <div aria-hidden className="pointer-events-none absolute -right-4 top-24 h-72 w-72 rounded-full border border-white/10" />
-          <div aria-hidden className="pointer-events-none absolute -bottom-24 -left-16 h-56 w-56 rounded-full bg-white/10 blur-2xl" />
+        {/* Chap panel — UTAX bosh binosi fotosurati (faqat kengroq ekranda).
+            Matn foto ustida turgani uchun ikki bosqichli scrim qo'yilgan: eng
+            yorug' piksel (oq maydon, 255,255,255) ustida ham oq matn 6.5:1 dan
+            past tushmaydi — qiymat rasmni piksel bo'yicha o'lchab tanlangan. */}
+        <div className="relative m-2 hidden flex-col justify-between overflow-hidden rounded-[10px] bg-brand-900 p-7 text-white lg:flex">
+          <div aria-hidden className="utax-building absolute inset-0" />
+          <div
+            aria-hidden
+            className="absolute inset-0 bg-[linear-gradient(180deg,rgba(6,32,78,0.74)_0%,rgba(6,32,78,0.40)_44%,rgba(6,32,78,0.82)_100%)]"
+          />
 
           <div className="relative flex items-center gap-3">
-            <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-white shadow-sm">
-              <UMark size={26} />
+            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white shadow-sm">
+              <UMark size={24} />
             </span>
             <span>
               <span className="block text-sm font-semibold leading-tight">{t("app_name", lang)}</span>
@@ -128,27 +162,16 @@ function LoginPageInner() {
             </span>
           </div>
 
-          <div className="relative mt-10">
-            <h1 className="text-[26px] font-semibold leading-[1.25]">{t("login_tagline", lang)}</h1>
-            <p className="mt-3 max-w-[34ch] text-[13px] leading-relaxed text-white/85">
+          <div className="relative">
+            <h1 className="text-[22px] font-semibold leading-[1.25] drop-shadow-sm">{t("login_tagline", lang)}</h1>
+            <p className="mt-2 max-w-[32ch] text-[12px] leading-relaxed text-white/85">
               {t("login_tagline_sub", lang)}
             </p>
-          </div>
-
-          <div className="relative mt-10 flex flex-wrap gap-x-6 gap-y-3">
-            {features.map(({ icon: Icon, key }) => (
-              <span key={key} className="flex items-center gap-2 text-[11px] font-medium text-white/90">
-                <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-white/15">
-                  <Icon size={13} />
-                </span>
-                {t(key, lang)}
-              </span>
-            ))}
           </div>
         </div>
 
         {/* O'ng — forma paneli */}
-        <div className="px-5 py-4 sm:p-7 lg:p-9">
+        <div className="px-5 py-4 sm:p-7 lg:p-8">
           {/* Bitta til tanlagichi: telefonda brend qatorida, desktopda o'ngda */}
           <div className="mb-4 flex items-center gap-2.5">
             <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-light lg:hidden">
@@ -178,7 +201,7 @@ function LoginPageInner() {
           </div>
 
           <p className="text-[10px] font-semibold tracking-[0.16em] text-brand-700">{t("login_eyebrow", lang)}</p>
-          <h2 className="mt-1.5 text-[20px] font-semibold leading-tight text-foreground sm:text-[22px] lg:text-[26px]">
+          <h2 className="mt-1.5 text-[20px] font-semibold leading-tight text-foreground sm:text-[22px] lg:text-[23px]">
             {t("login_welcome", lang)}
           </h2>
           <p className="mt-1 hidden text-[13px] text-muted sm:block">{t("login_welcome_sub", lang)}</p>

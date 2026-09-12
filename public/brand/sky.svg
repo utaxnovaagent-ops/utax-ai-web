@@ -8,19 +8,19 @@
     <!-- Asosiy osmon gradienti: tepada azur, pastda deyarli oq -->
     <linearGradient id="skyBase" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="#2E9AD6"/>
-      <stop offset="0.10" stop-color="#3AA5DE"/>
-      <stop offset="0.26" stop-color="#57B4E4"/>
-      <stop offset="0.42" stop-color="#7AC6EC"/>
-      <stop offset="0.58" stop-color="#9AD3F0"/>
-      <stop offset="0.72" stop-color="#A8DAF2"/>
-      <stop offset="0.86" stop-color="#D8EEF9"/>
-      <stop offset="1" stop-color="#F2FAFD"/>
+      <stop offset="0.14" stop-color="#3AA5DE"/>
+      <stop offset="0.32" stop-color="#4EB0E2"/>
+      <stop offset="0.48" stop-color="#66BCE8"/>
+      <stop offset="0.62" stop-color="#82C9ED"/>
+      <stop offset="0.76" stop-color="#9FD5F1"/>
+      <stop offset="0.88" stop-color="#B8E1F5"/>
+      <stop offset="1" stop-color="#CDEAF8"/>
     </linearGradient>
 
     <!-- Gorizont yorug'ligi -->
     <radialGradient id="horizonGlow" cx="0.5" cy="0.68" r="0.62">
-      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.55"/>
-      <stop offset="0.45" stop-color="#EAF6FD" stop-opacity="0.26"/>
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.28"/>
+      <stop offset="0.45" stop-color="#EAF6FD" stop-opacity="0.12"/>
       <stop offset="1" stop-color="#EAF6FD" stop-opacity="0"/>
     </radialGradient>
 
@@ -132,9 +132,9 @@
 
   <!-- 5. Pastki past kontrastli bulutlanish -->
   <g filter="url(#hazeBlur)" fill="#FFFFFF">
-    <ellipse cx="330" cy="738" rx="370" ry="64" opacity="0.52"/>
-    <ellipse cx="150" cy="788" rx="290" ry="54" opacity="0.42"/>
-    <ellipse cx="838" cy="778" rx="330" ry="48" opacity="0.30"/>
-    <ellipse cx="1290" cy="754" rx="300" ry="54" opacity="0.28"/>
+    <ellipse cx="330" cy="738" rx="370" ry="64" opacity="0.32"/>
+    <ellipse cx="150" cy="788" rx="290" ry="54" opacity="0.26"/>
+    <ellipse cx="838" cy="778" rx="330" ry="48" opacity="0.18"/>
+    <ellipse cx="1290" cy="754" rx="300" ry="54" opacity="0.17"/>
   </g>
 </svg>

@@ -20,8 +20,8 @@ export default function LoginPage() {
 }
 
 // Osmonda sekin suzuvchi bulutlar — sof dekorativ bezak, kartochka ORTIDA.
-// y: hammasi yuqori yarmida — sky.svg ning pastki yarmi deyarli oq, u yerda
-// oq bulut ko'rinmaydi. d: davomiyliklar o'zaro karrali emas, shuning uchun
+// y: 4%..60% — osmon pastga qarab ham ko'k bo'lgani uchun bulutlar
+// kartochka ortidan ham o'tadi. d: davomiyliklar o'zaro karrali emas, shuning uchun
 // manzara takrorlanmaydi. t: manfiy delay — sahifa ochilishida bulutlar
 // siklning turli nuqtalarida turadi, hammasi chap chetdan birga chiqmaydi.
 type Cloud = {
@@ -36,13 +36,13 @@ type Cloud = {
 };
 
 const CLOUDS: Cloud[] = [
-  { w: "clamp(170px,30vw,440px)", y: "8%", o: ".42", d: "164s", t: "-12s", v: "a" },
-  { w: "clamp(130px,21vw,300px)", y: "20%", o: ".40", d: "208s", t: "-96s", v: "b", lite: true },
-  { w: "clamp(190px,33vw,480px)", y: "33%", o: ".46", d: "186s", t: "-140s", v: "b" },
-  { w: "clamp(110px,17vw,250px)", y: "3%", o: ".30", d: "240s", t: "-58s", v: "c", r: ".40" },
-  { w: "clamp(160px,26vw,380px)", y: "41%", o: ".48", d: "152s", t: "-104s", v: "a" },
-  { w: "clamp(140px,23vw,340px)", y: "14%", o: ".36", d: "224s", t: "-176s", v: "c", lite: true },
-  { w: "clamp(105px,15vw,220px)", y: "26%", o: ".34", d: "198s", t: "-34s", v: "c", r: ".42", lite: true },
+  { w: "clamp(180px,31vw,460px)", y: "7%", o: ".72", d: "108s", t: "-12s", v: "a" },
+  { w: "clamp(135px,22vw,310px)", y: "19%", o: ".62", d: "134s", t: "-64s", v: "b", lite: true },
+  { w: "clamp(200px,34vw,500px)", y: "33%", o: ".70", d: "119s", t: "-88s", v: "b" },
+  { w: "clamp(115px,17vw,255px)", y: "4%", o: ".50", d: "150s", t: "-38s", v: "c", r: ".40" },
+  { w: "clamp(170px,27vw,395px)", y: "47%", o: ".66", d: "97s", t: "-66s", v: "a" },
+  { w: "clamp(145px,23vw,345px)", y: "13%", o: ".56", d: "142s", t: "-112s", v: "c", lite: true },
+  { w: "clamp(110px,15vw,225px)", y: "60%", o: ".48", d: "126s", t: "-22s", v: "c", r: ".42", lite: true },
 ];
 
 // Fokus halqasi to'liq alfada bo'lishi SHART: brand/25 oq kartochkada 1.39:1

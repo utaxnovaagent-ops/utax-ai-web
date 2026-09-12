@@ -2,7 +2,7 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
-import { ShieldCheck, Lock, Mail, ChevronDown } from "lucide-react";
+import { ShieldCheck, Lock, ChevronDown } from "lucide-react";
 import { useAppState } from "@/lib/app-context";
 import { ROLES, RoleId } from "@/lib/roles";
 import { Lang, LANG_LABEL, t } from "@/lib/i18n";
@@ -21,7 +21,6 @@ function LoginPageInner() {
   const router = useRouter();
   const { setRoleId, lang, setLang } = useAppState();
   const [selectedRole, setSelectedRole] = useState<RoleId>("ceo");
-  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -104,29 +103,25 @@ function LoginPageInner() {
 
           <form onSubmit={handleLogin} className="mt-6 space-y-4">
             <div>
-              <label className="mb-1 block text-xs font-medium text-muted">{t("login_email", lang)}</label>
-              <div className="relative">
-                <Mail size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="ism.familiya@utax.uz"
-                  className="w-full rounded-lg border border-border py-2.5 pl-9 pr-3 text-sm focus:border-brand focus:outline-none"
-                />
-              </div>
-            </div>
-            <div>
               <label className="mb-1 block text-xs font-medium text-muted">{t("login_password", lang)}</label>
               <div className="relative">
                 <Lock size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
+                {/* Ilgari placeholder "••••••••" edi — maydon to'ldirilgandek
+                    ko'rinib, foydalanuvchi hech narsa yozmay "Kirish" bosardi. */}
                 <input
                   type="password"
                   required
+                  autoFocus
                   autoComplete="current-password"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    e.target.setCustomValidity("");
+                  }}
+                  onInvalid={(e) =>
+                    (e.target as HTMLInputElement).setCustomValidity("Parolni kiriting")
+                  }
+                  placeholder="Parolni kiriting"
                   className="w-full rounded-lg border border-border py-2.5 pl-9 pr-3 text-sm focus:border-brand focus:outline-none"
                 />
               </div>

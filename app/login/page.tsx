@@ -2,6 +2,7 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useRef, useState } from "react";
+import ReactDOM from "react-dom";
 import { ArrowRight, ChevronDown, Eye, EyeOff, Lock, ShieldCheck } from "lucide-react";
 import { useAppState } from "@/lib/app-context";
 import { ROLES, RoleId } from "@/lib/roles";
@@ -50,6 +51,14 @@ const CLOUDS: Cloud[] = [
 const FOCUS = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-700";
 
 function LoginPageInner() {
+  // Bino fotosuratini oldindan yuklaymiz, aks holda panel bir lahza to'q ko'k
+  // bo'lib turadi. media bilan — telefonda panel ko'rinmaydi, 103KB bekor ketmasin.
+  ReactDOM.preload("/brand/utax-building.webp", {
+    as: "image",
+    type: "image/webp",
+    media: "(min-width: 1024px)",
+  });
+
   const router = useRouter();
   const { setRoleId, lang, setLang } = useAppState();
   const [selectedRole, setSelectedRole] = useState<RoleId>("ceo");

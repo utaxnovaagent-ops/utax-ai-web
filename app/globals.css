@@ -33,6 +33,7 @@
   --warning: #f59e0b;
   --warning-bg: #fef4e3;
   --danger: #dc3545;
+  --danger-700: #b42318; /* matn uchun — #dc3545 och fonda AA dan o'tmaydi */
   --danger-bg: #fceaec;
   --info: #1677ff;
   --info-bg: #eaf2ff;
@@ -69,6 +70,7 @@
   --color-warning: var(--warning);
   --color-warning-bg: var(--warning-bg);
   --color-danger: var(--danger);
+  --color-danger-700: var(--danger-700);
   --color-danger-bg: var(--danger-bg);
   --color-info: var(--info);
   --color-info-bg: var(--info-bg);

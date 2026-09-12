@@ -1,0 +1,140 @@
+<!-- UTAX login foni — yumshoq kunduzgi osmon.
+     Foydalanuvchi tanlagan etalon rasm faqat suhbatda bo'lgani (diskda fayl
+     yo'q) uchun u vektor ko'rinishida qayta yasaldi: har qanday ekranda
+     tiniq, ~6KB, va background-size:cover bilan telefonda ham, keng
+     ekranda ham to'g'ri kesiladi. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" width="1600" height="1000" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <!-- Asosiy osmon gradienti: tepada azur, pastda deyarli oq -->
+    <linearGradient id="skyBase" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2E9AD6"/>
+      <stop offset="0.10" stop-color="#3AA5DE"/>
+      <stop offset="0.26" stop-color="#57B4E4"/>
+      <stop offset="0.42" stop-color="#7AC6EC"/>
+      <stop offset="0.58" stop-color="#9AD3F0"/>
+      <stop offset="0.72" stop-color="#A8DAF2"/>
+      <stop offset="0.86" stop-color="#D8EEF9"/>
+      <stop offset="1" stop-color="#F2FAFD"/>
+    </linearGradient>
+
+    <!-- Gorizont yorug'ligi -->
+    <radialGradient id="horizonGlow" cx="0.5" cy="0.68" r="0.62">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.55"/>
+      <stop offset="0.45" stop-color="#EAF6FD" stop-opacity="0.26"/>
+      <stop offset="1" stop-color="#EAF6FD" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Yuqori burchaklarni biroz chuqurlashtirish (vinyet emas, yumshoq) -->
+    <linearGradient id="topDeep" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1F86C6" stop-opacity="0.42"/>
+      <stop offset="1" stop-color="#1F86C6" stop-opacity="0"/>
+    </linearGradient>
+
+    <!-- Bulut massasining pastini haze ichiga singdirish uchun maska -->
+    <linearGradient id="fadeGrad" gradientUnits="userSpaceOnUse" x1="0" y1="330" x2="0" y2="690">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="1"/>
+      <stop offset="0.50" stop-color="#FFFFFF" stop-opacity="0.95"/>
+      <stop offset="0.74" stop-color="#FFFFFF" stop-opacity="0.62"/>
+      <stop offset="0.90" stop-color="#FFFFFF" stop-opacity="0.28"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0.10"/>
+    </linearGradient>
+    <mask id="cumulusFade" maskUnits="userSpaceOnUse" x="-120" y="160" width="1840" height="640">
+      <rect x="-120" y="160" width="1840" height="640" fill="url(#fadeGrad)"/>
+    </mask>
+
+    <!-- YONDASHUV C: blur + juda past chastotali fractalNoise displacement =
+         tabiiy, notekis bulut qirralari. Filtr hududi qat'iy cheklangan. -->
+    <filter id="fluff" filterUnits="userSpaceOnUse" x="-80" y="185" width="1760" height="600"
+            color-interpolation-filters="sRGB">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="22" result="b"/>
+      <feTurbulence type="fractalNoise" baseFrequency="0.004" numOctaves="3" seed="11" result="n"/>
+      <feDisplacementMap in="b" in2="n" scale="124" xChannelSelector="R" yChannelSelector="G" result="d"/>
+      <feGaussianBlur in="d" stdDeviation="11"/>
+    </filter>
+
+    <!-- Ingichka cirrus chiziqlari uchun arzon blur -->
+    <filter id="cirrusBlur" filterUnits="userSpaceOnUse" x="-60" y="40" width="1720" height="300"
+            color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="11"/>
+    </filter>
+
+    <!-- Bulut tagi bilan haze orasidagi ko'prik -->
+    <filter id="bridgeBlur" filterUnits="userSpaceOnUse" x="-120" y="470" width="1840" height="320"
+            color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="44"/>
+    </filter>
+
+    <!-- Pastki past kontrastli bulutlanish: faqat blur (telefonda tejamkor) -->
+    <filter id="hazeBlur" filterUnits="userSpaceOnUse" x="-120" y="580" width="1840" height="420"
+            color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="52"/>
+    </filter>
+  </defs>
+
+  <!-- 1. Osmon foni -->
+  <rect width="1600" height="1000" fill="url(#skyBase)"/>
+  <rect width="1600" height="420" fill="url(#topDeep)"/>
+  <rect width="1600" height="1000" fill="url(#horizonGlow)"/>
+
+  <!-- 2. Yuqori chorak: cirrus -->
+  <g filter="url(#cirrusBlur)" fill="#FFFFFF">
+    <ellipse cx="760" cy="108" rx="470" ry="8" opacity="0.14"/>
+    <ellipse cx="520" cy="152" rx="330" ry="6" opacity="0.11"/>
+    <ellipse cx="1010" cy="168" rx="400" ry="7" opacity="0.12"/>
+    <ellipse cx="830" cy="206" rx="500" ry="9" opacity="0.15"/>
+    <ellipse cx="1290" cy="128" rx="320" ry="6" opacity="0.10"/>
+    <ellipse cx="300" cy="238" rx="360" ry="8" opacity="0.11"/>
+    <ellipse cx="700" cy="262" rx="420" ry="7" opacity="0.13"/>
+    <ellipse cx="1180" cy="248" rx="350" ry="9" opacity="0.11"/>
+  </g>
+
+  <!-- 3. Markaziy kumulus massasi (tekstura maskali) -->
+  <g mask="url(#cumulusFade)">
+    <g filter="url(#fluff)" fill="#FFFFFF">
+      <!-- chap chetdan kiruvchi baland massa -->
+      <ellipse cx="150" cy="486" rx="290" ry="84" opacity="0.90"/>
+      <ellipse cx="268" cy="432" rx="176" ry="96" opacity="0.88"/>
+      <ellipse cx="60" cy="430" rx="150" ry="86" opacity="0.84"/>
+      <ellipse cx="392" cy="470" rx="140" ry="74" opacity="0.78"/>
+      <ellipse cx="470" cy="508" rx="120" ry="52" opacity="0.62"/>
+
+      <!-- markaziy yadro: telefonda ko'rinadigan 560..1040 zonasi, biroz pastroq -->
+      <ellipse cx="700" cy="524" rx="168" ry="70" opacity="0.86"/>
+      <ellipse cx="666" cy="478" rx="118" ry="74" opacity="0.84"/>
+      <ellipse cx="812" cy="546" rx="182" ry="62" opacity="0.82"/>
+      <ellipse cx="806" cy="500" rx="104" ry="56" opacity="0.72"/>
+      <ellipse cx="944" cy="512" rx="150" ry="76" opacity="0.88"/>
+      <ellipse cx="918" cy="462" rx="104" ry="74" opacity="0.86"/>
+      <ellipse cx="1006" cy="470" rx="88" ry="58" opacity="0.76"/>
+      <ellipse cx="586" cy="548" rx="150" ry="50" opacity="0.60"/>
+
+      <!-- o'ng chetdan kiruvchi massa (markaz bilan orasida ozgina ko'k tirqish) -->
+      <ellipse cx="1470" cy="482" rx="300" ry="88" opacity="0.90"/>
+      <ellipse cx="1352" cy="436" rx="174" ry="92" opacity="0.86"/>
+      <ellipse cx="1570" cy="428" rx="160" ry="84" opacity="0.82"/>
+      <ellipse cx="1224" cy="492" rx="146" ry="66" opacity="0.74"/>
+      <ellipse cx="1136" cy="534" rx="118" ry="46" opacity="0.56"/>
+    </g>
+    <!-- yuqorida suzuvchi mayda puflar -->
+    <g filter="url(#fluff)" fill="#FFFFFF">
+      <ellipse cx="1082" cy="372" rx="74" ry="26" opacity="0.40"/>
+      <ellipse cx="512" cy="352" rx="92" ry="22" opacity="0.32"/>
+      <ellipse cx="852" cy="336" rx="68" ry="18" opacity="0.26"/>
+    </g>
+  </g>
+
+  <!-- 4. Ko'prik: bulut tagining havoga singishi -->
+  <g filter="url(#bridgeBlur)" fill="#FFFFFF">
+    <ellipse cx="240" cy="586" rx="380" ry="40" opacity="0.50"/>
+    <ellipse cx="820" cy="612" rx="330" ry="34" opacity="0.36"/>
+    <ellipse cx="1400" cy="588" rx="360" ry="38" opacity="0.46"/>
+  </g>
+
+  <!-- 5. Pastki past kontrastli bulutlanish -->
+  <g filter="url(#hazeBlur)" fill="#FFFFFF">
+    <ellipse cx="330" cy="738" rx="370" ry="64" opacity="0.52"/>
+    <ellipse cx="150" cy="788" rx="290" ry="54" opacity="0.42"/>
+    <ellipse cx="838" cy="778" rx="330" ry="48" opacity="0.30"/>
+    <ellipse cx="1290" cy="754" rx="300" ry="54" opacity="0.28"/>
+  </g>
+</svg>

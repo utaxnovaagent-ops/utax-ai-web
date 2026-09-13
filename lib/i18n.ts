@@ -86,9 +86,9 @@ export const STRINGS: Dict = {
   login_password: { uz: "Parol", ru: "Пароль", en: "Password" },
   login_demo_role: { uz: "Demo rol (RBAC namoyishi)", ru: "Демо-роль (демонстрация RBAC)", en: "Demo role (RBAC showcase)" },
   login_2fa: {
-    uz: "Ulanish shifrlangan — sessiya imzolangan cookie bilan saqlanadi.",
-    ru: "Соединение зашифровано — сессия хранится в подписанной cookie.",
-    en: "Encrypted connection — the session is kept in a signed cookie.",
+    uz: "Ulanish shifrlangan va himoyalangan.",
+    ru: "Соединение зашифровано и защищено.",
+    en: "Encrypted, protected connection.",
   },
   login_submit: { uz: "Kirish", ru: "Войти", en: "Sign in" },
   login_eyebrow: { uz: "UTAX AI PLATFORMASI", ru: "ПЛАТФОРМА UTAX AI", en: "UTAX AI PLATFORM" },

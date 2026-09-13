@@ -146,7 +146,7 @@ function LoginPageInner() {
         ))}
       </div>
 
-      <div className="w-full max-w-[400px] overflow-hidden rounded-card border border-white/70 bg-surface shadow-[0_24px_64px_-20px_rgba(11,79,176,0.45)] ring-1 ring-white/50 sm:ring-8 sm:ring-white/25 lg:grid lg:max-w-[820px] lg:grid-cols-[1fr_372px]">
+      <div className="utax-card-in w-full max-w-[360px] overflow-hidden rounded-card border border-white/70 bg-surface shadow-[0_24px_64px_-20px_rgba(11,79,176,0.45)] ring-1 ring-white/50 sm:ring-8 sm:ring-white/25 lg:grid lg:max-w-[720px] lg:grid-cols-[1fr_340px]">
         {/* Telefonda brend paneli o'rniga — ingichka gradient chiziq */}
         <div className="brand-gradient h-[3px] lg:hidden" />
 
@@ -154,8 +154,8 @@ function LoginPageInner() {
             Osmon foniga mos bo'lishi uchun och ko'k: tepada va pastda oq-ko'k
             scrim, o'rtada bino to'liq ko'rinadi. Matn to'q navy — scrim alfalari
             rasmni piksel bo'yicha o'lchab tanlangan: eng qorong'i nuqtada ham
-            sarlavha 8.9:1, izoh 8.4:1, "United Tax Advisors" 5.2:1. */}
-        <div className="relative m-2 hidden flex-col justify-between overflow-hidden rounded-[10px] bg-[#dcefff] p-7 lg:flex">
+            sarlavha 8.3:1, izoh 8.3:1, "United Tax Advisors" 5.2:1 (720px kartochkada). */}
+        <div className="relative m-2 hidden flex-col justify-between overflow-hidden rounded-[10px] bg-[#dcefff] p-6 lg:flex">
           <div aria-hidden className="utax-building absolute inset-0" />
           <div
             aria-hidden
@@ -163,8 +163,8 @@ function LoginPageInner() {
           />
 
           <div className="relative flex items-center gap-3">
-            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white shadow-sm">
-              <UMark size={24} />
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-white shadow-sm">
+              <UMark size={22} />
             </span>
             <span>
               <span className="block text-sm font-semibold leading-tight text-[#0b2f6b]">{t("app_name", lang)}</span>
@@ -173,19 +173,19 @@ function LoginPageInner() {
           </div>
 
           <div className="relative">
-            <h1 className="text-[22px] font-semibold leading-[1.25] text-[#0b2f6b]">{t("login_tagline", lang)}</h1>
-            <p className="mt-2 max-w-[32ch] text-[12px] leading-relaxed text-[#1f4476]">
+            <h1 className="text-[19px] font-semibold leading-[1.25] text-[#0b2f6b]">{t("login_tagline", lang)}</h1>
+            <p className="mt-1.5 max-w-[32ch] text-[12px] leading-relaxed text-[#1f4476]">
               {t("login_tagline_sub", lang)}
             </p>
           </div>
         </div>
 
         {/* O'ng — forma paneli */}
-        <div className="px-5 py-4 sm:p-7 lg:p-8">
+        <div className="px-5 py-4 sm:p-6 lg:px-7 lg:py-6">
           {/* Bitta til tanlagichi: telefonda brend qatorida, desktopda o'ngda */}
-          <div className="mb-4 flex items-center gap-2.5">
-            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-light lg:hidden">
-              <UMark size={22} />
+          <div className="mb-3 flex items-center gap-2.5">
+            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-light lg:hidden">
+              <UMark size={20} />
             </span>
             <span className="lg:hidden">
               <span className="block text-[13px] font-semibold leading-none text-foreground">
@@ -211,12 +211,12 @@ function LoginPageInner() {
           </div>
 
           <p className="text-[10px] font-semibold tracking-[0.16em] text-brand-700">{t("login_eyebrow", lang)}</p>
-          <h2 className="mt-1.5 text-[20px] font-semibold leading-tight text-foreground sm:text-[22px] lg:text-[23px]">
+          <h2 className="mt-1 text-[19px] font-semibold leading-tight text-foreground sm:text-[21px]">
             {t("login_welcome", lang)}
           </h2>
-          <p className="mt-1 hidden text-[13px] text-muted sm:block">{t("login_welcome_sub", lang)}</p>
+          <p className="mt-0.5 hidden text-[12px] text-muted sm:block">{t("login_welcome_sub", lang)}</p>
 
-          <form onSubmit={handleLogin} className="mt-4 space-y-3 sm:space-y-3.5">
+          <form onSubmit={handleLogin} className="mt-3.5 space-y-3">
             <div>
               <label htmlFor="login-password" className="mb-1 block text-[11px] font-medium text-muted">
                 {t("login_password", lang)}
@@ -319,21 +319,18 @@ function LoginPageInner() {
               type="submit"
               disabled={busy}
               aria-busy={busy}
-              className={`flex h-12 w-full items-center justify-center gap-2 rounded-control bg-[linear-gradient(135deg,#0b4fb0_0%,#0f62d6_55%,#1560d8_100%)] text-sm font-semibold text-white transition-[filter] hover:brightness-110 disabled:bg-none disabled:bg-[#3a5f8f] disabled:hover:brightness-100 sm:h-11 ${FOCUS}`}
+              className={`flex h-11 w-full items-center justify-center gap-2 rounded-control bg-[linear-gradient(135deg,#0b4fb0_0%,#0f62d6_55%,#1560d8_100%)] text-sm font-semibold text-white transition-[filter] hover:brightness-110 disabled:bg-none disabled:bg-[#3a5f8f] disabled:hover:brightness-100 sm:h-10 ${FOCUS}`}
             >
               {busy ? t("login_checking", lang) : t("login_submit", lang)}
               {!busy && <ArrowRight size={16} />}
             </button>
           </form>
 
-          <p className="mt-2.5 flex items-start gap-1.5 text-[11px] leading-snug text-muted">
-            <ShieldCheck size={13} className="mt-px flex-shrink-0" />
+          <p className="mt-2.5 flex items-center gap-1.5 text-[11px] leading-snug text-muted">
+            <ShieldCheck size={13} className="flex-shrink-0" />
             {t("login_2fa", lang)}
           </p>
 
-          <p className="mt-3 border-t border-border pt-2.5 text-[11px] text-muted">
-            {t("login_help", lang)} — {t("login_help_link", lang)}
-          </p>
         </div>
       </div>
     </div>

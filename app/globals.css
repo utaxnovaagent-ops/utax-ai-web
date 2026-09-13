@@ -344,3 +344,15 @@ body {
 @media (max-width: 640px) {
   .utax-cloud--lite { display: none; }
 }
+/* Login kartochkasining ochilishi — bir martalik, yumshoq ko'tarilish.
+   Faqat no-preference da e'lon qilinadi: reduce rejimida kartochka darhol,
+   harakatsiz ko'rinadi (sukut holatida opacity 1, transform yo'q). */
+@media (prefers-reduced-motion: no-preference) {
+  .utax-card-in {
+    animation: utaxCardIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+}
+@keyframes utaxCardIn {
+  from { opacity: 0; transform: translate3d(0, 14px, 0) scale(0.985); }
+  to   { opacity: 1; transform: none; }
+}

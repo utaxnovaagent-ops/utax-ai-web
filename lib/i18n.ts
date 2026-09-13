@@ -91,7 +91,6 @@ export const STRINGS: Dict = {
     en: "Encrypted, protected connection.",
   },
   login_submit: { uz: "Kirish", ru: "Войти", en: "Sign in" },
-  login_eyebrow: { uz: "UTAX AI PLATFORMASI", ru: "ПЛАТФОРМА UTAX AI", en: "UTAX AI PLATFORM" },
   login_welcome: { uz: "Xush kelibsiz", ru: "Добро пожаловать", en: "Welcome" },
   login_welcome_sub: {
     uz: "Ishchi hisobingiz bilan tizimga kiring.",

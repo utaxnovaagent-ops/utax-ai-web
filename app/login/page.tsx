@@ -210,8 +210,7 @@ function LoginPageInner() {
             </div>
           </div>
 
-          <p className="text-[10px] font-semibold tracking-[0.16em] text-brand-700">{t("login_eyebrow", lang)}</p>
-          <h2 className="mt-1 text-[19px] font-semibold leading-tight text-foreground sm:text-[21px]">
+          <h2 className="text-[19px] font-semibold leading-tight text-foreground sm:text-[21px]">
             {t("login_welcome", lang)}
           </h2>
           <p className="mt-0.5 hidden text-[12px] text-muted sm:block">{t("login_welcome_sub", lang)}</p>

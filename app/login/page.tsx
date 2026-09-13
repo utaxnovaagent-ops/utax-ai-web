@@ -110,13 +110,13 @@ function LoginPageInner() {
   // Maydonlar bir xil o'lchamda: telefonda 44px (barmoq nishoni), 16px shrift
   // — iOS Safari 16px dan kichik maydonga fokuslanganda sahifani kattalashtiradi.
   const field =
-    "h-11 w-full rounded-control border border-border bg-surface px-3 text-[16px] text-foreground " +
+    "h-11 w-full rounded-control border border-[#0b4fb0]/15 bg-white/80 px-3 text-[16px] text-foreground " +
     `placeholder:text-muted focus:border-brand ${FOCUS} sm:h-10 sm:text-sm`;
 
   return (
     // color-scheme:light — sahifada ikkita native <select> va checkbox bor;
     // usiz OS qorong'i rejimida ular oq kartochka ichida qora chiziladi.
-    <div className="relative flex min-h-[100svh] w-full items-center justify-center px-4 py-6 [color-scheme:light] sm:py-8">
+    <div className="utax-login relative flex min-h-[100svh] w-full items-center justify-center px-4 py-6 [color-scheme:light] sm:py-8">
       {/* Osmon foni alohida fixed qatlam: iOS Safari'da URL paneli yig'ilganda
           100svh ostidan body foni kulrang chok bo'lib chiqmasligi uchun. */}
       <div
@@ -146,9 +146,9 @@ function LoginPageInner() {
         ))}
       </div>
 
-      <div className="utax-card-in w-full max-w-[360px] overflow-hidden rounded-card border border-white/70 bg-surface shadow-[0_24px_64px_-20px_rgba(11,79,176,0.45)] ring-1 ring-white/50 sm:ring-8 sm:ring-white/25 lg:grid lg:max-w-[720px] lg:grid-cols-[1fr_340px]">
+      <div className="utax-card-in utax-glass w-full max-w-[360px] overflow-hidden rounded-card ring-1 ring-white/40 sm:ring-8 sm:ring-white/20 lg:grid lg:max-w-[720px] lg:grid-cols-[1fr_340px]">
         {/* Telefonda brend paneli o'rniga — ingichka gradient chiziq */}
-        <div className="brand-gradient h-[3px] lg:hidden" />
+        <div className="h-[3px] bg-[linear-gradient(90deg,#7cc8f6,#3aa5de)] lg:hidden" />
 
         {/* Chap panel — UTAX bosh binosi fotosurati (faqat kengroq ekranda).
             Osmon foniga mos bo'lishi uchun och ko'k: tepada va pastda oq-ko'k
@@ -198,7 +198,7 @@ function LoginPageInner() {
                 value={lang}
                 onChange={(e) => setLang(e.target.value as Lang)}
                 aria-label={t("login_language", lang)}
-                className={`h-9 appearance-none rounded-lg border border-border bg-surface pl-2.5 pr-7 text-[12px] font-medium text-foreground focus:border-brand ${FOCUS}`}
+                className={`h-9 appearance-none rounded-lg border border-[#0b4fb0]/15 bg-white/80 pl-2.5 pr-7 text-[12px] font-medium text-foreground focus:border-brand ${FOCUS}`}
               >
                 {(Object.keys(LANG_LABEL) as Lang[]).map((l) => (
                   <option key={l} value={l}>
@@ -312,14 +312,15 @@ function LoginPageInner() {
               </p>
             )}
 
-            {/* disabled holatida opacity ISHLATILMAYDI: u butun tugmani oq
-                kartochkaga kompozit qilib, "Tekshirilmoqda..." matnini
-                2.3:1 gacha tushirardi — aynan foydalanuvchi o'qiydigan paytda. */}
+            {/* Och ko'k tugma, matn to'q navy: oq matn bu fonda 1.8–2.8:1 bo'lardi,
+                #062a5e esa gradientning eng to'q nuqtasida ham 5.08:1.
+                disabled holatida opacity ISHLATILMAYDI — "Tekshirilmoqda..."
+                matni aynan o'qilayotgan paytda xiralashib qolardi. */}
             <button
               type="submit"
               disabled={busy}
               aria-busy={busy}
-              className={`flex h-11 w-full items-center justify-center gap-2 rounded-control bg-[linear-gradient(135deg,#0b4fb0_0%,#0f62d6_55%,#1560d8_100%)] text-sm font-semibold text-white transition-[filter] hover:brightness-110 disabled:bg-none disabled:bg-[#3a5f8f] disabled:hover:brightness-100 sm:h-10 ${FOCUS}`}
+              className={`flex h-11 w-full items-center justify-center gap-2 rounded-control border border-white/60 bg-[linear-gradient(135deg,#7cc8f6_0%,#52b3ee_55%,#3aa5de_100%)] text-sm font-semibold text-[#062a5e] shadow-[inset_0_1px_0_rgba(255,255,255,0.55),0_8px_18px_-8px_rgba(46,154,214,0.7)] transition-[filter,box-shadow] hover:brightness-105 disabled:bg-none disabled:bg-[#cfe3f2] disabled:shadow-none disabled:hover:brightness-100 sm:h-10 ${FOCUS}`}
             >
               {busy ? t("login_checking", lang) : t("login_submit", lang)}
               {!busy && <ArrowRight size={16} />}

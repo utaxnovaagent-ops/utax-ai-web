@@ -356,3 +356,37 @@ body {
   from { opacity: 0; transform: translate3d(0, 14px, 0) scale(0.985); }
   to   { opacity: 1; transform: none; }
 }
+
+/* ===== Login — glassmorphism kartochka =====
+   Qiymatlar hisoblab tanlangan: kartochka ortidagi ENG TO'Q osmon (#2E9AD6,
+   bulutsiz, saturate 140% bilan) ustida ham matn AA dan o'tadi.
+   Zaxiralar: backdrop-filter yo'q brauzerda va "shaffoflikni kamaytirish"
+   yoqilganda kartochka deyarli oq bo'ladi — matn hech qachon xiralashmaydi. */
+.utax-glass {
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.85),
+    0 24px 64px -20px rgba(11, 79, 176, 0.42);
+}
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .utax-glass {
+    background: rgba(255, 255, 255, 0.58);
+    -webkit-backdrop-filter: blur(22px) saturate(140%);
+    backdrop-filter: blur(22px) saturate(140%);
+  }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .utax-glass {
+    background: rgba(255, 255, 255, 0.96);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+/* Shisha ustida sukutdagi --muted (#64748b) 3.07:1 ga, --brand-700 (#0f62d6)
+   3.62:1 ga tushadi. Faqat login doirasida to'qroq qiymatlar: 4.88 / 4.90. */
+.utax-login {
+  --muted: #475569;
+  --brand-700: #0b4fb0;
+}

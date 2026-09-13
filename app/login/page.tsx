@@ -51,7 +51,7 @@ const CLOUDS: Cloud[] = [
 const FOCUS = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-700";
 
 function LoginPageInner() {
-  // Bino fotosuratini oldindan yuklaymiz, aks holda panel bir lahza to'q ko'k
+  // Bino fotosuratini oldindan yuklaymiz, aks holda panel bir lahza bo'sh och ko'k
   // bo'lib turadi. media bilan — telefonda panel ko'rinmaydi, 103KB bekor ketmasin.
   ReactDOM.preload("/brand/utax-building.webp", {
     as: "image",
@@ -151,14 +151,15 @@ function LoginPageInner() {
         <div className="brand-gradient h-[3px] lg:hidden" />
 
         {/* Chap panel — UTAX bosh binosi fotosurati (faqat kengroq ekranda).
-            Matn foto ustida turgani uchun ikki bosqichli scrim qo'yilgan: eng
-            yorug' piksel (oq maydon, 255,255,255) ustida ham oq matn 6.5:1 dan
-            past tushmaydi — qiymat rasmni piksel bo'yicha o'lchab tanlangan. */}
-        <div className="relative m-2 hidden flex-col justify-between overflow-hidden rounded-[10px] bg-brand-900 p-7 text-white lg:flex">
+            Osmon foniga mos bo'lishi uchun och ko'k: tepada va pastda oq-ko'k
+            scrim, o'rtada bino to'liq ko'rinadi. Matn to'q navy — scrim alfalari
+            rasmni piksel bo'yicha o'lchab tanlangan: eng qorong'i nuqtada ham
+            sarlavha 8.9:1, izoh 8.4:1, "United Tax Advisors" 5.2:1. */}
+        <div className="relative m-2 hidden flex-col justify-between overflow-hidden rounded-[10px] bg-[#dcefff] p-7 lg:flex">
           <div aria-hidden className="utax-building absolute inset-0" />
           <div
             aria-hidden
-            className="absolute inset-0 bg-[linear-gradient(180deg,rgba(6,32,78,0.74)_0%,rgba(6,32,78,0.40)_44%,rgba(6,32,78,0.82)_100%)]"
+            className="absolute inset-0 bg-[linear-gradient(180deg,rgba(236,246,255,0.72)_0%,rgba(236,246,255,0.38)_20%,rgba(236,246,255,0)_42%,rgba(236,246,255,0.35)_64%,rgba(236,246,255,0.86)_78%,rgba(236,246,255,0.92)_100%)]"
           />
 
           <div className="relative flex items-center gap-3">
@@ -166,14 +167,14 @@ function LoginPageInner() {
               <UMark size={24} />
             </span>
             <span>
-              <span className="block text-sm font-semibold leading-tight">{t("app_name", lang)}</span>
-              <span className="block text-[11px] text-white/85">United Tax Advisors</span>
+              <span className="block text-sm font-semibold leading-tight text-[#0b2f6b]">{t("app_name", lang)}</span>
+              <span className="block text-[11px] text-[#35557f]">United Tax Advisors</span>
             </span>
           </div>
 
           <div className="relative">
-            <h1 className="text-[22px] font-semibold leading-[1.25] drop-shadow-sm">{t("login_tagline", lang)}</h1>
-            <p className="mt-2 max-w-[32ch] text-[12px] leading-relaxed text-white/85">
+            <h1 className="text-[22px] font-semibold leading-[1.25] text-[#0b2f6b]">{t("login_tagline", lang)}</h1>
+            <p className="mt-2 max-w-[32ch] text-[12px] leading-relaxed text-[#1f4476]">
               {t("login_tagline_sub", lang)}
             </p>
           </div>

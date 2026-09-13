@@ -3,8 +3,9 @@
 import { NextResponse } from "next/server";
 import { fetchSotuvSnapshot, bitrixConfigured } from "@/lib/bitrix";
 
-// Bitrix sekin javob beradi (~1-3 s), shuning uchun natija 10 daqiqa keshlanadi.
-export const revalidate = 600;
+// Bitrix sekin javob beradi (~1-3 s); "real vaqt" uchun kesh 60 s — klient ham
+// shu oraliqda qayta so'raydi, Bitrix'ga daqiqasiga bir marta boriladi.
+export const revalidate = 60;
 
 export async function GET() {
   if (!bitrixConfigured()) {
@@ -17,7 +18,7 @@ export async function GET() {
     const snapshot = await fetchSotuvSnapshot();
     return NextResponse.json(
       { ok: true, ...snapshot },
-      { headers: { "Cache-Control": "s-maxage=600, stale-while-revalidate=1800" } },
+      { headers: { "Cache-Control": "s-maxage=60, stale-while-revalidate=120" } },
     );
   } catch (e) {
     // Sahifa ishlashda davom etsin — mijozga namunaviy ma'lumot ko'rsatiladi.

@@ -65,9 +65,12 @@ export function DealsProvider({ children }: { children: ReactNode }) {
     monthlyWon: null,
   });
 
+  // Bitrix bilan "real vaqtda": har 60 s va oynaga qaytilganda qayta so'raladi.
+  // Server tomonida ham kesh 60 s (app/api/sotuv/route.ts), shuning uchun
+  // ko'p foydalanuvchi bo'lsa ham Bitrix'ga daqiqasiga bir marta boriladi.
   useEffect(() => {
     let alive = true;
-    fetch("/api/sotuv")
+    const load = () => fetch("/api/sotuv", { cache: "no-store" })
       .then((r) => r.json())
       .then((j) => {
         if (!alive) return;
@@ -99,8 +102,14 @@ export function DealsProvider({ children }: { children: ReactNode }) {
         if (!alive) return;
         setState((s) => ({ ...s, loading: false, note: String(e) }));
       });
+    load();
+    const timer = setInterval(load, 60_000);
+    const onVisible = () => { if (document.visibilityState === "visible") load(); };
+    document.addEventListener("visibilitychange", onVisible);
     return () => {
       alive = false;
+      clearInterval(timer);
+      document.removeEventListener("visibilitychange", onVisible);
     };
   }, []);
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { Bell, ChevronDown, LogOut, Menu } from "lucide-react";
+import { Bell, ChevronDown, KeyRound, LogOut, Menu } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useAppState, useCurrentRole } from "@/lib/app-context";
@@ -9,7 +9,15 @@ import { Lang, LANG_LABEL, t } from "@/lib/i18n";
 import { NOTIFICATIONS } from "@/lib/notifications";
 import { GlobalSearch } from "./GlobalSearch";
 
-export function Topbar({ onMenuClick, scrolled }: { onMenuClick: () => void; scrolled?: boolean }) {
+export function Topbar({
+  onMenuClick,
+  scrolled,
+  onChangePassword,
+}: {
+  onMenuClick: () => void;
+  scrolled?: boolean;
+  onChangePassword?: () => void;
+}) {
   const { roleId, setRoleId, lang, setLang } = useAppState();
   const role = useCurrentRole();
   const router = useRouter();
@@ -150,6 +158,17 @@ export function Topbar({ onMenuClick, scrolled }: { onMenuClick: () => void; scr
             </div>
           )}
         </div>
+
+        {onChangePassword && (
+          <button
+            onClick={onChangePassword}
+            title={t("pw_change", lang)}
+            aria-label={t("pw_change", lang)}
+            className="flex h-10 w-10 items-center justify-center rounded-lg border border-border text-foreground hover:bg-surface-alt"
+          >
+            <KeyRound size={16} />
+          </button>
+        )}
 
         <button
           onClick={async () => {

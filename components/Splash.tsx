@@ -14,6 +14,21 @@ export function Splash() {
   const [ms, setMs] = useState(SPLASH_MS);
 
   useEffect(() => {
+    // Login sahifasi allaqachon 4.5 s "kirilmoqda" ketma-ketligini ko'rsatgan —
+    // ustiga yana qora splash chiqsa kutish ikki barobar bo'ladi.
+    try {
+      if (sessionStorage.getItem("utax_entered_via_login") === "1") {
+        // Birinchi kadr opacity 0 dan boshlanadi (utaxSplashIn), shuning uchun
+        // keyingi tick'da yashirish ko'zga ko'rinmaydi. Bayroq faqat yashirilgach
+        // o'chiriladi — dev rejimida effekt ikki marta ishga tushganda ham
+        // (StrictMode) ikkinchi urinish bayroqni ko'ra oladi.
+        const id = setTimeout(() => {
+          setVisible(false);
+          try { sessionStorage.removeItem("utax_entered_via_login"); } catch {}
+        }, 0);
+        return () => clearTimeout(id);
+      }
+    } catch {}
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const total = reduce ? 900 : SPLASH_MS;
     setMs(total);

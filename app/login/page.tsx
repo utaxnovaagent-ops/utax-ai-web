@@ -50,6 +50,9 @@ const CLOUDS: Cloud[] = [
 // foydalanuvchi fokus qayerdaligini ko'rmaydi. #0f62d6 = 5.62:1.
 const FOCUS = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-700";
 
+// "Kirilmoqda" ketma-ketligining davomiyligi — Sotuv Desk splash bilan bir xil (4.5 s)
+const ENTER_MS = 4500;
+
 function LoginPageInner() {
   // Bino fotosuratini oldindan yuklaymiz, aks holda panel bir lahza bo'sh och ko'k
   // bo'lib turadi. media bilan — telefonda panel ko'rinmaydi, 103KB bekor ketmasin.
@@ -68,14 +71,54 @@ function LoginPageInner() {
   const [hintOpen, setHintOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  // "Kirilmoqda" ketma-ketligi: nishon manzil, bosqich va davomiylik.
+  // Sessiya allaqachon bor bo'lsa ham, parol bilan kirilganda ham — bir xil
+  // ko'rinish, shunda ikkisi bir-biridan farq qilmaydi.
+  const [entering, setEntering] = useState<string | null>(null);
+  const [enterStep, setEnterStep] = useState(0);
+  // Faqat "kirilmoqda" bo'lagi ichida ishlatiladi (hydration paytida chizilmaydi)
+  const [enterMs] = useState(() =>
+    typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ? 1200 : ENTER_MS
+  );
   const params = useSearchParams();
   const passwordRef = useRef<HTMLInputElement>(null);
 
   // Faqat sichqoncha/klaviatura qurilmasida avtofokus: telefonda u sahifa
   // ochilishi bilan klaviaturani chiqarib, kartochkani yuqoriga itaradi.
+  const targetFor = (roleId: RoleId) => {
+    const next = params.get("next");
+    if (next && next.startsWith("/")) return next;
+    const role = ROLES.find((r) => r.id === roleId);
+    const firstVisible = role?.modules.find((m) => VISIBLE_MODULES.includes(m));
+    return firstVisible ? `/${firstVisible}` : "/";
+  };
+
+  // Sessiya cookie'si hali yaroqli bo'lsa — parol so'ramaymiz: yuklanish
+  // ketma-ketligini ko'rsatib o'zi kiradi. /api/session proxy orqali himoyalangan,
+  // cookie yo'q yoki eskirgan bo'lsa 401 keladi va oddiy forma qoladi.
   useEffect(() => {
-    if (window.matchMedia?.("(pointer: fine)").matches) passwordRef.current?.focus();
+    let alive = true;
+    const focus = () => { if (window.matchMedia?.("(pointer: fine)").matches) passwordRef.current?.focus(); };
+    fetch("/api/session", { cache: "no-store" })
+      .then((r) => { if (!alive) return; if (r.ok) setEntering(targetFor("ceo")); else focus(); })
+      .catch(() => { if (alive) focus(); });
+    return () => { alive = false; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (!entering) return;
+    const total = enterMs;
+    const t1 = setTimeout(() => setEnterStep(1), total * 0.36);
+    const t2 = setTimeout(() => setEnterStep(2), total * 0.74);
+    const t3 = setTimeout(() => {
+      // Dashboard'dagi qora splash shu belgini ko'rib o'zini ko'rsatmaydi
+      try { sessionStorage.setItem("utax_entered_via_login", "1"); } catch {}
+      router.replace(entering);
+      router.refresh();
+    }, total);
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
+  }, [entering, enterMs, router]);
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
@@ -95,11 +138,8 @@ function LoginPageInner() {
         return;
       }
       setRoleId(selectedRole);
-      const role = ROLES.find((r) => r.id === selectedRole);
-      const firstVisible = role?.modules.find((m) => VISIBLE_MODULES.includes(m));
-      const next = params.get("next");
-      router.replace(next && next.startsWith("/") ? next : firstVisible ? `/${firstVisible}` : "/");
-      router.refresh();
+      setPassword("");
+      setEntering(targetFor(selectedRole));
     } catch {
       setError("Tarmoq xatosi — qayta urinib ko'ring");
     } finally {
@@ -229,6 +269,7 @@ function LoginPageInner() {
                   ref={passwordRef}
                   type={showPassword ? "text" : "password"}
                   required
+                  disabled={!!entering}
                   autoComplete="current-password"
                   value={password}
                   onChange={(e) => {
@@ -259,6 +300,7 @@ function LoginPageInner() {
                   id="login-role"
                   value={selectedRole}
                   onChange={(e) => setSelectedRole(e.target.value as RoleId)}
+                  disabled={!!entering}
                   className={`${field} appearance-none pr-9`}
                 >
                   {/* Faqat rol nomi — tavsif pastda alohida qatorda, aks holda
@@ -315,15 +357,27 @@ function LoginPageInner() {
                 #062a5e esa gradientning eng to'q nuqtasida ham 5.08:1.
                 disabled holatida opacity ISHLATILMAYDI — "Tekshirilmoqda..."
                 matni aynan o'qilayotgan paytda xiralashib qolardi. */}
-            <button
-              type="submit"
-              disabled={busy}
-              aria-busy={busy}
-              className={`flex h-11 w-full items-center justify-center gap-2 rounded-control border border-white/60 bg-[linear-gradient(135deg,#7cc8f6_0%,#52b3ee_55%,#3aa5de_100%)] text-sm font-semibold text-[#062a5e] shadow-[inset_0_1px_0_rgba(255,255,255,0.55),0_8px_18px_-8px_rgba(46,154,214,0.7)] transition-[filter,box-shadow] hover:brightness-105 disabled:bg-none disabled:bg-[#cfe3f2] disabled:shadow-none disabled:hover:brightness-100 sm:h-10 ${FOCUS}`}
-            >
-              {busy ? t("login_checking", lang) : t("login_submit", lang)}
-              {!busy && <ArrowRight size={16} />}
-            </button>
+            {entering ? (
+              <div className="rounded-control border border-brand-700/25 bg-white/80 px-3 py-3" aria-live="polite">
+                <p className="text-[12.5px] font-medium text-foreground">{t(`login_entering_${enterStep + 1}`, lang)}</p>
+                <div className="mt-2 h-1 overflow-hidden rounded bg-brand-light">
+                  <i
+                    className="block h-full w-0 rounded bg-[linear-gradient(90deg,#0b4fb0,#38bdf8)]"
+                    style={{ animation: `utaxBarGo ${enterMs}ms cubic-bezier(0.25, 0.1, 0.3, 1) forwards` }}
+                  />
+                </div>
+              </div>
+            ) : (
+              <button
+                type="submit"
+                disabled={busy}
+                aria-busy={busy}
+                className={`flex h-11 w-full items-center justify-center gap-2 rounded-control border border-white/60 bg-[linear-gradient(135deg,#7cc8f6_0%,#52b3ee_55%,#3aa5de_100%)] text-sm font-semibold text-[#062a5e] shadow-[inset_0_1px_0_rgba(255,255,255,0.55),0_8px_18px_-8px_rgba(46,154,214,0.7)] transition-[filter,box-shadow] hover:brightness-105 disabled:bg-none disabled:bg-[#cfe3f2] disabled:shadow-none disabled:hover:brightness-100 sm:h-10 ${FOCUS}`}
+              >
+                {busy ? t("login_checking", lang) : t("login_submit", lang)}
+                {!busy && <ArrowRight size={16} />}
+              </button>
+            )}
           </form>
 
           <p className="mt-2.5 flex items-center gap-1.5 text-[11px] leading-snug text-muted">

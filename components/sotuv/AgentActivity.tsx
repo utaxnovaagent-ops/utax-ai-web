@@ -67,7 +67,7 @@ export function AgentActivity() {
                 <div className="flex items-center gap-2">
                   <span
                     className={`flex h-6 w-6 items-center justify-center rounded-lg ${
-                      isFresh(r.lastActiveAt) ? "bg-emerald-50 text-emerald-600 dark:bg-emerald-950/50" : "bg-surface-alt text-muted"
+                      isFresh(r.lastActiveAt) ? "bg-emerald-50 text-emerald-600" : "bg-surface-alt text-muted"
                     }`}
                   >
                     <Activity size={12} />

@@ -12,10 +12,10 @@ import { SOTUV_OWNER, SOTUV_AGENTS, SOTUV_STAGES, type SotuvStage } from "@/lib/
 // Bosqich rangi — mijoz yo'li bo'ylab sovuqdan issiqqa.
 const ACCENT: Record<SotuvStage, { text: string; dot: string; ring: string; soft: string }> = {
   kirish: {
-    text: "text-sky-700 dark:text-sky-300",
+    text: "text-sky-700",
     dot: "bg-sky-500",
-    ring: "ring-sky-200 dark:ring-sky-900/60",
-    soft: "bg-sky-50/70 dark:bg-sky-950/30",
+    ring: "ring-sky-200",
+    soft: "bg-sky-50/70",
   },
   jarayon: {
     text: "text-brand",
@@ -24,10 +24,10 @@ const ACCENT: Record<SotuvStage, { text: string; dot: string; ring: string; soft
     soft: "bg-brand-light/50",
   },
   keyin: {
-    text: "text-emerald-700 dark:text-emerald-300",
+    text: "text-emerald-700",
     dot: "bg-emerald-500",
-    ring: "ring-emerald-200 dark:ring-emerald-900/60",
-    soft: "bg-emerald-50/70 dark:bg-emerald-950/30",
+    ring: "ring-emerald-200",
+    soft: "bg-emerald-50/70",
   },
 };
 
@@ -139,7 +139,7 @@ export function SotuvStructure() {
                               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60 motion-reduce:hidden" />
                             )}
                             <span
-                              className={`relative inline-flex h-2 w-2 rounded-full ${fresh ? "bg-emerald-500" : "bg-slate-300 dark:bg-slate-600"}`}
+                              className={`relative inline-flex h-2 w-2 rounded-full ${fresh ? "bg-emerald-500" : "bg-slate-300"}`}
                             />
                           </span>
                         </div>
@@ -149,7 +149,7 @@ export function SotuvStructure() {
                         </div>
                         {/* Tirik, lekin ishi yo'q — buni "o'lik" deb ko'rsatmaymiz */}
                         {note && (
-                          <p className="mt-1 ml-8 rounded-md bg-amber-50 px-1.5 py-0.5 text-[10px] text-amber-800 dark:bg-amber-950/40 dark:text-amber-300">
+                          <p className="mt-1 ml-8 rounded-md bg-amber-50 px-1.5 py-0.5 text-[10px] text-amber-800">
                             {note}
                           </p>
                         )}

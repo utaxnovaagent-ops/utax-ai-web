@@ -103,7 +103,7 @@ function SotuvPageInner() {
             <h1 className="text-lg font-bold text-foreground">Sotuv Command Center</h1>
             <span className={`rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${
               isReal
-                ? "border-emerald-300 bg-emerald-50 text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-300"
+                ? "border-emerald-300 bg-emerald-50 text-emerald-700"
                 : "border-border bg-surface-alt text-muted"
             }`}>
               {isReal ? "LIVE" : "DEMO"}
@@ -156,7 +156,7 @@ function SotuvPageInner() {
 
       <RevenueHero />
 
-      <div className="mb-5 grid grid-cols-2 gap-3 lg:grid-cols-5">
+      <div className="mb-5 grid grid-cols-2 gap-3 lg:grid-cols-5 [&>*]:min-w-0">
         <StatCard label="Pipeline qiymati" value={`${pipelineValue(deals)}M`} hint="Ochiq bitimlar summasi" icon={<Wallet size={17} />} />
         <StatCard label="Weighted forecast" value={`${weightedForecast(deals)}M`} hint="Σ bitim × ehtimollik" icon={<Target size={17} />} />
         {/* Win rate — Bitrixdagi so'nggi 90 kun yopilgan bitimlaridan hisoblanadi. */}
@@ -184,12 +184,12 @@ function SotuvPageInner() {
         />
       </div>
 
-      <div className="mb-5 grid gap-4 lg:grid-cols-2">
+      <div className="mb-5 grid gap-4 lg:grid-cols-2 [&>*]:min-w-0">
         <FunnelVelocity selected={stageFilter} onSelect={setStageFilter} />
         <MissionQueue stageFilter={stageFilter} />
       </div>
 
-      <div className="mb-5 grid gap-4 lg:grid-cols-2">
+      <div className="mb-5 grid gap-4 lg:grid-cols-2 [&>*]:min-w-0">
         <DealRiskRadar />
         <RevenueTrend />
       </div>

@@ -1,6 +1,10 @@
 @import "tailwindcss";
 
 :root {
+  /* Ilova faqat och rejimda: OS qorong'i rejimi native select/checkbox va
+     ba'zi komponentlarni qoraytirib yubormasin. Sidebar (.utax-rail) — dizayn bo'yicha to'q. */
+  color-scheme: light;
+
   /* UTAX Executive Intelligence — Dizayn TZI §4/§5/§7.3.
      Sotuv Desk (sotuv.169-58-178-40.sslip.io) bilan bitta tizim. */
   --background: #f4f7fa; /* Cloud — sahifa foni */

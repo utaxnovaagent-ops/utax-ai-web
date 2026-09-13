@@ -28,8 +28,8 @@ export function FunnelVelocity({ selected, onSelect }: { selected: string | null
                 isSelected ? "border-brand bg-brand-light" : "border-border hover:border-brand/40"
               }`}
             >
-              <div className="flex items-center justify-between gap-2">
-                <span className="flex items-center gap-1.5 text-sm font-semibold text-foreground">
+              <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-0.5">
+                <span className="flex min-w-0 items-center gap-1.5 text-sm font-semibold text-foreground">
                   {s.stage}
                   {isBottleneck && <AlertTriangle size={13} className="text-warning" />}
                 </span>

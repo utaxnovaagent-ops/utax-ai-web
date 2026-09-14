@@ -50,8 +50,9 @@ const CLOUDS: Cloud[] = [
 // foydalanuvchi fokus qayerdaligini ko'rmaydi. #0f62d6 = 5.62:1.
 const FOCUS = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-700";
 
-// "Kirilmoqda" ketma-ketligining davomiyligi — Sotuv Desk splash bilan bir xil (4.5 s)
-const ENTER_MS = 4500;
+// "Kirilmoqda" ketma-ketligi 5.5 s — internet yuklanishiga o'xshab notekis: tez boshlanadi,
+// to'xtab turadi, oxirida tugaydi (progress keyframe'lari globals.css: utaxNetBar).
+const ENTER_MS = 5500;
 
 function LoginPageInner() {
   // Bino fotosuratini oldindan yuklaymiz, aks holda panel bir lahza bo'sh och ko'k
@@ -109,15 +110,14 @@ function LoginPageInner() {
   useEffect(() => {
     if (!entering) return;
     const total = enterMs;
-    const t1 = setTimeout(() => setEnterStep(1), total * 0.36);
-    const t2 = setTimeout(() => setEnterStep(2), total * 0.74);
+    const t1 = setTimeout(() => setEnterStep(1), total * 0.2);
+    const t2 = setTimeout(() => setEnterStep(2), total * 0.48);
+    const t4 = setTimeout(() => setEnterStep(3), total * 0.8);
     const t3 = setTimeout(() => {
-      // Dashboard'dagi qora splash shu belgini ko'rib o'zini ko'rsatmaydi
-      try { sessionStorage.setItem("utax_entered_via_login", "1"); } catch {}
       router.replace(entering);
       router.refresh();
     }, total);
-    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); };
   }, [entering, enterMs, router]);
 
   async function handleLogin(e: React.FormEvent) {
@@ -363,7 +363,7 @@ function LoginPageInner() {
                 <div className="mt-2 h-1 overflow-hidden rounded bg-brand-light">
                   <i
                     className="block h-full w-0 rounded bg-[linear-gradient(90deg,#0b4fb0,#38bdf8)]"
-                    style={{ animation: `utaxBarGo ${enterMs}ms cubic-bezier(0.25, 0.1, 0.3, 1) forwards` }}
+                    style={{ animation: `utaxNetBar ${enterMs}ms linear forwards` }}
                   />
                 </div>
               </div>

@@ -6,32 +6,20 @@
 
 import { useEffect, useState } from "react";
 
-const SPLASH_MS = 4500;
+// Qisqa: kutish login sahifasida bo'ladi, bu yerda faqat brend "chaqnashi" (1.6 s)
+const SPLASH_MS = 1600;
 
 export function Splash() {
   const [visible, setVisible] = useState(true);
   const [leaving, setLeaving] = useState(false);
-  const [ms, setMs] = useState(SPLASH_MS);
+  // Davomiylik lazy hisoblanadi (effekt ichida setState yo'q); SSR da SPLASH_MS.
+  const [ms] = useState(() =>
+    typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 600 : SPLASH_MS
+  );
 
   useEffect(() => {
-    // Login sahifasi allaqachon 4.5 s "kirilmoqda" ketma-ketligini ko'rsatgan —
-    // ustiga yana qora splash chiqsa kutish ikki barobar bo'ladi.
-    try {
-      if (sessionStorage.getItem("utax_entered_via_login") === "1") {
-        // Birinchi kadr opacity 0 dan boshlanadi (utaxSplashIn), shuning uchun
-        // keyingi tick'da yashirish ko'zga ko'rinmaydi. Bayroq faqat yashirilgach
-        // o'chiriladi — dev rejimida effekt ikki marta ishga tushganda ham
-        // (StrictMode) ikkinchi urinish bayroqni ko'ra oladi.
-        const id = setTimeout(() => {
-          setVisible(false);
-          try { sessionStorage.removeItem("utax_entered_via_login"); } catch {}
-        }, 0);
-        return () => clearTimeout(id);
-      }
-    } catch {}
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const total = reduce ? 900 : SPLASH_MS;
-    setMs(total);
+    const total = ms;
 
     let done = false;
     const close = () => {
@@ -45,7 +33,7 @@ export function Splash() {
     const timer = setTimeout(close, total);
     document.addEventListener("keydown", onEsc);
     return () => { clearTimeout(timer); document.removeEventListener("keydown", onEsc); };
-  }, []);
+  }, [ms]);
 
   if (!visible) return null;
 

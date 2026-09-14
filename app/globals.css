@@ -424,3 +424,10 @@ body {
   --muted: #475569;
   --brand-700: #0b4fb0;
 }
+
+/* Login "kirilmoqda" chizig'i — internet yuklanishi kabi notekis:
+   tez boshlanadi, 40% da biroz turadi, 70% da yana, oxirida tugaydi. */
+@keyframes utaxNetBar {
+  0% { width: 0 } 12% { width: 34% } 30% { width: 41% } 45% { width: 63% }
+  62% { width: 68% } 78% { width: 86% } 90% { width: 92% } 100% { width: 100% }
+}

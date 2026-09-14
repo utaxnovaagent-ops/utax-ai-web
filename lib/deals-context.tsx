@@ -21,6 +21,8 @@ type DealsState = {
   lost90: number | null;
   /** Oxirgi 6 oy tushumi — Bitrixdagi g'olib bitimlardan. */
   monthlyWon: { month: string; revenue: number; deals: number }[] | null;
+  /** Shu oy kunlik yig'ilma tushum (mln), indeks 0 = oyning 1-kuni. */
+  wonThisMonthDaily: number[] | null;
 };
 
 const DealsContext = createContext<DealsState>({
@@ -34,6 +36,7 @@ const DealsContext = createContext<DealsState>({
   won90: null,
   lost90: null,
   monthlyWon: null,
+  wonThisMonthDaily: null,
 });
 
 type PeriodCtx = {
@@ -63,6 +66,7 @@ export function DealsProvider({ children }: { children: ReactNode }) {
     won90: null,
     lost90: null,
     monthlyWon: null,
+  wonThisMonthDaily: null,
   });
 
   // Bitrix bilan "real vaqtda": har 60 s va oynaga qaytilganda qayta so'raladi.
@@ -89,6 +93,7 @@ export function DealsProvider({ children }: { children: ReactNode }) {
             won90: typeof j.meta?.wonLast90 === "number" ? j.meta.wonLast90 : null,
             lost90: typeof j.meta?.lostLast90 === "number" ? j.meta.lostLast90 : null,
             monthlyWon: Array.isArray(j.meta?.monthlyWon) ? j.meta.monthlyWon : null,
+            wonThisMonthDaily: Array.isArray(j.meta?.wonThisMonthDaily) ? j.meta.wonThisMonthDaily : null,
           });
         } else {
           setState((s) => ({
@@ -142,9 +147,9 @@ export function usePeriod() {
 
 /** Manba holati — sahifadagi belgi uchun. */
 export function useDealsSource() {
-  const { isReal, loading, fetchedAt, note, deals, wonThisMonthM, quality, won90, lost90, monthlyWon } = useContext(DealsContext);
+  const { isReal, loading, fetchedAt, note, deals, wonThisMonthM, quality, won90, lost90, monthlyWon, wonThisMonthDaily } = useContext(DealsContext);
   // Win rate faqat real yopilgan bitimlar bo'lsa hisoblanadi.
   const closed = (won90 ?? 0) + (lost90 ?? 0);
   const winRate = isReal && closed > 0 ? Math.round(((won90 ?? 0) / closed) * 100) : null;
-  return { isReal, loading, fetchedAt, note, count: deals.length, wonThisMonthM, quality, won90, lost90, winRate, monthlyWon };
+  return { isReal, loading, fetchedAt, note, count: deals.length, wonThisMonthM, quality, won90, lost90, winRate, monthlyWon, wonThisMonthDaily };
 }

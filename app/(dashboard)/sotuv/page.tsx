@@ -10,7 +10,7 @@ import { DealRiskRadar } from "@/components/sotuv/DealRiskRadar";
 import { RevenueTrend } from "@/components/sotuv/RevenueTrend";
 import { pipelineValue, weightedForecast, atRiskValue, funnelStages } from "@/lib/sales-metrics";
 import { DealsProvider, useDeals, useDealsSource, usePeriod } from "@/lib/deals-context";
-import { DataSourceBadge } from "@/components/sotuv/DataSourceBadge";
+import { SourceChip } from "@/components/sotuv/SourceChip";
 import { SotuvStructure } from "@/components/sotuv/SotuvStructure";
 import { SotuvAgents } from "@/components/sotuv/SotuvAgents";
 import { AgentActivity } from "@/components/sotuv/AgentActivity";
@@ -99,15 +99,9 @@ function SotuvPageInner() {
     <div>
       <div className="sticky top-0 z-10 -mx-4 mb-5 border-b border-border bg-background/95 px-4 py-3 backdrop-blur md:-mx-6 md:px-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-2">
-            <h1 className="text-lg font-bold text-foreground">Sotuv Command Center</h1>
-            <span className={`rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${
-              isReal
-                ? "border-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300"
-                : "border-border bg-surface-alt text-muted"
-            }`}>
-              {isReal ? "LIVE" : "DEMO"}
-            </span>
+          <div className="flex flex-wrap items-center gap-2">
+            <h1 className="mr-1 text-lg font-bold text-foreground">Sotuv Command Center</h1>
+            <SourceChip sotuvWebUrl={SOTUV_WEB_URL} />
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <select
@@ -137,8 +131,6 @@ function SotuvPageInner() {
           </div>
         </div>
       </div>
-
-      <DataSourceBadge />
 
       {canFilter && period !== "all" && (
         <p className="mb-3 flex flex-wrap items-center gap-2 rounded-lg border border-border bg-surface-alt px-3 py-2 text-xs text-muted">

@@ -15,12 +15,15 @@ export function FunnelVelocity({ selected, onSelect }: { selected: string | null
   return (
     <Card title="Voronka va tezlik" subtitle="Bosqich bo'yicha conversion, qiymat va o'rtacha kun" className="h-full">
       <div className="space-y-2.5">
-        {stages.map((s) => {
+        {stages.map((s, i) => {
           const isBottleneck = s.stage === BOTTLENECK_STAGE;
           const isSelected = selected === s.stage;
           return (
+            <div key={s.stage}>
+              {i > 0 && (
+                <p className="mb-1.5 pl-3 text-[10.5px] text-muted">↓ {s.conversionIntoStage}% shu bosqichga o&apos;tadi</p>
+              )}
             <button
-              key={s.stage}
               onClick={() => onSelect(isSelected ? null : s.stage)}
               aria-pressed={isSelected}
               aria-label={`${s.stage} — ${s.count} bitim, ${s.value}M so'm, conversion ${s.conversionIntoStage}%`}
@@ -46,12 +49,10 @@ export function FunnelVelocity({ selected, onSelect }: { selected: string | null
               <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[11px] text-muted">
                 <span>Conversion: {s.conversionIntoStage}%</span>
                 <span>O'rtacha {s.avgDays} kun</span>
-                <span className={s.prevPeriodDeltaPct >= 0 ? "text-success" : "text-danger"}>
-                  {s.prevPeriodDeltaPct >= 0 ? "+" : ""}
-                  {s.prevPeriodDeltaPct}% o'tgan davrga nisbatan
-                </span>
+
               </div>
             </button>
+            </div>
           );
         })}
       </div>

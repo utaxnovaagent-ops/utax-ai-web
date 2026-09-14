@@ -123,6 +123,8 @@ export type SotuvSnapshot = {
     openWithoutAmount: number;
     /** Oxirgi 6 oy: yopilgan g'olib bitimlar summasi (mln so'm) va soni. */
     monthlyWon: { month: string; revenue: number; deals: number }[];
+    /** shu oy kunlik yig'ilma tushum (mln), indeks 0 = 1-kun */
+    wonThisMonthDaily: number[];
     source: "bitrix";
   };
 };
@@ -211,6 +213,15 @@ export async function fetchSotuvSnapshot(): Promise<SotuvSnapshot> {
     wonThisMonth.reduce((sum, d) => sum + Number(d.OPPORTUNITY || 0), 0) / 1_000_000,
   );
   const wonThisMonthCount = wonThisMonth.length;
+  // Kunlik yig'ilma (mln) — reja vs fakt grafigi uchun: indeks 0 = oyning 1-kuni
+  const today = new Date().getDate();
+  const perDay = new Array<number>(today).fill(0);
+  for (const d of wonThisMonth) {
+    const day = new Date(d.CLOSEDATE!).getDate();
+    if (day >= 1 && day <= today) perDay[day - 1] += Number(d.OPPORTUNITY || 0) / 1_000_000;
+  }
+  let acc = 0;
+  const wonThisMonthDaily = perDay.map((v) => Math.round((acc += v) * 10) / 10);
 
   const toDeal = (d: RawDeal): Deal | null => {
     const stage = mapStage(d.STAGE_ID, d.STAGE_SEMANTIC_ID);
@@ -248,6 +259,7 @@ export async function fetchSotuvSnapshot(): Promise<SotuvSnapshot> {
       lostLast90: closedRaw.filter((d) => d.STAGE_SEMANTIC_ID === "F").length,
       wonThisMonthM,
       wonThisMonthCount,
+      wonThisMonthDaily,
       openWithoutAmount: openRaw.filter((d) => Number(d.OPPORTUNITY || 0) === 0).length,
       monthlyWon,
       source: "bitrix",

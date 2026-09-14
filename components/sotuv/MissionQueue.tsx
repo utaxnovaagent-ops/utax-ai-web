@@ -5,6 +5,7 @@ import { Phone, Mail, CalendarClock, ShieldCheck, Check } from "lucide-react";
 import { Card, Badge } from "@/components/ui";
 import { missions as computeMissions } from "@/lib/sales-metrics";
 import { useDeals } from "@/lib/deals-context";
+import { AgentsStrip } from "@/components/sotuv/AgentsStrip";
 
 function ctaIcon(nextAction: string) {
   if (/qo'ng'iroq/i.test(nextAction)) return Phone;
@@ -77,6 +78,7 @@ export function MissionQueue({ stageFilter }: { stageFilter: string | null }) {
           );
         })}
       </div>
+      <AgentsStrip />
     </Card>
   );
 }

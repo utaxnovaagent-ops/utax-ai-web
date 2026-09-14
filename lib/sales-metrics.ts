@@ -10,15 +10,6 @@ export type Deal = (typeof sotuvDeals)[number] & { createdAt?: string };
 const WON_STAGE = "Yopilgan (g'olib)";
 const RISK_WEIGHT: Record<Deal["risk"], number> = { yuqori: 30, "o'rta": 18, past: 6 };
 
-// Bosqichlar bo'yicha "oldingi davrga nisbatan" — real tarixiy ma'lumot hali
-// yo'q, shu sababli aniq belgilangan namunaviy (DEMO) trend sifatida saqlanadi.
-const PREV_PERIOD_DELTA_PCT: Record<string, number> = {
-  "Yangi lead": 12,
-  Malakalashtirilgan: -4,
-  "Taklif yuborilgan": 6,
-  Muzokara: -8,
-  "Yopilgan (g'olib)": 15,
-};
 
 export function openDeals(deals: Deal[] = sotuvDeals) {
   return deals.filter((d) => d.stage !== WON_STAGE);
@@ -54,7 +45,6 @@ export interface FunnelStage {
   value: number;
   avgDays: number;
   conversionIntoStage: number;
-  prevPeriodDeltaPct: number;
 }
 
 export function funnelStages(deals: Deal[] = sotuvDeals): FunnelStage[] {
@@ -76,7 +66,6 @@ export function funnelStages(deals: Deal[] = sotuvDeals): FunnelStage[] {
       value: inStage.reduce((s, d) => s + d.value, 0),
       avgDays: inStage.length ? Math.round(inStage.reduce((s, d) => s + d.daysInStage, 0) / inStage.length) : 0,
       conversionIntoStage,
-      prevPeriodDeltaPct: PREV_PERIOD_DELTA_PCT[stage] ?? 0,
     };
   });
 }

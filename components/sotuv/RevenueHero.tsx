@@ -11,11 +11,19 @@ function fmt(n: number) {
 }
 
 /** Oy davomida yig'ilma: reja chizig'i (0 → reja), fakt maydoni, forecast belgisi. */
-function CumulativeChart({ plan, daily, forecast }: { plan: number; daily: number[] | null; forecast: number }) {
+// Sana faqat serverdan kelgan fetchedAt (UTC) va kunlik qator uzunligidan olinadi:
+// new Date() ishlatilsa server (Berlin) va mijoz (masalan, Los-Anjeles) boshqa kunni
+// ko'rib, hydration mos kelmay qoladi (React #418).
+function monthInfo(fetchedAt: string) {
+  const ref = new Date(fetchedAt);
+  const y = ref.getUTCFullYear(), m = ref.getUTCMonth();
+  return { days: new Date(Date.UTC(y, m + 1, 0)).getUTCDate(), today: ref.getUTCDate(), month: m };
+}
+
+function CumulativeChart({ plan, daily, forecast, fetchedAt }: { plan: number; daily: number[] | null; forecast: number; fetchedAt: string }) {
   const W = 760, H = 150, L = 40, R = 20, T = 14, B = 22;
-  const now = new Date();
-  const days = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
-  const today = now.getDate();
+  const { days, today: refDay, month } = monthInfo(fetchedAt);
+  const today = daily && daily.length ? daily.length : refDay;
   const series = daily && daily.length ? daily : new Array(today).fill(0);
   const fact = series[series.length - 1] ?? 0;
   const top = Math.max(plan, fact + forecast, 1);
@@ -25,7 +33,7 @@ function CumulativeChart({ plan, daily, forecast }: { plan: number; daily: numbe
   const line = `M${pts.join(" L")}`;
   const area = `${line} L${x(series.length).toFixed(1)} ${y(0)} L${x(1)} ${y(0)} Z`;
   const ticks = [0, 0.5, 1].map((f) => Math.round(top * f));
-  const label = (d: number) => `${d} ${["yan","fev","mar","apr","may","iyun","iyul","avg","sen","okt","noy","dek"][now.getMonth()]}`;
+  const label = (d: number) => `${d} ${["yan","fev","mar","apr","may","iyun","iyul","avg","sen","okt","noy","dek"][month]}`;
   return (
     <svg viewBox={`0 0 ${W} ${H}`} className="mt-3 h-[150px] w-full" role="img" aria-label="Oy davomida yig'ilma: reja va fakt">
       <defs>
@@ -62,7 +70,7 @@ function CumulativeChart({ plan, daily, forecast }: { plan: number; daily: numbe
 export function RevenueHero() {
   const [showWhy, setShowWhy] = useState(false);
   const deals = useDeals();
-  const { isReal, fetchedAt, count, wonThisMonthM, wonThisMonthDaily } = useDealsSource();
+  const { isReal, loading, fetchedAt, count, wonThisMonthM, wonThisMonthDaily } = useDealsSource();
 
   // Reja — biznes maqsadi, CRMda yo'q: serverdagi sozlamadan (/api/settings).
   const [plan, setPlan] = useState<{ value: number; setBy: "default" | "user" } | null>(null);
@@ -105,8 +113,8 @@ export function RevenueHero() {
   const pendingApprovals = missions(deals).filter((m) => m.requiresApproval).length;
   const actionNeeded = needsActionToday(deals).length;
   const atRisk = atRiskValue(deals);
-  const now = new Date();
-  const daysLeft = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate() - now.getDate();
+  const ready = !loading && !!fetchedAt;
+  const daysLeft = ready ? (() => { const m = monthInfo(fetchedAt!); return m.days - (wonThisMonthDaily?.length ?? m.today); })() : null;
 
   return (
     <Card className="mb-5">
@@ -114,7 +122,7 @@ export function RevenueHero() {
         <div>
           <div className="flex items-center justify-between gap-2">
             <p className="text-xs font-semibold uppercase tracking-wide text-muted">Bu oy — reja vs fakt</p>
-            <span className="text-[11px] tabular-nums text-muted">{daysLeft} kun qoldi</span>
+            <span className="text-[11px] tabular-nums text-muted">{daysLeft === null ? "" : `${daysLeft} kun qoldi`}</span>
           </div>
           <div className="mt-1.5 flex flex-wrap items-baseline gap-x-2 gap-y-1 tabular-nums">
             <span className="text-4xl font-extrabold text-foreground">{fmt(factThisMonth)}</span>
@@ -149,7 +157,11 @@ export function RevenueHero() {
             {plan?.setBy !== "user" && <span className="ml-2 rounded-full bg-warning-bg px-2 py-0.5 text-[10px] font-semibold text-warning">reja boshlang&apos;ich qiymat</span>}
           </p>
 
-          <CumulativeChart plan={planThisMonth} daily={wonThisMonthDaily} forecast={forecast} />
+          {ready ? (
+            <CumulativeChart plan={planThisMonth} daily={wonThisMonthDaily} forecast={forecast} fetchedAt={fetchedAt!} />
+          ) : (
+            <div className="mt-3 h-[150px] w-full rounded-lg bg-surface-alt" aria-hidden />
+          )}
 
           <div className="mt-3 flex flex-wrap gap-2">
             <button className="rounded-full border border-warning/40 bg-warning-bg px-3 py-1.5 text-xs font-semibold text-warning" onClick={() => setShowWhy(true)}>

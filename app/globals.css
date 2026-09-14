@@ -126,7 +126,9 @@ body {
 
 /* Chap menyu — chuqur grafit (Dizayn TZI §7.1). Ichkarida token to'plami
    almashtiriladi, shuning uchun mavjud Tailwind klasslari o'zgartirilmaydi. */
-.utax-rail {
+/* Yon menyu: kun rejimida och (sahifa bilan bir xil tokenlar), tun rejimida
+   Carbon. Ilgari har doim to'q edi — kun rejimida "qora bo'lib qotib" turardi. */
+:root[data-theme="dark"] .utax-rail {
   --surface: var(--carbon);
   --surface-alt: #18202d;
   --foreground: #f4f7fb;
@@ -136,8 +138,8 @@ body {
   --brand: #5ca4ff;
   color: #f4f7fb;
 }
-.utax-rail ::-webkit-scrollbar-thumb { background: #26313f; }
-.utax-rail { scrollbar-color: #26313f transparent; }
+:root[data-theme="dark"] .utax-rail ::-webkit-scrollbar-thumb { background: #26313f; }
+:root[data-theme="dark"] .utax-rail { scrollbar-color: #26313f transparent; }
 
 .brand-gradient {
   background: var(--brand-gradient);

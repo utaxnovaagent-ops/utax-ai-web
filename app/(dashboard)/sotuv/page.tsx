@@ -103,7 +103,7 @@ function SotuvPageInner() {
             <h1 className="text-lg font-bold text-foreground">Sotuv Command Center</h1>
             <span className={`rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${
               isReal
-                ? "border-emerald-300 bg-emerald-50 text-emerald-700"
+                ? "border-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300"
                 : "border-border bg-surface-alt text-muted"
             }`}>
               {isReal ? "LIVE" : "DEMO"}

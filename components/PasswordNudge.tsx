@@ -31,18 +31,18 @@ export function PasswordNudge({ version, onChange }: { version: number; onChange
   if (!show) return null;
 
   return (
-    <div role="status" className="mb-4 flex flex-col gap-3 rounded-card border border-amber-200 bg-amber-50 px-4 py-3 sm:flex-row sm:items-center">
+    <div role="status" className="mb-4 flex flex-col gap-3 rounded-card border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/40 px-4 py-3 sm:flex-row sm:items-center">
       <div className="flex min-w-0 flex-1 items-start gap-3">
-        <ShieldAlert size={18} className="mt-0.5 flex-shrink-0 text-amber-700" />
+        <ShieldAlert size={18} className="mt-0.5 flex-shrink-0 text-amber-700 dark:text-amber-300" />
         <div className="min-w-0 flex-1">
-        <p className="text-[13px] font-semibold text-amber-900">{t("pw_nudge_title", lang)}</p>
-        <p className="text-[12px] leading-snug text-amber-800">{t("pw_nudge_body", lang)}</p>
+        <p className="text-[13px] font-semibold text-amber-900 dark:text-amber-300">{t("pw_nudge_title", lang)}</p>
+        <p className="text-[12px] leading-snug text-amber-800 dark:text-amber-300">{t("pw_nudge_body", lang)}</p>
         </div>
       </div>
       <div className="flex gap-2 sm:flex-shrink-0">
         <button
           onClick={() => { try { localStorage.setItem(KEY, String(Date.now() + LATER_MS)); } catch {} setShow(false); }}
-          className="h-9 flex-1 rounded-control border border-amber-300 px-3 sm:flex-none text-[12px] font-medium text-amber-900 hover:bg-amber-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600"
+          className="h-9 flex-1 rounded-control border border-amber-300 dark:border-amber-700 px-3 sm:flex-none text-[12px] font-medium text-amber-900 dark:text-amber-300 hover:bg-amber-100 dark:bg-amber-900/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600"
         >
           {t("pw_nudge_later", lang)}
         </button>

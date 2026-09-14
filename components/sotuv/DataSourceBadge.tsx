@@ -29,7 +29,7 @@ export function DataSourceBadge() {
     // buni ko'rsatkich yonida ochiq aytamiz, aks holda noto'g'ri xulosa chiqadi.
     
     return (
-      <div className="mb-4 flex flex-wrap items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs text-emerald-900">
+      <div className="mb-4 flex flex-wrap items-center gap-2 rounded-lg border border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/40 px-3 py-2 text-xs text-emerald-900 dark:text-emerald-300">
         <Database size={13} />
         <span className="font-semibold">Real ma&apos;lumot — Bitrix24</span>
         <span className="opacity-75">
@@ -40,7 +40,7 @@ export function DataSourceBadge() {
   }
 
   return (
-    <div className="mb-4 flex flex-wrap items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-900">
+    <div className="mb-4 flex flex-wrap items-center gap-2 rounded-lg border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/40 px-3 py-2 text-xs text-amber-900 dark:text-amber-300">
       <TriangleAlert size={13} />
       <span className="font-semibold">Namunaviy (demo) ma&apos;lumot</span>
       <span className="opacity-75">

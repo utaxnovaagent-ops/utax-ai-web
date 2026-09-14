@@ -1,6 +1,6 @@
 "use client";
 
-import { Bell, ChevronDown, KeyRound, LogOut, Menu } from "lucide-react";
+import { Bell, ChevronDown, KeyRound, LogOut, Menu, Moon, Sun } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useAppState, useCurrentRole } from "@/lib/app-context";
@@ -18,7 +18,7 @@ export function Topbar({
   scrolled?: boolean;
   onChangePassword?: () => void;
 }) {
-  const { roleId, setRoleId, lang, setLang } = useAppState();
+  const { roleId, setRoleId, lang, setLang, theme, setTheme } = useAppState();
   const role = useCurrentRole();
   const router = useRouter();
   const roleLabel = t(`role_label_${role.id}`, lang);
@@ -158,6 +158,15 @@ export function Topbar({
             </div>
           )}
         </div>
+
+        <button
+          onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+          title={t(theme === "dark" ? "theme_light" : "theme_dark", lang)}
+          aria-label={t(theme === "dark" ? "theme_light" : "theme_dark", lang)}
+          className="flex h-10 w-10 items-center justify-center rounded-lg border border-border text-foreground hover:bg-surface-alt"
+        >
+          {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
+        </button>
 
         {onChangePassword && (
           <button

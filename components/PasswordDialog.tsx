@@ -87,7 +87,7 @@ export function PasswordDialog({ open, onClose, onChanged }: { open: boolean; on
         </div>
 
         {done ? (
-          <p className="rounded-control border border-emerald-200 bg-emerald-50 px-3 py-2.5 text-[12.5px] font-medium text-emerald-800">
+          <p className="rounded-control border border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/40 px-3 py-2.5 text-[12.5px] font-medium text-emerald-800 dark:text-emerald-300">
             {t("pw_changed", lang)}
           </p>
         ) : (

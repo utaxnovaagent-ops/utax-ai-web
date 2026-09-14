@@ -21,6 +21,8 @@ export const STRINGS: Dict = {
   role: { uz: "Rol", ru: "Роль", en: "Role" },
   role_demo: { uz: "Rol (demo)", ru: "Роль (демо)", en: "Role (demo)" },
   logout: { uz: "Chiqish", ru: "Выйти", en: "Log out" },
+  theme_dark: { uz: "Tun rejimi", ru: "Тёмная тема", en: "Dark mode" },
+  theme_light: { uz: "Kun rejimi", ru: "Светлая тема", en: "Light mode" },
   no_modules_for_role: {
     uz: "Bu rol uchun ichki panel mavjud emas. Mijoz chatidan foydalaning.",
     ru: "Для этой роли внутренние панели недоступны. Используйте чат клиента.",

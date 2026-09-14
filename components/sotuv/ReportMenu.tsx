@@ -99,7 +99,7 @@ export function ReportMenu({ build, onCsv }: { build: () => ReportModel; onCsv: 
         <span
           className={`absolute right-0 top-10 z-40 flex items-center gap-1.5 whitespace-nowrap rounded-lg border px-2.5 py-1.5 text-[11px] font-medium shadow-brand ${
             sent === "ok"
-              ? "border-emerald-200 bg-emerald-50 text-emerald-700"
+              ? "border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300"
               : sent
                 ? "border-danger/30 bg-danger-bg text-danger"
                 : "border-border bg-surface text-muted"

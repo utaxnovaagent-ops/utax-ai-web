@@ -1,10 +1,12 @@
 @import "tailwindcss";
 
-:root {
-  /* Ilova faqat och rejimda: OS qorong'i rejimi native select/checkbox va
-     ba'zi komponentlarni qoraytirib yubormasin. Sidebar (.utax-rail) — dizayn bo'yicha to'q. */
-  color-scheme: light;
+/* Kun/tun rejimi: <html data-theme="dark"> bo'lganda dark: variantlari ishlaydi.
+   Tanlov localStorage'da (utax_theme), sahifa chizilishidan oldin app/layout.tsx
+   dagi kichik skript o'rnatadi — yorug' "miltillash" bo'lmaydi. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
+:root {
+  color-scheme: light;
   /* UTAX Executive Intelligence — Dizayn TZI §4/§5/§7.3.
      Sotuv Desk (sotuv.169-58-178-40.sslip.io) bilan bitta tizim. */
   --background: #f4f7fa; /* Cloud — sahifa foni */
@@ -47,6 +49,34 @@
   --radius-control: 10px;
   --shadow-brand: 0 1px 2px rgba(11, 15, 20, 0.045), 0 8px 24px rgba(11, 15, 20, 0.055);
   --shadow-brand-hover: 0 2px 6px rgba(11, 15, 20, 0.07), 0 18px 44px rgba(11, 15, 20, 0.11);
+}
+
+
+/* ===== Tun rejimi tokenlari — Sotuv Desk qorong'i palitrasi bilan bir xil ===== */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --background: #0b0f14;
+  --surface: #121926;
+  --surface-alt: #18212f;
+  --foreground: #f2f5f9;
+  --muted: #9aa9bc;
+  --border: #232e40;
+  --brand-light: #142a4f;
+  --brand-dark: #0b0f14;
+  --silver: #7c8a9b;
+  --connector: #2e3a4c;
+  --success-bg: #0f2a1e;
+  --warning-bg: #2e2208;
+  --danger-bg: #33171b;
+  --info-bg: #142a4f;
+  --shadow-brand: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.35);
+  --shadow-brand-hover: 0 2px 6px rgba(0, 0, 0, 0.5), 0 18px 44px rgba(0, 0, 0, 0.5);
+}
+/* Kirish sahifasi o'z (osmon, oq shisha) dizaynida qoladi — tun rejimida ham och tokenlar */
+:root[data-theme="dark"] .utax-login {
+  color-scheme: light;
+  --background: #f4f7fa; --surface: #ffffff; --surface-alt: #f1f5f9; --foreground: #111827;
+  --border: #e5eaf0; --brand-light: #eaf2ff; --danger-bg: #fceaec; --silver: #b8c2cf;
 }
 
 @theme inline {

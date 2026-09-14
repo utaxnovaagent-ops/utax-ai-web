@@ -41,7 +41,7 @@ function Metric({
         {icon}
         <span className="text-[11px] font-medium uppercase tracking-wide">{label}</span>
       </div>
-      <p className={`text-xl font-bold tabular-nums ${tone === "warn" ? "text-amber-600" : "text-foreground"}`}>
+      <p className={`text-xl font-bold tabular-nums ${tone === "warn" ? "text-amber-600 dark:text-amber-400" : "text-foreground"}`}>
         {value}
       </p>
       {hint && <p className="mt-0.5 text-[11px] text-muted">{hint}</p>}
@@ -111,7 +111,7 @@ export function CallAnalytics({ days = 30 }: { days?: number }) {
           <span className="text-xs font-semibold text-foreground">
             {TARGET_SECONDS} soniyadan qisqa qo&apos;ng&apos;iroqlar
           </span>
-          <span className={`text-lg font-bold tabular-nums ${data.underTargetPct >= 30 ? "text-amber-600" : "text-foreground"}`}>
+          <span className={`text-lg font-bold tabular-nums ${data.underTargetPct >= 30 ? "text-amber-600 dark:text-amber-400" : "text-foreground"}`}>
             {data.underTargetPct}%
           </span>
         </div>
